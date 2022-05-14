@@ -6,6 +6,8 @@ import {
     Icon,
     IconButton,
     Link,
+    LinkBox,
+    LinkOverlay,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -43,74 +45,94 @@ export default function WithSubnavigation() {
                     ml={{ base: -2 }}
                     display={{ base: 'flex', md: 'none' }}
                 >
-                    <IconButton
-                        onClick={onToggle}
-                        icon={
-                            isOpen ? (
-                                <CloseIcon w={3} h={3} />
-                            ) : (
-                                <HamburgerIcon w={5} h={5} />
-                            )
-                        }
-                        variant={'ghost'}
-                        aria-label={'Toggle Navigation'}
-                    />
+                    <NavIconButton onClick={onToggle} open={isOpen} />
                 </Flex>
-                <Flex
-                    flex={{ base: 1 }}
-                    justify={{ base: 'center', md: 'start' }}
-                >
-                    <Text
-                        textAlign={useBreakpointValue({
-                            base: 'center',
-                            md: 'left',
-                        })}
-                        fontFamily={'heading'}
-                        color={useColorModeValue('gray.800', 'white')}
-                    >
-                        Logo
-                    </Text>
+
+                <Flex flex={1} justify={{ base: 'center', md: 'start' }}>
+                    <NavLogo />
 
                     <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
                         <DesktopNav />
                     </Flex>
                 </Flex>
 
-                <Stack
-                    flex={{ base: 1, md: 0 }}
-                    justify={'flex-end'}
-                    direction={'row'}
-                    spacing={6}
-                >
-                    <Button
-                        as={'a'}
-                        fontSize={'sm'}
-                        fontWeight={400}
-                        variant={'link'}
-                        href={'#'}
-                    >
-                        Sign In
-                    </Button>
-                    <Button
-                        display={{ base: 'none', md: 'inline-flex' }}
-                        fontSize={'sm'}
-                        fontWeight={600}
-                        color={'white'}
-                        bg={'pink.400'}
-                        href={'#'}
-                        _hover={{
-                            bg: 'pink.300',
-                        }}
-                    >
-                        Sign Up
-                    </Button>
-                </Stack>
+                <Flex flex={{ base: 1, md: 0 }} />
+                {/*<NavRightSide />*/}
             </Flex>
 
             <Collapse in={isOpen} animateOpacity>
                 <MobileNav />
             </Collapse>
         </Box>
+    );
+}
+
+const NavRightSide = () => {
+    return (
+        <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}
+        >
+            <Button
+                as={'a'}
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'link'}
+                href={'#'}
+            >
+                Sign In
+            </Button>
+            <Button
+                display={{ base: 'none', md: 'inline-flex' }}
+                fontSize={'sm'}
+                fontWeight={600}
+                color={'white'}
+                bg={'pink.400'}
+                href={'#'}
+                _hover={{
+                    bg: 'pink.300',
+                }}
+            >
+                Sign Up
+            </Button>
+        </Stack>
+    );
+};
+
+function NavIconButton(props: { onClick: () => void; open: boolean }) {
+    return (
+        <IconButton
+            onClick={props.onClick}
+            icon={
+                props.open ? (
+                    <CloseIcon w={3} h={3} />
+                ) : (
+                    <HamburgerIcon w={5} h={5} />
+                )
+            }
+            variant={'ghost'}
+            aria-label={'Toggle Navigation'}
+        />
+    );
+}
+
+function NavLogo() {
+    return (
+        <LinkBox>
+            <LinkOverlay href={'/'} />
+            <Text
+                textAlign={useBreakpointValue({
+                    base: 'center',
+                    md: 'left',
+                })}
+                fontFamily={'heading'}
+                color={useColorModeValue('gray.800', 'white')}
+            >
+                Logo
+            </Text>
+        </LinkBox>
     );
 }
 
@@ -291,41 +313,26 @@ interface NavItem {
 
 const NAV_ITEMS: Array<NavItem> = [
     {
-        label: 'Inspiration',
-        children: [
-            {
-                label: 'Explore Design Work',
-                subLabel: 'Trending Design to inspire you',
-                href: '#',
-            },
-            {
-                label: 'New & Noteworthy',
-                subLabel: 'Up-and-coming Designers',
-                href: '#',
-            },
-        ],
+        label: 'Tic-Tac-Toe',
+        href: '/tictactoe',
     },
-    {
-        label: 'Find Work',
-        children: [
-            {
-                label: 'Job Board',
-                subLabel: 'Find your dream design job',
-                href: '#',
-            },
-            {
-                label: 'Freelance Projects',
-                subLabel: 'An exclusive list for contract work',
-                href: '#',
-            },
-        ],
-    },
-    {
-        label: 'Learn Design',
-        href: '#',
-    },
-    {
-        label: 'Hire Designers',
-        href: '#',
-    },
+    // {
+    //     label: 'Find Work',
+    //     children: [
+    //         {
+    //             label: 'Job Board',
+    //             subLabel: 'Find your dream design job',
+    //             href: '#',
+    //         },
+    //         {
+    //             label: 'Freelance Projects',
+    //             subLabel: 'An exclusive list for contract work',
+    //             href: '#',
+    //         },
+    //     ],
+    // },
+    // {
+    //     label: 'Learn Design',
+    //     href: '#',
+    // },
 ];

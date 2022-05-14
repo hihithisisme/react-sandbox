@@ -1,11 +1,13 @@
-import CallToActionWithImage from '../components/CTAWithImage';
-import WithSubnavigation from '../components/Navbar';
+import React from 'react';
+import CallToActionWithHero from '../components/CTAWithHero';
+import Layout from '../components/Layout';
 
-export default function Home() {
+const Home = () => {
     return (
-        <>
-            <WithSubnavigation />
-            <CallToActionWithImage />
-        </>
+        <Layout>
+            <CallToActionWithHero />
+        </Layout>
     );
-}
+};
+
+export default Home;
