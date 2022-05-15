@@ -1,19 +1,25 @@
 import { Box, Button, Grid, GridItem } from '@chakra-ui/react';
 import { useState } from 'react';
 import Board from './Board';
-import { isNotAllowedToPlay, newGame, otherPlayerSign } from './game';
+import {
+    getWinningLine,
+    isNotAllowedToPlay,
+    newGame,
+    otherPlayerSign,
+} from './game';
 import { Blob } from '../Blob';
 import { findBestMove } from './gameAI';
 
-const baseSize = 300;
+const gameSize = 3;
+const baseSize = gameSize * 100;
 export const boardSize = { base: `${baseSize}px`, md: `${baseSize * 1.5}px` };
 export const paddedBoardSize = {
     base: `${baseSize + 50}px`,
     md: `${baseSize * 1.5 + 50}px`,
 };
 export const squareSize = {
-    base: `${baseSize / 3}px`,
-    md: `${(baseSize * 1.5) / 3}px`,
+    base: `${baseSize / gameSize}px`,
+    md: `${(baseSize * 1.5) / gameSize}px`,
 };
 
 function TicTacToe() {
@@ -37,8 +43,10 @@ function TicTacToe() {
 
         setTimeout(() => {
             setGame((nGame) => {
+                if (getWinningLine(nGame)) {
+                    return nGame;
+                }
                 const aiMove = findBestMove(nGame);
-                console.log('AI making its move!', aiMove);
                 const squares = nGame.squares.slice();
                 squares[aiMove] = nGame.isPlayerTurn
                     ? nGame.playerSign
@@ -49,10 +57,8 @@ function TicTacToe() {
                     isPlayerTurn: !nGame.isPlayerTurn,
                 };
             });
-        }, 1000);
+        }, 400);
     }
-
-    const gameSize = 3;
 
     const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
 

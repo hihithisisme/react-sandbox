@@ -12,7 +12,7 @@ export function newGame(gameSize: number, isPlayerFirst: boolean): IGame {
     };
 }
 
-function getLines(game: IGame): number[][] {
+export function getLines(game: IGame): number[][] {
     const size = game.squares.length ** 0.5;
 
     const verticalIndices: number[][] = Array(size)
@@ -56,6 +56,14 @@ export function getWinningLine(game: IGame): number[] | null {
         const someoneWon = line.every(
             (value) => game.squares[value] == firstVal
         );
+        // const numOfX = line
+        //     .map((i): number => (game.squares[i] === 'X' ? 1 : 0))
+        //     .reduce((a, b) => a + b);
+        // const numOfO = line
+        //     .map((i): number => (game.squares[i] === 'O' ? 1 : 0))
+        //     .reduce((a, b) => a + b);
+        //
+        // const someoneWon = numOfO >= 3 || numOfX >= 3;
         if (someoneWon) {
             return line;
         }

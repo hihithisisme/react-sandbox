@@ -1,34 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sandbox
 
-## Getting Started
+This is my Front-end sandbox where I just dump stuff.
 
-First, run the development server:
+## Tic-tac-toe
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+So for tic-tac-toe, I built something up and I learnt some about CSS grids and a bit on layouts. There are a few
+interesting variants that I do want to implement in the future.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Vs AI [Done]
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Player plays with an AI that uses the minimax algorithm. So far, there hasn't been a need for heuristics yet due to the
+simplistic nature of the game. Interestingly, it seems like it is much simpler to obtain a draw for 4x4 and larger
+boards.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Hopefully, one of the other variants can introduce significant depth that it is worth trying to implement a heuristic
+into the minimax algorithm.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Online 2-player
 
-## Learn More
+I want to implement an online version of the game with rooms that allow two users to join and play against each other in
+real-time. This would open up for the more complicated variants of the tic-tac-toe games.
 
-To learn more about Next.js, take a look at the following resources:
+### Bidding tic-tac-toe
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This variant gives both players a set amount of tokens to begin with.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Each turn, both players make a silent bid, indicating the number of tokens they are willing to give to make a move.
+- The player with the higher bid gets to make the move.
+- The other player gets the amount that the successful bidder bid.
+- Repeat until someone wins the game.
 
-## Deploy on Vercel
+This variant will very likely have to be an online version since I don't think the minimax algorithm translate well to
+such a continuous range of options.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Ultimate tic-tac-toe
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This variant is the one whereby there are 9 3x3 grids and your goal is to win on 3 3x3 grids such that they form a line.
+Due to the scale, it is quite possible that I will either need to migrate the minimax algorithm to a backend call using
+perhaps golang, or just an online version will do.
