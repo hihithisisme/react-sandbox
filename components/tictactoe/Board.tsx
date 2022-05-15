@@ -1,6 +1,7 @@
 import { Grid } from '@chakra-ui/react';
 import { getWinningLine, IGame } from './game';
 import dynamic from 'next/dynamic';
+import { boardSize } from './TicTacToe';
 
 export default function Board(props: IBoardProps): JSX.Element {
     const gameSize = props.squares.length ** 0.5;
@@ -8,26 +9,6 @@ export default function Board(props: IBoardProps): JSX.Element {
     if (winningLine) {
         console.log(winningLine);
     }
-
-    // const renderRow = () => {
-    //     const squareRow = Array(props.game.size)
-    //         .fill(0)
-    //         .map(() => {
-    //             const sq = renderSquare(index);
-    //             index++;
-    //             return sq;
-    //         });
-    //
-    //     return (
-    //         <Grid container item justifyContent={'center'} wrap={'nowrap'}>
-    //             {squareRow}
-    //         </Grid>
-    //     );
-    // };
-    //
-    // const rows = Array(props.gameSize)
-    //     .fill(0)
-    //     .map(() => renderRow());
 
     return (
         // TODO: make size dynamic
@@ -37,12 +18,8 @@ export default function Board(props: IBoardProps): JSX.Element {
             // direction={'column'}
             // h={{ base: '300px', md: '900px' }}
             // w={{ base: '300px', md: '100%' }}
-            h={'300px'}
-            w={'300px'}
-            templateRows={`repeat(${gameSize}, 1fr)`}
+            boxSize={boardSize}
             templateColumns={`repeat(${gameSize}, 1fr)`}
-            autoRows={'minmax(min-content, max-content)'}
-            autoColumns={'minmax(min-content, max-content)'}
         >
             {props.squares.map((_, i) => (
                 <DynamicSquare

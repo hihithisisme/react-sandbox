@@ -13,7 +13,6 @@ import {
     PopoverTrigger,
     Stack,
     Text,
-    useBreakpointValue,
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
@@ -23,6 +22,7 @@ import {
     CloseIcon,
     HamburgerIcon,
 } from '@chakra-ui/icons';
+import { HouseSimple } from 'phosphor-react';
 
 export default function WithSubnavigation() {
     const { isOpen, onToggle } = useDisclosure();
@@ -122,16 +122,7 @@ function NavLogo() {
     return (
         <LinkBox>
             <LinkOverlay href={'/'} />
-            <Text
-                textAlign={useBreakpointValue({
-                    base: 'center',
-                    md: 'left',
-                })}
-                fontFamily={'heading'}
-                color={useColorModeValue('gray.800', 'white')}
-            >
-                Logo
-            </Text>
+            <Icon as={HouseSimple} boxSize={6} verticalAlign={'middle'} />
         </LinkBox>
     );
 }

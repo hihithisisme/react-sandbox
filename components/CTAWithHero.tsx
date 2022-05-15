@@ -5,6 +5,8 @@ import {
     Heading,
     Icon,
     IconProps,
+    LinkBox,
+    LinkOverlay,
     Stack,
     Text,
 } from '@chakra-ui/react';
@@ -44,25 +46,25 @@ function Header() {
             fontWeight={600}
             fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}
         >
-            <Text
-                as={'span'}
-                position={'relative'}
-                _after={{
-                    content: "''",
-                    width: 'full',
-                    height: '30%',
-                    position: 'absolute',
-                    bottom: 1,
-                    left: 0,
-                    bg: 'red.400',
-                    zIndex: -1,
-                }}
-            >
-                Write once,
-            </Text>
-            <br />
-            <Text as={'span'} color={'red.400'}>
-                use everywhere!
+            {/*<Text*/}
+            {/*    as={'span'}*/}
+            {/*    position={'relative'}*/}
+            {/*    _after={{*/}
+            {/*        content: "''",*/}
+            {/*        width: 'full',*/}
+            {/*        height: '30%',*/}
+            {/*        position: 'absolute',*/}
+            {/*        bottom: 1,*/}
+            {/*        left: 0,*/}
+            {/*        bg: 'red.400',*/}
+            {/*        zIndex: -1,*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    Just experimenting */}
+            {/*</Text>*/}
+            {/*<br />*/}
+            <Text as={'span'} color={'red.600'}>
+                Just experimenting
             </Text>
         </Heading>
     );
@@ -73,9 +75,9 @@ function CTAText() {
         <>
             <Header />
             <Text color={'gray.500'}>
-                Snippy is a rich coding snippets app that lets you create your
-                own code snippets, categorize them, and even sync them in the
-                cloud so you can use them anywhere. All that is free!
+                Just playing around with web development. Not really trying to
+                do anything. Something like a playground, yeah? Hopefully, I
+                will add more stuff as things go.
             </Text>
         </>
     );
@@ -87,17 +89,19 @@ function CTAButton() {
             spacing={{ base: 4, sm: 6 }}
             direction={{ base: 'column', sm: 'row' }}
         >
-            <Button
-                rounded={'full'}
-                size={'lg'}
-                fontWeight={'normal'}
-                px={6}
-                colorScheme={'red'}
-                bg={'red.400'}
-                _hover={{ bg: 'red.500' }}
-            >
-                Get started
-            </Button>
+            <LinkBox>
+                <Button
+                    rounded={'full'}
+                    size={'lg'}
+                    fontWeight={'normal'}
+                    px={6}
+                    colorScheme={'red'}
+                    bg={'red.400'}
+                    _hover={{ bg: 'red.500' }}
+                >
+                    <LinkOverlay href={'/tictactoe'}>Tic-tac-toe</LinkOverlay>
+                </Button>
+            </LinkBox>
         </Stack>
     );
 }
