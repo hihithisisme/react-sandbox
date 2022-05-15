@@ -1,5 +1,5 @@
 import { Grid } from '@chakra-ui/react';
-import { getWinningLine, IGame, isEndOfGame } from './game';
+import { getWinningLine, IGame, isMovesLeft } from './game';
 import dynamic from 'next/dynamic';
 import { boardSize } from './TicTacToe';
 
@@ -7,20 +7,19 @@ export default function Board(props: IBoardProps): JSX.Element {
     const gameSize = props.squares.length ** 0.5;
 
     function shouldHighlightSquare(i: number): boolean {
-        if (isEndOfGame(props)) {
-            const winningLine = getWinningLine(props);
-            if (winningLine) {
-                return winningLine.includes(i);
-            } else {
-                return false;
-            }
+        if (!isMovesLeft(props)) {
+            return false;
+        }
+
+        const winningLine = getWinningLine(props);
+        if (winningLine) {
+            return winningLine.includes(i);
         }
 
         return true;
     }
 
     return (
-        // TODO: make size dynamic
         <Grid
             // id="board"
             // container

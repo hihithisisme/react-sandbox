@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Board from './Board';
 import { isNotAllowedToPlay, newGame, otherPlayerSign } from './game';
 import { Blob } from '../Blob';
+import { findBestMove } from './gameAI';
 
 const baseSize = 300;
 export const boardSize = { base: `${baseSize}px`, md: `${baseSize * 1.5}px` };
@@ -18,9 +19,6 @@ export const squareSize = {
 function TicTacToe() {
     // const [gameSize, setGameSize] = useState(gameModes[0].value);
     const isPlayerFirst = true;
-    const gameSize = 3;
-
-    const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
 
     function handleClick(i: number): void {
         if (isNotAllowedToPlay(game, i)) {
@@ -28,15 +26,35 @@ function TicTacToe() {
         }
 
         const squares = game.squares.slice();
-        squares[i] = game.isPlayerNext
+        squares[i] = game.isPlayerTurn
             ? game.playerSign
             : otherPlayerSign(game);
         setGame({
             ...game,
             squares,
-            isPlayerNext: !game.isPlayerNext,
+            isPlayerTurn: !game.isPlayerTurn,
         });
+
+        setTimeout(() => {
+            setGame((nGame) => {
+                const aiMove = findBestMove(nGame);
+                console.log('AI making its move!', aiMove);
+                const squares = nGame.squares.slice();
+                squares[aiMove] = nGame.isPlayerTurn
+                    ? nGame.playerSign
+                    : otherPlayerSign(nGame);
+                return {
+                    ...nGame,
+                    squares,
+                    isPlayerTurn: !nGame.isPlayerTurn,
+                };
+            });
+        }, 1000);
     }
+
+    const gameSize = 3;
+
+    const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
 
     return (
         <Box textAlign={'center'}>
