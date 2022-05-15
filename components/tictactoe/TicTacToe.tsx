@@ -1,7 +1,8 @@
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Grid, GridItem } from '@chakra-ui/react';
 import { useState } from 'react';
 import Board from './Board';
-import { getWinningLine, newGame } from './game';
+import { isNotAllowedToPlay, newGame, otherPlayerSign } from './game';
+import { Blob } from '../Blob';
 
 const baseSize = 300;
 export const boardSize = { base: `${baseSize}px`, md: `${baseSize * 1.5}px` };
@@ -22,31 +23,46 @@ function TicTacToe() {
     const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
 
     function handleClick(i: number): void {
-        const squares = game.squares.slice();
-        if (squares[i] || getWinningLine(game)) {
+        if (isNotAllowedToPlay(game, i)) {
             return;
         }
 
-        squares[i] = game.isPlayerNext ? 'X' : 'O';
+        const squares = game.squares.slice();
+        squares[i] = game.isPlayerNext
+            ? game.playerSign
+            : otherPlayerSign(game);
         setGame({
+            ...game,
             squares,
             isPlayerNext: !game.isPlayerNext,
         });
     }
 
     return (
-        <Box textAlign={'center'} boxSize={paddedBoardSize}>
+        <Box textAlign={'center'}>
             {/*<StatusHeader squares={game.squares} isXNext={game.isXNext} />*/}
-            <Flex
+            <Grid
+                templateRows={'1fr'}
+                alignItems={'center'}
                 justifyItems={'center'}
-                p={6}
-                m={3}
-                bgColor={'teal.100'}
-                borderRadius={'10px'}
-                boxSize={'100%'}
+                templateColumns={'1fr'}
+                boxSize={paddedBoardSize}
             >
-                <Board {...game} handleClick={(i: number) => handleClick(i)} />
-            </Flex>
+                <GridItem rowStart={1} colStart={1}>
+                    <Blob boxSize={'150%'} ml={'-25%'} />
+                </GridItem>
+                <GridItem
+                    justifyItems={'center'}
+                    rowStart={1}
+                    colStart={1}
+                    boxSize={'100%'}
+                >
+                    <Board
+                        {...game}
+                        handleClick={(i: number) => handleClick(i)}
+                    />
+                </GridItem>
+            </Grid>
 
             <Button
                 // variant="contained"

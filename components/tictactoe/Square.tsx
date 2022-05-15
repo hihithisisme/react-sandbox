@@ -27,10 +27,13 @@ export default function Square(props: ISquareProps): JSX.Element {
 
     return (
         <GridItem
+            className={`sq-${props.index}`}
             onClick={props.handleClick}
             boxSize={squareSize}
             rowSpan={1}
             colSpan={1}
+            rowStart={~~(props.index / props.gameSize) + 1}
+            colStart={(props.index % props.gameSize) + 1}
             borderBottom={
                 isBottomEdge(props.index, props.gameSize)
                     ? 'transparent'

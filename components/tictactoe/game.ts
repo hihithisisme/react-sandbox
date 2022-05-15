@@ -1,12 +1,14 @@
 export interface IGame {
     squares: Array<string | null>;
     isPlayerNext: boolean;
+    playerSign: string;
 }
 
 export function newGame(gameSize: number, isPlayerFirst: boolean): IGame {
     return {
         squares: Array(gameSize ** 2).fill(null),
         isPlayerNext: isPlayerFirst,
+        playerSign: Math.random() < 0.5 ? 'X' : 'O',
     };
 }
 
@@ -78,4 +80,18 @@ export function evaluate(game: IGame, playerSign: string): number {
     } else {
         return -1;
     }
+}
+
+export function isNotAllowedToPlay(game: IGame, index: number) {
+    return game.squares.slice()[index] || getWinningLine(game);
+}
+
+export function otherPlayerSign(game: IGame): string {
+    return game.playerSign === 'X' ? 'O' : 'X';
+}
+
+export function isEndOfGame(game: IGame) {
+    return (
+        game.squares.every((value) => value !== null) || getWinningLine(game)
+    );
 }
