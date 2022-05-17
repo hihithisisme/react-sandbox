@@ -2,7 +2,7 @@ import { Center, GridItem, Icon } from '@chakra-ui/react';
 import React from 'react';
 
 import { Circle, X } from 'phosphor-react';
-import { squareSize } from './TicTacToe';
+import { squareSize } from './BaseTicTacToe';
 
 interface ISquareProps {
     index: number;

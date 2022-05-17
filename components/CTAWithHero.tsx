@@ -8,7 +8,7 @@ import {
     Stack,
     Text,
 } from '@chakra-ui/react';
-import TicTacToe from './tictactoe/TicTacToe';
+import AITicTacToe from '../components/tictactoe/AITicTacToe';
 
 export default function CallToActionWithHero() {
     return (
@@ -117,7 +117,7 @@ function HeroComponent() {
                 pb={{ base: '100%' }}
                 justifyContent={'center'}
             >
-                <TicTacToe />
+                <AITicTacToe />
             </Flex>
         </>
 

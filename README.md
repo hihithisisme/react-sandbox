@@ -21,6 +21,21 @@ into the minimax algorithm.
 I want to implement an online version of the game with rooms that allow two users to join and play against each other in
 real-time. This would open up for the more complicated variants of the tic-tac-toe games.
 
+### Sized tic-tac-toe
+
+This variant gives each player 3 kinds of symbols to place of differing sizes:
+
+- 3 small
+- 3 medium
+- 3 large
+
+The game plays as per the original variant, but you may draw over your opponent's symbol if you use one that is larger.
+
+Required:
+
+- Drag & drop mechanics?
+- Live version for 2-player
+
 ### Bidding tic-tac-toe
 
 This variant gives both players a set amount of tokens to begin with.

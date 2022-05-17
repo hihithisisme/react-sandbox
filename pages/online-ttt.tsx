@@ -1,15 +1,15 @@
 import { Flex } from '@chakra-ui/react';
 import Layout from '../components/Layout';
-import AITicTacToe from '../components/tictactoe/AITicTacToe';
+import OnlineTicTacToeProps from '../components/tictactoe/OnlineTicTacToe';
 
-function TicTacToePage() {
+function OnlineTicTacToePage() {
     return (
         <Layout>
             <Flex py={5} px={5} justify={'center'}>
-                <AITicTacToe />
+                <OnlineTicTacToeProps />
             </Flex>
         </Layout>
     );
 }
 
-export default TicTacToePage;
+export default OnlineTicTacToePage;

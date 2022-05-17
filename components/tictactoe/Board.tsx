@@ -1,7 +1,7 @@
 import { Grid } from '@chakra-ui/react';
 import { getWinningLine, IGame, isMovesLeft } from './game';
 import dynamic from 'next/dynamic';
-import { boardSize } from './TicTacToe';
+import { boardSize } from './BaseTicTacToe';
 
 export default function Board(props: IBoardProps): JSX.Element {
     const gameSize = props.squares.length ** 0.5;
