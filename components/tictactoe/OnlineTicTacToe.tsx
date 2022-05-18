@@ -13,7 +13,7 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     getWinningLine,
     isNotAllowedToPlay,
@@ -23,11 +23,43 @@ import {
 import axios, { AxiosResponse } from 'axios';
 import { AIResponse } from '../../pages/api/tictactoe/simple-ai';
 import BaseTicTacToe from './BaseTicTacToe';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 const gameSize = 3;
 const roomCodeLength = 4;
 
+const buildWsAddress = (roomCode: string) => {
+    return `ws://${process.env.NEXT_PUBLIC_WS_ADDRESS}?code=${roomCode}`;
+};
+
 interface OnlineTicTacToeProps {}
+
+function Connector({ code }: { code: string }) {
+    const { sendMessage, lastMessage, readyState } = useWebSocket(
+        buildWsAddress(code)
+    );
+
+    useEffect(() => {
+        if (lastMessage) {
+            console.log('message', lastMessage.data);
+
+            setTimeout(() => {
+                sendMessage("{ hello: 'world' }");
+            }, 1000);
+        }
+    }, [lastMessage]);
+
+    useEffect(() => {
+        sendMessage("{ hello: 'first hello?' }");
+    }, []);
+
+    return (
+        <Box>
+            <Text>{ReadyState[readyState]}</Text>
+            <Text>{buildWsAddress(code)}</Text>
+        </Box>
+    );
+}
 
 function OnlineTicTacToe(props: OnlineTicTacToeProps) {
     const isPlayerFirst = true;
@@ -77,7 +109,8 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
     const [roomCode, setRoomCode] = useState('');
 
     const { isOpen, onOpen, onClose } = useDisclosure({
-        isOpen: roomCode.length !== roomCodeLength,
+        // isOpen: roomCode.length !== roomCodeLength,
+        isOpen: true,
     });
 
     return (
@@ -99,8 +132,10 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
                                 focusBorderColor={'teal.400'}
                                 type={'alphanumeric'}
                                 size={'lg'}
-                                value={roomCode.toLocaleUpperCase()}
-                                onChange={(value) => setRoomCode(value)}
+                                value={roomCode}
+                                onChange={(value) =>
+                                    setRoomCode(value.toLocaleUpperCase())
+                                }
                             >
                                 {Array(roomCodeLength)
                                     .fill(null)
@@ -109,6 +144,10 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
                                     })}
                             </PinInput>
                         </Flex>
+
+                        {roomCode.length === roomCodeLength && (
+                            <Connector code={roomCode} />
+                        )}
                     </ModalBody>
 
                     <ModalFooter>
