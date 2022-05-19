@@ -14,14 +14,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import {
-    getWinningLine,
-    isNotAllowedToPlay,
-    newGame,
-    otherPlayerSign,
-} from './game';
-import axios, { AxiosResponse } from 'axios';
-import { AIResponse } from '../../pages/api/tictactoe/simple-ai';
+import { isNotAllowedToPlay, newGame, otherPlayerSign } from './game';
 import BaseTicTacToe from './BaseTicTacToe';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
@@ -35,22 +28,22 @@ const buildWsAddress = (roomCode: string) => {
 interface OnlineTicTacToeProps {}
 
 function Connector({ code }: { code: string }) {
-    const { sendMessage, lastMessage, readyState } = useWebSocket(
+    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
         buildWsAddress(code)
     );
 
     useEffect(() => {
-        if (lastMessage) {
-            console.log('message', lastMessage.data);
+        if (lastJsonMessage) {
+            console.log('message', lastJsonMessage);
 
             setTimeout(() => {
-                sendMessage("{ hello: 'world' }");
+                sendJsonMessage({ hello: 'world' });
             }, 1000);
         }
-    }, [lastMessage]);
+    }, [lastJsonMessage]);
 
     useEffect(() => {
-        sendMessage("{ hello: 'first hello?' }");
+        sendJsonMessage({ hello: 'first hello' });
     }, []);
 
     return (
@@ -78,31 +71,10 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
             squares,
             isPlayerTurn: !game.isPlayerTurn,
         };
+
+        // TODO: replace this by sending into websocket
+        // TODO: setGame on receiving websocket message
         setGame(nGame);
-
-        const aiMove: number = (
-            (await axios.post('/api/tictactoe/simple-ai', {
-                data: nGame,
-            })) as AxiosResponse<AIResponse>
-        ).data.bestMove;
-
-        setTimeout(() => {
-            setGame((nGame) => {
-                if (getWinningLine(nGame)) {
-                    return nGame;
-                }
-
-                const squares = nGame.squares.slice();
-                squares[aiMove] = nGame.isPlayerTurn
-                    ? nGame.playerSign
-                    : otherPlayerSign(nGame);
-                return {
-                    ...nGame,
-                    squares,
-                    isPlayerTurn: !nGame.isPlayerTurn,
-                };
-            });
-        }, 400);
     }
 
     const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));

@@ -1,3 +1,5 @@
+// TODO: migrate all logic to /tictactoe folder
+
 export interface IGame {
     squares: Array<string | null>;
     isPlayerTurn: boolean;

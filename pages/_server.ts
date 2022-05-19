@@ -2,7 +2,7 @@ import next from 'next';
 import express from 'express';
 import { createServer } from 'http';
 import { parse } from 'url';
-import WebSocket from 'ws';
+import { WebSocketRouter } from './_websocket';
 
 const port = 3000;
 const dev = process.env.NODE_ENV !== 'production';
@@ -17,28 +17,13 @@ nextApp.prepare().then(() => {
     const server = createServer(expressApp);
 
     // WebSocket server - for sending realtime updates to UI
-    const wss = new WebSocket.Server({ noServer: true });
-
-    wss.on('close', () => {
-        console.log('ws closing');
-    });
-
-    wss.on('connection', (socket, request) => {
-        console.log('connection');
-
-        console.log(request.url);
-
-        socket.on('message', (data: Buffer) => {
-            console.log('message', data.toString());
-            socket.send('{"world":"hello"}');
-        });
-    });
+    const wsw = new WebSocketRouter();
 
     server.on('upgrade', function (req, socket, head) {
         const { pathname } = parse(req.url!, true);
         if (pathname !== '/_next/webpack-hmr') {
-            wss.handleUpgrade(req, socket, head, function done(ws: any) {
-                wss.emit('connection', ws, req);
+            wsw.server.handleUpgrade(req, socket, head, function done(ws: any) {
+                wsw.server.emit('connection', ws, req);
             });
         }
     });
@@ -57,10 +42,10 @@ nextApp.prepare().then(() => {
     //     res.send('buttons:no');
     // });
 
-    expressApp.all(/^\/_next\/webpack-hmr(\/.*)?/, (req, res) => {
-        void nextHandler(req, res);
-    });
-
+    // expressApp.all(/^\/_next\/webpack-hmr(\/.*)?/, (req, res) => {
+    //     void nextHandler(req, res);
+    // });
+    //
     // To handle Next.js routing
     expressApp.all('*', (req, res) => {
         return nextHandler(req, res);
