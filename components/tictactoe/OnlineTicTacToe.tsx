@@ -13,10 +13,18 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+    ForwardedRef,
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from 'react';
 import { isNotAllowedToPlay, newGame, otherPlayerSign } from './game';
 import BaseTicTacToe from './BaseTicTacToe';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { IMove } from '../../pages/api/tictactoe/_live';
 
 const gameSize = 3;
 const roomCodeLength = 4;
@@ -27,34 +35,54 @@ const buildWsAddress = (roomCode: string) => {
 
 interface OnlineTicTacToeProps {}
 
-function Connector({ code }: { code: string }) {
+interface ConnectorProps {
+    roomCode: string;
+
+    handleNewMessage(message: any): void;
+}
+
+const Connector = forwardRef<
+    { sendWsMessage(message: object): void },
+    ConnectorProps
+>((props: ConnectorProps, ref: ForwardedRef<any>) => {
     const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-        buildWsAddress(code)
+        buildWsAddress(props.roomCode)
     );
+
+    useImperativeHandle(ref, () => ({
+        sendWsMessage(message: object) {
+            console.log('sending', message);
+            sendJsonMessage(message);
+        },
+    }));
 
     useEffect(() => {
         if (lastJsonMessage) {
             console.log('message', lastJsonMessage);
 
-            setTimeout(() => {
-                sendJsonMessage({ hello: 'world' });
-            }, 1000);
+            props.handleNewMessage(lastJsonMessage.data);
+
+            // setTimeout(() => {
+            //     sendJsonMessage({ hello: 'world' });
+            // }, 1000);
         }
     }, [lastJsonMessage]);
 
-    useEffect(() => {
-        sendJsonMessage({ hello: 'first hello' });
-    }, []);
+    // useEffect(() => {
+    //     sendJsonMessage({ hello: 'first hello' });
+    // }, []);
 
     return (
         <Box>
             <Text>{ReadyState[readyState]}</Text>
-            <Text>{buildWsAddress(code)}</Text>
+            {/*<Text>{buildWsAddress(code)}</Text>*/}
         </Box>
     );
-}
+});
+Connector.displayName = 'Connector';
 
 function OnlineTicTacToe(props: OnlineTicTacToeProps) {
+    // TODO: playerTurn and playerSign managed by server?
     const isPlayerFirst = true;
 
     async function handleClick(i: number) {
@@ -62,18 +90,35 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
             return;
         }
 
+        connectorRef.current!.sendWsMessage({
+            move: i,
+            playerSign: game.isPlayerTurn
+                ? game.playerSign
+                : otherPlayerSign(game),
+        });
+
         const squares = game.squares.slice();
         squares[i] = game.isPlayerTurn
             ? game.playerSign
             : otherPlayerSign(game);
-        let nGame = {
+        const nGame = {
             ...game,
             squares,
             isPlayerTurn: !game.isPlayerTurn,
         };
+        setGame(nGame);
+    }
 
-        // TODO: replace this by sending into websocket
-        // TODO: setGame on receiving websocket message
+    function handleNewMessage(message: IMove): void {
+        console.log('handling new message', message);
+
+        const squares = game.squares.slice();
+        squares[message.move] = message.playerSign;
+        const nGame = {
+            ...game,
+            squares,
+            isPlayerTurn: !game.isPlayerTurn,
+        };
         setGame(nGame);
     }
 
@@ -81,9 +126,10 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
     const [roomCode, setRoomCode] = useState('');
 
     const { isOpen, onOpen, onClose } = useDisclosure({
-        // isOpen: roomCode.length !== roomCodeLength,
-        isOpen: true,
+        isOpen: roomCode.length !== roomCodeLength,
+        // isOpen: true,
     });
+    const connectorRef = useRef<{ sendWsMessage(message: object): void }>(null);
 
     return (
         <Box textAlign={'center'}>
@@ -116,10 +162,6 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
                                     })}
                             </PinInput>
                         </Flex>
-
-                        {roomCode.length === roomCodeLength && (
-                            <Connector code={roomCode} />
-                        )}
                     </ModalBody>
 
                     <ModalFooter>
@@ -136,6 +178,13 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            {roomCode.length === roomCodeLength && (
+                <Connector
+                    ref={connectorRef}
+                    roomCode={roomCode}
+                    handleNewMessage={handleNewMessage}
+                />
+            )}
 
             <BaseTicTacToe
                 handleSquareClick={handleClick}

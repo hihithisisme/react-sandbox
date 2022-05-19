@@ -15,7 +15,7 @@ class TicTacToeRoom extends Room {
     }
 }
 
-interface IMove {
+export interface IMove {
     // squares: Array<string | null>;
     move: number;
     playerSign: string;
@@ -51,29 +51,28 @@ export class WsTicTacToe {
     }
 
     onMessage(state: MessageWithState<IMove>): void {
-        this.pingPong(state);
+        // this.pingPong(state);
 
-        // const room = this.getRoom(state.request);
-        // console.log(`message:`, state.message);
-        //
-        // const { move, playerSign } = state.message;
-        // const { squares } = room;
-        //
-        // if (squares[move] !== null) {
-        //     console.log(
-        //         `Invalid move by player. Something is wrong. Move=${move}, squares=`,
-        //         room.squares
-        //     );
-        // } else {
-        //     squares[move] = playerSign;
-        //     room.players.forEach((player) => {
-        //         if (player.id !== state.player.id) {
-        //             player.send({
-        //                 data: state.message,
-        //             });
-        //         }
-        //     });
-        // }
+        const room = this.getRoom(state.request);
+        console.log(`message:`, state.message);
+
+        const { move, playerSign } = state.message;
+        const { squares } = room;
+
+        if (squares[move] !== null) {
+            console.log(
+                `Invalid move by player. Something is wrong. Move=${move}, squares=`,
+                room.squares
+            );
+        }
+        squares[move] = playerSign;
+        room.players.forEach((player) => {
+            if (player.id !== state.player.id) {
+                player.send({
+                    data: state.message,
+                });
+            }
+        });
     }
 
     private getRoomId(request: http.IncomingMessage): string {
