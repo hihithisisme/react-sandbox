@@ -14,11 +14,7 @@ interface ISquareProps {
 }
 
 export default function Square(props: ISquareProps): JSX.Element {
-    // const theme = useTheme();
-
     const defaultBorder = `2px black solid`;
-
-    let displayIcon = null;
 
     return (
         <GridItem
@@ -78,7 +74,7 @@ export function PlayerIcon(props: {
     isFocus: boolean;
     boxSize?: any;
 }) {
-    if (props.sign === null) {
+    if (!props.sign) {
         return <></>;
     }
     return (

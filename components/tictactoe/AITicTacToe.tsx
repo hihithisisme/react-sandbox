@@ -36,7 +36,7 @@ function AITicTacToe() {
                 const squares = nGame.squares.slice();
                 squares[aiMove] = nGame.isPlayerTurn
                     ? nGame.playerSign
-                    : otherPlayerSign(nGame);
+                    : otherPlayerSign(nGame.playerSign);
                 return {
                     ...nGame,
                     squares,
@@ -53,7 +53,7 @@ function AITicTacToe() {
         const squares = game.squares.slice();
         squares[i] = game.isPlayerTurn
             ? game.playerSign
-            : otherPlayerSign(game);
+            : otherPlayerSign(game.playerSign);
         let nGame = {
             ...game,
             squares,

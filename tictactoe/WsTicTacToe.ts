@@ -2,48 +2,9 @@ import * as WebSocket from 'ws';
 import * as http from 'http';
 import Buffer from 'buffer';
 import { randomUUID } from 'crypto';
-import { MessageWithState, Player, Room } from './TicTacToeRoom';
+import { MessageWithState, Player, TicTacToeRoom } from './TicTacToeRoom';
 import { ICommand, InitCmd, MoveCmd } from './commands';
-import { ReadyState } from 'react-use-websocket';
-
-const gameSize = 3;
-
-class TicTacToeRoom extends Room {
-    public squares!: Array<string | null>;
-
-    constructor(roomId: string) {
-        super(roomId);
-        this.newBoard();
-    }
-
-    public reset() {
-        this.newBoard();
-        const firstPlayerTurn = Math.random() < 0.5;
-        const firstPlayerSign = Math.random() < 0.5 ? 'X' : 'O';
-
-        this.players[0].turn = firstPlayerTurn;
-        this.players[0].sign = firstPlayerSign;
-        this.players[1].turn = !firstPlayerTurn;
-        this.players[1].sign = firstPlayerSign === 'X' ? 'O' : 'X';
-    }
-
-    private newBoard() {
-        this.squares = Array(gameSize ** 2).fill(null);
-    }
-
-    isReady(): boolean {
-        this.removeDisconnectedPlayers();
-        return this.players.length === 2;
-    }
-
-    private removeDisconnectedPlayers() {
-        this.players = this.players.filter((player) => {
-            return ![ReadyState.CLOSING, ReadyState.CLOSED].includes(
-                player.socket.readyState
-            );
-        });
-    }
-}
+import { otherPlayerSign } from './game';
 
 export class WsTicTacToe {
     // TODO: abstract roomMap management into an abstract class
@@ -77,7 +38,6 @@ export class WsTicTacToe {
     }
 
     onMessage(state: MessageWithState<ICommand>): void {
-        // this.pingPong(state);
         console.log(`message:`, state.message);
 
         switch (state.message.action) {
@@ -139,12 +99,18 @@ export class WsTicTacToe {
         // VALIDATION
         if (squares[move] !== null) {
             console.log(
-                `Invalid move by player. Something is wrong. Move=${move}, squares=`,
+                `Invalid move by player. Square is already occupied. Move=${move}, squares=`,
                 room.squares
             );
+            return;
+        } else if (data.playerSign !== room.turnSign) {
+            console.log(`Invalid move by player. Not player's turn.`, data);
+            return;
         }
+
         // UPDATE BE STATE
         squares[move] = playerSign;
+        room.turnSign = otherPlayerSign(room.turnSign);
 
         // PASSING ON MESSAGE
         this.emitToAllPlayers(room, state.message);
@@ -153,13 +119,17 @@ export class WsTicTacToe {
     private emitInit(room: TicTacToeRoom) {
         room.reset();
 
-        room.players.forEach((player) => {
+        room.players.forEach((player, index) => {
+            const isFirstPlayer = room.playerIndexWhoStartsFirst === index;
+
             this.emitToPlayer(player, {
                 action: 'INIT',
                 data: {
                     squares: room.squares,
-                    playerSign: player.sign,
-                    playerTurn: player.turn,
+                    playerSign: isFirstPlayer
+                        ? room.turnSign
+                        : otherPlayerSign(room.turnSign),
+                    playerTurn: isFirstPlayer,
                 } as InitCmd,
             });
         });

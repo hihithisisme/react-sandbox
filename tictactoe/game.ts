@@ -95,8 +95,8 @@ export function isNotAllowedToPlay(game: IGame, index: number) {
     );
 }
 
-export function otherPlayerSign(game: IGame): string {
-    return game.playerSign === 'X' ? 'O' : 'X';
+export function otherPlayerSign(playerSign: string): string {
+    return playerSign === 'X' ? 'O' : 'X';
 }
 
 export function isMovesLeft(game: IGame) {

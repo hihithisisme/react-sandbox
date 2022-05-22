@@ -26,7 +26,7 @@ function OnlineTicTacToe() {
                 move: i,
                 playerSign: game.isPlayerTurn
                     ? game.playerSign
-                    : otherPlayerSign(game),
+                    : otherPlayerSign(game.playerSign),
             },
         });
     }

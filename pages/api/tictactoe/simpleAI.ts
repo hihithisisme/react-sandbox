@@ -21,15 +21,9 @@ export default function handler(
 const DEPTH_THRESHOLD = 5;
 
 function getCurrentSign(game: IGame) {
-    return game.isPlayerTurn ? game.playerSign : otherPlayerSign(game);
-}
-
-function getOtherSign(game: IGame) {
-    return getCurrentSign(game) === 'X' ? 'O' : 'X';
-}
-
-function getPolaritySign(game: IGame): number {
-    return game.isPlayerTurn ? 1 : -1;
+    return game.isPlayerTurn
+        ? game.playerSign
+        : otherPlayerSign(game.playerSign);
 }
 
 export function evaluate(game: IGame): number {
