@@ -19,11 +19,6 @@ export default function Square(props: ISquareProps): JSX.Element {
     const defaultBorder = `2px black solid`;
 
     let displayIcon = null;
-    if (props.value == 'X') {
-        displayIcon = <CrossIcon isFocus={props.highlight} />;
-    } else if (props.value === 'O') {
-        displayIcon = <CircleIcon isFocus={props.highlight} />;
-    }
 
     return (
         <GridItem
@@ -56,7 +51,7 @@ export default function Square(props: ISquareProps): JSX.Element {
             }
         >
             <Center w={'100%'} h={'100%'}>
-                {displayIcon}
+                <PlayerIcon sign={props.value} isFocus={props.highlight} />
             </Center>
         </GridItem>
     );
@@ -78,24 +73,18 @@ function isRightEdge(index: number, gameSize: number) {
     return index % gameSize === gameSize - 1;
 }
 
-const iconSize = '60%';
-
-function CrossIcon(props: { isFocus: boolean }) {
+export function PlayerIcon(props: {
+    sign: string | null;
+    isFocus: boolean;
+    boxSize?: any;
+}) {
+    if (props.sign === null) {
+        return <></>;
+    }
     return (
         <Icon
-            as={X}
-            boxSize={iconSize}
-            transition={'opacity 0.3s ease-out'}
-            opacity={props.isFocus ? 1 : 0.2}
-        />
-    );
-}
-
-function CircleIcon(props: { isFocus: boolean }) {
-    return (
-        <Icon
-            as={Circle}
-            boxSize={iconSize}
+            as={props.sign === 'X' ? X : Circle}
+            boxSize={props.boxSize || '60%'}
             transition={'opacity 0.3s ease-out'}
             opacity={props.isFocus ? 1 : 0.2}
         />

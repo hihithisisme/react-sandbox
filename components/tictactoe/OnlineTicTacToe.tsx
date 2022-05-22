@@ -77,6 +77,7 @@ function OnlineTicTacToe() {
                 <Button
                     size="md"
                     colorScheme="teal"
+                    variant={'outline'}
                     onClick={() => {
                         roomRef.current!.sendWsMessage({
                             action: 'RESET',

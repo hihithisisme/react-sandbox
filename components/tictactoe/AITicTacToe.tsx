@@ -70,6 +70,7 @@ function AITicTacToe() {
             <Button
                 size="md"
                 colorScheme="teal"
+                variant={'outline'}
                 onClick={() => setGame(newGame(gameSize, isPlayerFirst))}
             >
                 new game

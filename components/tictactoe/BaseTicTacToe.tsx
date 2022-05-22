@@ -1,14 +1,18 @@
 import {
     Center,
+    Flex,
     Grid,
     GridItem,
     Spinner,
+    Stack,
+    Tag,
     Text,
     VStack,
 } from '@chakra-ui/react';
 import { Blob } from '../Blob';
 import Board from './Board';
-import { IGame } from '../../tictactoe/game';
+import { hasGameEnded, hasGameStarted, IGame } from '../../tictactoe/game';
+import { PlayerIcon } from './Square';
 
 const gameSize = 3;
 const baseSize = gameSize * 100;
@@ -52,9 +56,10 @@ function LoadingGame({ value }: { value: string | undefined }) {
 export default function BaseTicTacToe(props: BaseTicTacToeProps) {
     const loading = props.loadingGame || false;
 
+    const gameStarted = hasGameStarted(props.game);
     return (
-        <Center width={'100%'}>
-            {/*<StatusHeader squares={game.squares} isXNext={game.isXNext} />*/}
+        <VStack width={'100%'}>
+            <Flex>{props.game.isPlayerTurn}</Flex>
             <Grid
                 templateRows={'1fr'}
                 templateColumns={'1fr'}
@@ -75,10 +80,34 @@ export default function BaseTicTacToe(props: BaseTicTacToeProps) {
                 </GridItem>
             </Grid>
 
+            {gameStarted && (
+                <Stack
+                    direction={'row'}
+                    w={'100%'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                >
+                    <Text>You are: </Text>
+                    <PlayerIcon
+                        sign={props.game.playerSign}
+                        isFocus={true}
+                        boxSize={'1rem'}
+                    />
+                </Stack>
+            )}
+
+            {gameStarted &&
+                props.game.isPlayerTurn &&
+                !hasGameEnded(props.game) && (
+                    <Tag colorScheme={'teal'} size={'lg'} variant={'solid'}>
+                        Your Turn!
+                    </Tag>
+                )}
+
             {/*<GameOptions gameMode={gameSize} setGameMode={(gameSize: number) => {*/}
             {/*    setGameSize(gameSize);*/}
             {/*    createSquares(gameSize);*/}
             {/*}}/>*/}
-        </Center>
+        </VStack>
     );
 }
