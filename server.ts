@@ -2,7 +2,7 @@ import next from 'next';
 import express from 'express';
 import { createServer } from 'http';
 import { parse } from 'url';
-import { WebSocketRouter } from '../websocket/router';
+import { WebSocketRouter } from './websocket/router';
 
 const port = 3000;
 const dev = process.env.NODE_ENV !== 'production';

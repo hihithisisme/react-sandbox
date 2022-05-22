@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node pages/_server.ts",
+    "dev": "ts-node server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production node pages/_server.ts",
+    "start": "NODE_ENV=production node server.ts",
     "lint": "next lint"
   },
   "dependencies": {
