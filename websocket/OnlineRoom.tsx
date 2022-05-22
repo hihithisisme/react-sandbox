@@ -22,6 +22,7 @@ import {
     useBreakpointValue,
     useClipboard,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react';
 import {
     ForwardedRef,
@@ -31,7 +32,7 @@ import {
     useState,
 } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { CopySimple } from 'phosphor-react';
+import { LinkSimple } from 'phosphor-react';
 
 const roomIdLength = 4;
 const roomIdUrlParamKey = 'roomId';
@@ -54,7 +55,8 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
             { retryOnError: true, reconnectAttempts: 3 },
             roomId.length === roomIdLength
         );
-        const { hasCopied, onCopy } = useClipboard(roomId);
+        const { hasCopied, onCopy } = useClipboard(getCurrentURL());
+        const toast = useToast();
 
         const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
 
@@ -148,15 +150,20 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
                     </Skeleton>
                     <IconButton
                         aria-label={'copy to clipboard'}
-                        icon={
-                            <CopySimple
-                                weight={hasCopied ? 'fill' : 'regular'}
-                                size={'2rem'}
-                            />
-                        }
-                        onClick={onCopy}
+                        icon={<LinkSimple size={'2rem'} />}
+                        onClick={() => {
+                            onCopy();
+                            toast({
+                                title: 'Room URL copied',
+                                description:
+                                    'Give the URL to your friend to start the game.',
+                                status: 'success',
+                                duration: 5000,
+                                isClosable: true,
+                            });
+                        }}
                         ml={2}
-                        variant={'ghost'}
+                        variant={hasCopied ? 'solid' : 'ghost'}
                     />
                 </Center>
             </Flex>
@@ -215,6 +222,13 @@ const buildWsAddress = (roomCode: string): string => {
     }
     return '';
 };
+
+function getCurrentURL(): string {
+    if (typeof window !== 'undefined') {
+        return window.location.href;
+    }
+    return '';
+}
 
 OnlineRoom.displayName = 'OnlineRoom';
 export default OnlineRoom;
