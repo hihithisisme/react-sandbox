@@ -4,8 +4,10 @@ import {
     Center,
     Code,
     Flex,
-    Heading,
     HStack,
+    IconButton,
+    LinkBox,
+    LinkOverlay,
     Modal,
     ModalBody,
     ModalContent,
@@ -15,6 +17,7 @@ import {
     PinInput,
     PinInputField,
     Skeleton,
+    Stack,
     Text,
     useBreakpointValue,
     useClipboard,
@@ -28,8 +31,10 @@ import {
     useState,
 } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { CopySimple } from 'phosphor-react';
 
 const roomIdLength = 4;
+const roomIdUrlParamKey = 'roomId';
 
 interface OnlineRoomProps {
     handleNewMessage: (message: ICommand) => void;
@@ -43,9 +48,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
     (props: OnlineRoomProps, ref: ForwardedRef<any>) => {
         const [roomId, setRoomId] = useState('');
         const [inRoom, setInRoom] = useState(false);
-        const { isOpen, onClose } = useDisclosure({
-            isOpen: !inRoom,
-        });
+        const { isOpen, onClose } = useDisclosure({ isOpen: !inRoom });
         const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
             buildWsAddress(roomId),
             { retryOnError: true, reconnectAttempts: 3 },
@@ -56,10 +59,18 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
         const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
 
         useEffect(() => {
+            setRoomId(tryGetRoomId());
+        }, []);
+
+        useEffect(() => {
             if (ReadyState.OPEN === readyState) {
                 setInRoom(() => true);
+
+                const url = new URL(window.location.href);
+                url.searchParams.set(roomIdUrlParamKey, roomId);
+                window.history.pushState('', '', url);
             }
-        }, [readyState]);
+        }, [readyState, roomId]);
 
         useEffect(() => {
             if (lastJsonMessage) {
@@ -103,27 +114,50 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
                         </ModalBody>
 
                         <ModalFooter>
-                            <Button
-                                colorScheme="teal"
-                                mr={3}
-                                onClick={() =>
-                                    console.log('TODO: need create new room')
-                                }
+                            <Stack
+                                direction={{ base: 'column', md: 'row' }}
+                                spacing={3}
                             >
-                                Create New Room
-                            </Button>
-                            <Button variant="ghost">Go back</Button>
+                                <Button
+                                    colorScheme="teal"
+                                    onClick={() => {
+                                        setRoomId(
+                                            generateRandomRoomId(roomIdLength)
+                                        );
+                                    }}
+                                >
+                                    Create a new room
+                                </Button>
+                                <LinkBox>
+                                    <Button variant="ghost">
+                                        <LinkOverlay href={'/'}>
+                                            Return to homepage
+                                        </LinkOverlay>
+                                    </Button>
+                                </LinkBox>
+                            </Stack>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
 
-                <Center width={'100%'}>
+                <Center w={'100%'} h={'3rem'}>
                     <Skeleton isLoaded={inRoom}>
-                        <Code as={Heading}>{inRoom ? roomId : '----'}</Code>
+                        <Code fontSize={'2rem'} borderRadius={'0.5rem'}>
+                            {inRoom ? roomId : '----'}
+                        </Code>
                     </Skeleton>
-                    <Button onClick={onCopy} ml={2}>
-                        {hasCopied ? 'Copied' : 'Copy'}
-                    </Button>
+                    <IconButton
+                        aria-label={'copy to clipboard'}
+                        icon={
+                            <CopySimple
+                                weight={hasCopied ? 'fill' : 'regular'}
+                                size={'2rem'}
+                            />
+                        }
+                        onClick={onCopy}
+                        ml={2}
+                        variant={'ghost'}
+                    />
                 </Center>
             </Flex>
         );
@@ -153,10 +187,29 @@ function RoomIdInput(props: {
     );
 }
 
-OnlineRoom.displayName = 'OnlineRoom';
+function tryGetRoomId(): string {
+    const url = new URL(window.location.href);
+    let searchParams = url.searchParams;
+
+    return (
+        searchParams.has(roomIdUrlParamKey)
+            ? searchParams.get(roomIdUrlParamKey)!
+            : ''
+    ).toLocaleUpperCase();
+}
+
+function generateRandomRoomId(roomIdLength: number) {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = roomIdLength; i > 0; --i) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+}
 
 const buildWsAddress = (roomCode: string) => {
     return `ws://${process.env.NEXT_PUBLIC_WS_ADDRESS}?code=${roomCode}`;
 };
 
+OnlineRoom.displayName = 'OnlineRoom';
 export default OnlineRoom;

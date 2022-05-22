@@ -98,7 +98,9 @@ function CTAButton() {
                     bg={'red.400'}
                     _hover={{ bg: 'red.500' }}
                 >
-                    <LinkOverlay href={'/tictactoe'}>Tic-tac-toe</LinkOverlay>
+                    <LinkOverlay href={'/tictactoe/online'}>
+                        Play against a friend
+                    </LinkOverlay>
                 </Button>
             </LinkBox>
         </Stack>
