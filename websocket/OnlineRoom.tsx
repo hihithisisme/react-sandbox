@@ -207,8 +207,13 @@ function generateRandomRoomId(roomIdLength: number) {
     return result;
 }
 
-const buildWsAddress = (roomCode: string) => {
-    return `ws://${process.env.NEXT_PUBLIC_WS_ADDRESS}?${roomIdUrlParamKey}=${roomCode}`;
+const buildWsAddress = (roomCode: string): string => {
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.origin.replace(/^http/, 'ws'));
+        url.searchParams.set(roomIdUrlParamKey, roomCode);
+        return url.toString();
+    }
+    return '';
 };
 
 OnlineRoom.displayName = 'OnlineRoom';
