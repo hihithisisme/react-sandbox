@@ -306,7 +306,11 @@ interface NavItem {
 const NAV_ITEMS: Array<NavItem> = [
     {
         label: 'Tic-Tac-Toe',
-        href: '/tictactoe',
+        href: '/tictactoe/simpleAI',
+    },
+    {
+        label: 'Online Tic-Tac-Toe',
+        href: '/tictactoe/online',
     },
     // {
     //     label: 'Find Work',

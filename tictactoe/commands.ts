@@ -1,6 +1,6 @@
 export interface ICommand {
     action: string;
-    data: MoveCmd | InitCmd;
+    data: MoveCmd | InitCmd | ResetCmd;
 }
 
 // triggered by client upon clicking

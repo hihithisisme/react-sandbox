@@ -1,5 +1,11 @@
-import { Dispatch, SetStateAction } from 'react';
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import {
+    Center,
+    Grid,
+    GridItem,
+    Spinner,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
 import { Blob } from '../Blob';
 import Board from './Board';
 import { IGame } from '../../tictactoe/game';
@@ -17,36 +23,55 @@ export const squareSize = {
 };
 
 export interface BaseTicTacToeProps {
-    handleSquareClick(index: number): void;
-
     game: IGame;
-    setGame: Dispatch<SetStateAction<IGame>>;
+    // setGame: Dispatch<SetStateAction<IGame>>;
+    loadingGame?: boolean;
+    loadingText?: string;
+
+    handleSquareClick(index: number): void;
+}
+
+function BaseGame(props: {
+    game: IGame;
+    handleClick: (index: number) => void;
+}) {
+    return <Board {...props.game} handleClick={props.handleClick} />;
+}
+
+function LoadingGame({ value }: { value: string | undefined }) {
+    return (
+        <Center boxSize={'100%'}>
+            <VStack>
+                <Spinner size={'xl'} />
+                <Text>{value}</Text>
+            </VStack>
+        </Center>
+    );
 }
 
 export default function BaseTicTacToe(props: BaseTicTacToeProps) {
+    const loading = props.loadingGame || false;
+
     return (
-        <Box textAlign={'center'}>
+        <Center width={'100%'}>
             {/*<StatusHeader squares={game.squares} isXNext={game.isXNext} />*/}
             <Grid
                 templateRows={'1fr'}
-                alignItems={'center'}
-                justifyItems={'center'}
                 templateColumns={'1fr'}
                 boxSize={paddedBoardSize}
             >
                 <GridItem rowStart={1} colStart={1}>
-                    <Blob boxSize={'150%'} ml={'-25%'} />
+                    <Blob boxSize={'100%'} />
                 </GridItem>
-                <GridItem
-                    justifyItems={'center'}
-                    rowStart={1}
-                    colStart={1}
-                    boxSize={'100%'}
-                >
-                    <Board
-                        {...props.game}
-                        handleClick={props.handleSquareClick}
-                    />
+                <GridItem rowStart={1} colStart={1}>
+                    {loading ? (
+                        <LoadingGame value={props.loadingText} />
+                    ) : (
+                        <BaseGame
+                            game={props.game}
+                            handleClick={props.handleSquareClick}
+                        />
+                    )}
                 </GridItem>
             </Grid>
 
@@ -54,6 +79,6 @@ export default function BaseTicTacToe(props: BaseTicTacToeProps) {
             {/*    setGameSize(gameSize);*/}
             {/*    createSquares(gameSize);*/}
             {/*}}/>*/}
-        </Box>
+        </Center>
     );
 }

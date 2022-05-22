@@ -14,7 +14,7 @@ export function newGame(gameSize: number, isPlayerFirst: boolean): IGame {
 
 export function emptyGame(): IGame {
     return {
-        squares: Array(1),
+        squares: Array(0),
         isPlayerTurn: true,
         playerSign: 'z',
     };
@@ -101,4 +101,14 @@ export function otherPlayerSign(game: IGame): string {
 
 export function isMovesLeft(game: IGame) {
     return game.squares.some((value) => value === null);
+}
+
+export function hasGameStarted(game: IGame): boolean {
+    return game.squares.length !== 0;
+}
+
+export function hasGameEnded(game: IGame): boolean {
+    return (
+        hasGameStarted(game) && (!isMovesLeft(game) || !!getWinningLine(game))
+    );
 }

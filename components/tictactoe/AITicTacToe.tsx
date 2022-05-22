@@ -1,7 +1,7 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Button, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import { AIResponse } from '../../pages/api/tictactoe/simple-ai';
+import { AIResponse } from '../../pages/api/tictactoe/simpleAI';
 import BaseTicTacToe from './BaseTicTacToe';
 import {
     getWinningLine,
@@ -15,7 +15,7 @@ const gameSize = 3;
 
 async function getAIBestMove(game: IGame): Promise<number> {
     return (
-        (await axios.post('/api/tictactoe/simple-ai', {
+        (await axios.post('/api/tictactoe/simpleAI', {
             data: game,
         })) as AxiosResponse<AIResponse>
     ).data.bestMove;
@@ -65,21 +65,16 @@ function AITicTacToe() {
     }
 
     return (
-        <Box textAlign={'center'}>
-            <BaseTicTacToe
-                handleSquareClick={handleClick}
-                game={game}
-                setGame={setGame}
-            />
+        <VStack>
+            <BaseTicTacToe handleSquareClick={handleClick} game={game} />
             <Button
-                // variant="contained"
                 size="md"
                 colorScheme="teal"
                 onClick={() => setGame(newGame(gameSize, isPlayerFirst))}
             >
-                reset
+                new game
             </Button>
-        </Box>
+        </VStack>
     );
 }
 

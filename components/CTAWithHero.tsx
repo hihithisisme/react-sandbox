@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Container,
     Flex,
@@ -108,18 +109,16 @@ function HeroComponent() {
     return (
         // On creating a squared element with dynamic width
         // https://stackoverflow.com/a/13625843
-        <>
-            <Flex
-                // bgColor={'teal.100'}
-                // borderRadius={'10px'}
-                h={0}
-                w={{ base: '100%' }}
-                pb={{ base: '100%' }}
-                justifyContent={'center'}
-            >
-                <AITicTacToe />
-            </Flex>
-        </>
+        <Box
+            // bgColor={'teal.100'}
+            // borderRadius={'10px'}
+            h={0}
+            w={{ base: '100%' }}
+            pb={{ base: '100%' }}
+            justifyContent={'center'}
+        >
+            <AITicTacToe />
+        </Box>
 
         // <>
         //     <Blob

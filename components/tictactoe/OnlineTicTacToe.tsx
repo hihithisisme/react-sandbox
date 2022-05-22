@@ -1,7 +1,9 @@
-import { Box } from '@chakra-ui/react';
+import { Button, VStack } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import {
     emptyGame,
+    hasGameEnded,
+    hasGameStarted,
     isNotAllowedToPlay,
     otherPlayerSign,
 } from '../../tictactoe/game';
@@ -30,7 +32,7 @@ function OnlineTicTacToe() {
     }
 
     function handleNewMessage(message: ICommand): void {
-        console.log('handling new message', message);
+        // console.log('handling new message', message);
 
         switch (message.action) {
             case 'INIT': {
@@ -61,24 +63,31 @@ function OnlineTicTacToe() {
     }
 
     return (
-        <Box textAlign={'center'}>
+        <VStack>
             <OnlineRoom ref={roomRef} handleNewMessage={handleNewMessage} />
 
-            {/* TODO: insert loading screen + loading text */}
             <BaseTicTacToe
                 handleSquareClick={handleClick}
                 game={game}
-                setGame={setGame}
+                loadingGame={!hasGameStarted(game)}
+                loadingText={'Waiting for other player to connect'}
             />
-            {/*<Button*/}
-            {/*    // variant="contained"*/}
-            {/*    size="md"*/}
-            {/*    colorScheme="teal"*/}
-            {/*    onClick={() => setGame(newGame(gameSize, isPlayerFirst))}*/}
-            {/*>*/}
-            {/*    new game*/}
-            {/*</Button>*/}
-        </Box>
+
+            {hasGameEnded(game) && (
+                <Button
+                    size="md"
+                    colorScheme="teal"
+                    onClick={() => {
+                        roomRef.current!.sendWsMessage({
+                            action: 'RESET',
+                            data: {},
+                        });
+                    }}
+                >
+                    new game
+                </Button>
+            )}
+        </VStack>
     );
 }
 

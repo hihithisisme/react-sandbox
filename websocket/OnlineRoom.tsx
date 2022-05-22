@@ -14,7 +14,9 @@ import {
     ModalOverlay,
     PinInput,
     PinInputField,
+    Skeleton,
     Text,
+    useBreakpointValue,
     useClipboard,
     useDisclosure,
 } from '@chakra-ui/react';
@@ -42,7 +44,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
         const [roomId, setRoomId] = useState('');
         const [inRoom, setInRoom] = useState(false);
         const { isOpen, onClose } = useDisclosure({
-            isOpen: roomId.length !== roomIdLength,
+            isOpen: !inRoom,
         });
         const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
             buildWsAddress(roomId),
@@ -50,6 +52,8 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
             roomId.length === roomIdLength
         );
         const { hasCopied, onCopy } = useClipboard(roomId);
+
+        const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
 
         useEffect(() => {
             if (ReadyState.OPEN === readyState) {
@@ -59,15 +63,12 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
 
         useEffect(() => {
             if (lastJsonMessage) {
-                console.log('message', lastJsonMessage);
-
                 props.handleNewMessage(lastJsonMessage);
             }
         }, [lastJsonMessage]);
 
         useImperativeHandle(ref, () => ({
             sendWsMessage(message: ICommand) {
-                console.log('sending', message);
                 sendJsonMessage(message);
             },
         }));
@@ -79,9 +80,16 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
                     onClose={onClose}
                     closeOnOverlayClick={false}
                     closeOnEsc={false}
+                    size={modalSize}
                 >
                     <ModalOverlay />
-                    <ModalContent>
+                    <ModalContent
+                        borderRadius={{
+                            base: '0.375rem 0.375rem 0rem 0rem',
+                            md: '0.375rem',
+                        }}
+                        mt={'3.75rem'}
+                    >
                         <ModalHeader>Play against your friend!</ModalHeader>
                         {/*<ModalCloseButton />*/}
                         <ModalBody>
@@ -109,16 +117,14 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
                     </ModalContent>
                 </Modal>
 
-                {inRoom && (
-                    <Center width={'100%'}>
-                        {/*<Text>{ReadyState[readyState]}</Text>*/}
-                        <Code as={Heading}>{roomId}</Code>
-                        <Button onClick={onCopy} ml={2}>
-                            {hasCopied ? 'Copied' : 'Copy'}
-                        </Button>
-                        {/*<Text>{buildWsAddress(code)}</Text>*/}
-                    </Center>
-                )}
+                <Center width={'100%'}>
+                    <Skeleton isLoaded={inRoom}>
+                        <Code as={Heading}>{inRoom ? roomId : '----'}</Code>
+                    </Skeleton>
+                    <Button onClick={onCopy} ml={2}>
+                        {hasCopied ? 'Copied' : 'Copy'}
+                    </Button>
+                </Center>
             </Flex>
         );
     }
