@@ -1,5 +1,3 @@
-// TODO: migrate all logic to /tictactoe folder
-
 export interface IGame {
     squares: Array<string | null>;
     isPlayerTurn: boolean;
@@ -11,6 +9,14 @@ export function newGame(gameSize: number, isPlayerFirst: boolean): IGame {
         squares: Array(gameSize ** 2).fill(null),
         isPlayerTurn: isPlayerFirst,
         playerSign: Math.random() < 0.5 ? 'X' : 'O',
+    };
+}
+
+export function emptyGame(): IGame {
+    return {
+        squares: Array(1),
+        isPlayerTurn: true,
+        playerSign: 'z',
     };
 }
 

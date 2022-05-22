@@ -13,123 +13,86 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
+import { useRef, useState } from 'react';
 import {
-    ForwardedRef,
-    forwardRef,
-    useEffect,
-    useImperativeHandle,
-    useRef,
-    useState,
-} from 'react';
-import { isNotAllowedToPlay, newGame, otherPlayerSign } from './game';
+    emptyGame,
+    isNotAllowedToPlay,
+    otherPlayerSign,
+} from '../../tictactoe/game';
 import BaseTicTacToe from './BaseTicTacToe';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { IMove } from '../../pages/api/tictactoe/_live';
+import { ICommand, InitCmd, MoveCmd } from '../../tictactoe/commands';
+import Connector, { ConnectorRefProps } from '../../websocket/Connector';
 
 const gameSize = 3;
 const roomCodeLength = 4;
 
-const buildWsAddress = (roomCode: string) => {
-    return `ws://${process.env.NEXT_PUBLIC_WS_ADDRESS}?code=${roomCode}`;
-};
-
-interface OnlineTicTacToeProps {}
-
-interface ConnectorProps {
-    roomCode: string;
-
-    handleNewMessage(message: any): void;
-}
-
-const Connector = forwardRef<
-    { sendWsMessage(message: object): void },
-    ConnectorProps
->((props: ConnectorProps, ref: ForwardedRef<any>) => {
-    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-        buildWsAddress(props.roomCode)
-    );
-
-    useImperativeHandle(ref, () => ({
-        sendWsMessage(message: object) {
-            console.log('sending', message);
-            sendJsonMessage(message);
-        },
-    }));
-
-    useEffect(() => {
-        if (lastJsonMessage) {
-            console.log('message', lastJsonMessage);
-
-            props.handleNewMessage(lastJsonMessage.data);
-
-            // setTimeout(() => {
-            //     sendJsonMessage({ hello: 'world' });
-            // }, 1000);
-        }
-    }, [lastJsonMessage]);
-
-    // useEffect(() => {
-    //     sendJsonMessage({ hello: 'first hello' });
-    // }, []);
-
-    return (
-        <Box>
-            <Text>{ReadyState[readyState]}</Text>
-            {/*<Text>{buildWsAddress(code)}</Text>*/}
-        </Box>
-    );
-});
-Connector.displayName = 'Connector';
-
-function OnlineTicTacToe(props: OnlineTicTacToeProps) {
-    // TODO: playerTurn and playerSign managed by server?
-    const isPlayerFirst = true;
-
+function OnlineTicTacToe() {
     async function handleClick(i: number) {
         if (isNotAllowedToPlay(game, i)) {
             return;
         }
 
         connectorRef.current!.sendWsMessage({
-            move: i,
-            playerSign: game.isPlayerTurn
-                ? game.playerSign
-                : otherPlayerSign(game),
+            action: 'MOVE',
+            data: {
+                move: i,
+                playerSign: game.isPlayerTurn
+                    ? game.playerSign
+                    : otherPlayerSign(game),
+            },
         });
 
-        const squares = game.squares.slice();
-        squares[i] = game.isPlayerTurn
-            ? game.playerSign
-            : otherPlayerSign(game);
-        const nGame = {
-            ...game,
-            squares,
-            isPlayerTurn: !game.isPlayerTurn,
-        };
-        setGame(nGame);
+        // const squares = game.squares.slice();
+        // squares[i] = game.isPlayerTurn
+        //     ? game.playerSign
+        //     : otherPlayerSign(game);
+        // const nGame = {
+        //     ...game,
+        //     squares,
+        //     isPlayerTurn: !game.isPlayerTurn,
+        // };
+        // setGame(nGame);
     }
 
-    function handleNewMessage(message: IMove): void {
+    function handleNewMessage(message: ICommand): void {
         console.log('handling new message', message);
 
-        const squares = game.squares.slice();
-        squares[message.move] = message.playerSign;
-        const nGame = {
-            ...game,
-            squares,
-            isPlayerTurn: !game.isPlayerTurn,
-        };
-        setGame(nGame);
+        switch (message.action) {
+            case 'INIT': {
+                const data = message.data as InitCmd;
+                setGame({
+                    isPlayerTurn: data.playerTurn,
+                    playerSign: data.playerSign,
+                    squares: data.squares,
+                });
+                break;
+            }
+            case 'MOVE': {
+                const data = message.data as MoveCmd;
+                const squares = game.squares.slice();
+                squares[data.move] = data.playerSign;
+                const nGame = {
+                    ...game,
+                    squares,
+                    isPlayerTurn: !game.isPlayerTurn,
+                };
+                setGame(nGame);
+                break;
+            }
+            default:
+                console.log('unrecognisable action:', message);
+                return;
+        }
     }
 
-    const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
+    const [game, setGame] = useState(emptyGame());
     const [roomCode, setRoomCode] = useState('');
 
     const { isOpen, onOpen, onClose } = useDisclosure({
         isOpen: roomCode.length !== roomCodeLength,
         // isOpen: true,
     });
-    const connectorRef = useRef<{ sendWsMessage(message: object): void }>(null);
+    const connectorRef = useRef<ConnectorRefProps>(null);
 
     return (
         <Box textAlign={'center'}>
@@ -190,7 +153,6 @@ function OnlineTicTacToe(props: OnlineTicTacToeProps) {
                 handleSquareClick={handleClick}
                 game={game}
                 setGame={setGame}
-                isPlayerFirst={isPlayerFirst}
             />
             {/*<Button*/}
             {/*    // variant="contained"*/}

@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as WebSocket from 'ws';
-import { WsTicTacToe } from './api/tictactoe/_live';
+import { WsTicTacToe } from '../tictactoe/WsTicTacToe';
 
 export class WebSocketRouter {
     public server: WebSocket.Server;

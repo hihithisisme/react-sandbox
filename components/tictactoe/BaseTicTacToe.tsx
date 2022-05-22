@@ -1,8 +1,8 @@
-import { IGame } from './game';
 import { Dispatch, SetStateAction } from 'react';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { Blob } from '../Blob';
 import Board from './Board';
+import { IGame } from '../../tictactoe/game';
 
 const gameSize = 3;
 const baseSize = gameSize * 100;
@@ -19,14 +19,11 @@ export const squareSize = {
 export interface BaseTicTacToeProps {
     handleSquareClick(index: number): void;
 
-    isPlayerFirst: boolean;
     game: IGame;
     setGame: Dispatch<SetStateAction<IGame>>;
 }
 
 export default function BaseTicTacToe(props: BaseTicTacToeProps) {
-    // const [gameSize, setGameSize] = useState(gameModes[0].value);
-
     return (
         <Box textAlign={'center'}>
             {/*<StatusHeader squares={game.squares} isXNext={game.isXNext} />*/}

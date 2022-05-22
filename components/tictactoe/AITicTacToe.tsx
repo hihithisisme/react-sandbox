@@ -1,42 +1,32 @@
 import { Box, Button } from '@chakra-ui/react';
 import { useState } from 'react';
-import {
-    getWinningLine,
-    isNotAllowedToPlay,
-    newGame,
-    otherPlayerSign,
-} from './game';
 import axios, { AxiosResponse } from 'axios';
 import { AIResponse } from '../../pages/api/tictactoe/simple-ai';
 import BaseTicTacToe from './BaseTicTacToe';
+import {
+    getWinningLine,
+    IGame,
+    isNotAllowedToPlay,
+    newGame,
+    otherPlayerSign,
+} from '../../tictactoe/game';
 
 const gameSize = 3;
 
+async function getAIBestMove(game: IGame): Promise<number> {
+    return (
+        (await axios.post('/api/tictactoe/simple-ai', {
+            data: game,
+        })) as AxiosResponse<AIResponse>
+    ).data.bestMove;
+}
+
 function AITicTacToe() {
     const isPlayerFirst = true;
+    const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
 
-    async function handleClick(i: number) {
-        if (isNotAllowedToPlay(game, i)) {
-            return;
-        }
-
-        const squares = game.squares.slice();
-        squares[i] = game.isPlayerTurn
-            ? game.playerSign
-            : otherPlayerSign(game);
-        let nGame = {
-            ...game,
-            squares,
-            isPlayerTurn: !game.isPlayerTurn,
-        };
-        setGame(nGame);
-
-        const aiMove: number = (
-            (await axios.post('/api/tictactoe/simple-ai', {
-                data: nGame,
-            })) as AxiosResponse<AIResponse>
-        ).data.bestMove;
-
+    async function aiMakeMove(game: IGame) {
+        const aiMove: number = await getAIBestMove(game);
         setTimeout(() => {
             setGame((nGame) => {
                 if (getWinningLine(nGame)) {
@@ -56,7 +46,23 @@ function AITicTacToe() {
         }, 300);
     }
 
-    const [game, setGame] = useState(newGame(gameSize, isPlayerFirst));
+    async function handleClick(i: number) {
+        if (isNotAllowedToPlay(game, i)) {
+            return;
+        }
+        const squares = game.squares.slice();
+        squares[i] = game.isPlayerTurn
+            ? game.playerSign
+            : otherPlayerSign(game);
+        let nGame = {
+            ...game,
+            squares,
+            isPlayerTurn: !game.isPlayerTurn,
+        };
+
+        setGame(nGame);
+        await aiMakeMove(nGame);
+    }
 
     return (
         <Box textAlign={'center'}>
@@ -64,7 +70,6 @@ function AITicTacToe() {
                 handleSquareClick={handleClick}
                 game={game}
                 setGame={setGame}
-                isPlayerFirst={isPlayerFirst}
             />
             <Button
                 // variant="contained"

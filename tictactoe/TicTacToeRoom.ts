@@ -11,6 +11,8 @@ export interface MessageWithState<T> {
 export class Player {
     public id: string;
     public socket: WebSocket;
+    public sign: string | undefined;
+    public turn: boolean | undefined;
 
     constructor(id: string, socket: WebSocket) {
         this.id = id;
