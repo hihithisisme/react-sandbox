@@ -189,7 +189,7 @@ function RoomIdInput(props: {
 
 function tryGetRoomId(): string {
     const url = new URL(window.location.href);
-    let searchParams = url.searchParams;
+    const searchParams = url.searchParams;
 
     return (
         searchParams.has(roomIdUrlParamKey)
@@ -208,7 +208,7 @@ function generateRandomRoomId(roomIdLength: number) {
 }
 
 const buildWsAddress = (roomCode: string) => {
-    return `ws://${process.env.NEXT_PUBLIC_WS_ADDRESS}?code=${roomCode}`;
+    return `ws://${process.env.NEXT_PUBLIC_WS_ADDRESS}?${roomIdUrlParamKey}=${roomCode}`;
 };
 
 OnlineRoom.displayName = 'OnlineRoom';

@@ -106,7 +106,7 @@ export class WsTicTacToe {
     private getRoomId(request: http.IncomingMessage): string {
         const params = new URL(request.url!, `ws://${request.headers.host}`)
             .searchParams;
-        return params.get('code')!;
+        return params.get('roomId')!;
     }
 
     private getRoom(request: http.IncomingMessage): TicTacToeRoom {
