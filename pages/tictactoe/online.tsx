@@ -1,20 +1,15 @@
 import { Flex } from '@chakra-ui/react';
 import Layout from '../../components/Layout';
-import OnlineTicTacToe from '../../components/tictactoe/OnlineTicTacToe';
+import SimpleOnlineTicTacToe from '../../components/tictactoe/SimpleOnlineTicTacToe';
 
-// const DynamicTTT = dynamic(
-//     () => import('../components/tictactoe/OnlineTicTacToe'),
-//     { ssr: false }
-// );
-
-function OnlineTicTacToePage() {
+function SimpleOnlineTicTacToePage() {
     return (
         <Layout>
             <Flex py={5} px={5} justify={'center'}>
-                <OnlineTicTacToe />
+                <SimpleOnlineTicTacToe />
             </Flex>
         </Layout>
     );
 }
 
-export default OnlineTicTacToePage;
+export default SimpleOnlineTicTacToePage;

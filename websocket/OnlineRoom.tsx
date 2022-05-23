@@ -1,4 +1,4 @@
-import { ICommand } from '../tictactoe/commands';
+import { ICommand } from '../tictactoe/messages';
 import {
     Button,
     Center,

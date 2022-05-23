@@ -8,10 +8,10 @@ import {
     otherPlayerSign,
 } from '../../tictactoe/game';
 import BaseTicTacToe from './BaseTicTacToe';
-import { ICommand, InitCmd, MoveCmd } from '../../tictactoe/commands';
+import { ICommand, InitCmd, MoveCmd } from '../../tictactoe/messages';
 import OnlineRoom, { OnlineRoomRefProps } from '../../websocket/OnlineRoom';
 
-function OnlineTicTacToe() {
+function SimpleOnlineTicTacToe() {
     const [game, setGame] = useState(emptyGame());
     const roomRef = useRef<OnlineRoomRefProps>(null);
 
@@ -92,4 +92,4 @@ function OnlineTicTacToe() {
     );
 }
 
-export default OnlineTicTacToe;
+export default SimpleOnlineTicTacToe;

@@ -1,36 +1,31 @@
 import * as WebSocket from 'ws';
 import * as http from 'http';
-import Buffer from 'buffer';
 import { randomUUID } from 'crypto';
-import { MessageWithState, Player, TicTacToeRoom } from './TicTacToeRoom';
-import { ICommand, InitCmd, MoveCmd } from './commands';
+import { OnlineBaseTTTPlayer, SimpleOnlineRoom } from './SimpleOnlineRoom';
+import { ICommand, InitCmd, MoveCmd } from './messages';
 import { otherPlayerSign } from './game';
+import { MessageWithState } from '../websocket/room';
+import { WsController } from '../websocket/controller';
 
-export class WsTicTacToe {
-    // TODO: abstract roomMap management into an abstract class
-    public roomMap: { [key: string]: TicTacToeRoom };
-
+export class SimpleOnlineController extends WsController<
+    ICommand,
+    OnlineBaseTTTPlayer,
+    SimpleOnlineRoom
+> {
     constructor() {
-        this.roomMap = {};
+        super();
     }
 
     onConnection(ws: WebSocket, request: http.IncomingMessage): void {
         const roomId = this.getRoomId(request);
         console.log(`connection: roomId={${roomId}}`);
 
-        const room = this.getRoom(request) || new TicTacToeRoom(roomId);
-        const player = new Player(randomUUID(), ws);
+        const room = this.getRoom(request) || new SimpleOnlineRoom(roomId);
+        const player = new OnlineBaseTTTPlayer(randomUUID(), ws);
         room.addPlayer(player);
         this.setRoom(room);
 
-        ws.on('message', (data: Buffer) => {
-            const parsedData = JSON.parse(data.toString());
-            this.onMessage({
-                message: parsedData,
-                player,
-                request,
-            });
-        });
+        this.defaultAddOnMessage(ws, request, player);
 
         if (room.isReady()) {
             this.emitInit(room);
@@ -51,43 +46,6 @@ export class WsTicTacToe {
                 console.log('unrecognisable action:', state.message);
                 return;
         }
-    }
-
-    private emitToAllPlayers(room: TicTacToeRoom, command: ICommand) {
-        room.players.forEach((player) => {
-            this.emitToPlayer(player, command);
-        });
-    }
-
-    private emitToPlayer(player: Player, command: ICommand) {
-        player.send(command);
-    }
-
-    private getRoomId(request: http.IncomingMessage): string {
-        const params = new URL(request.url!, `ws://${request.headers.host}`)
-            .searchParams;
-        return params.get('roomId')!;
-    }
-
-    private getRoom(request: http.IncomingMessage): TicTacToeRoom {
-        return this.roomMap[this.getRoomId(request)];
-    }
-
-    private setRoom(room: TicTacToeRoom): void {
-        this.roomMap[room.roomId] = room;
-    }
-
-    pingPong(state: MessageWithState<object>): void {
-        const room = this.getRoom(state.request);
-        console.log(`message:`, state.message);
-
-        room.players.forEach((player) => {
-            if (player.id !== state.player.id) {
-                player.send({
-                    data: state.message,
-                });
-            }
-        });
     }
 
     private onMove(state: MessageWithState<ICommand>) {
@@ -116,7 +74,7 @@ export class WsTicTacToe {
         this.emitToAllPlayers(room, state.message);
     }
 
-    private emitInit(room: TicTacToeRoom) {
+    private emitInit(room: SimpleOnlineRoom) {
         room.reset();
 
         room.players.forEach((player, index) => {
@@ -135,12 +93,3 @@ export class WsTicTacToe {
         });
     }
 }
-
-/*
- * 1. P1 makes a move: -> BE
- * 2. BE validates the move against board state (persisted in-memory?)
- * 3. BE adjust board state
- * 4. BE forwards the board state to P2
- *
- *
- * */
