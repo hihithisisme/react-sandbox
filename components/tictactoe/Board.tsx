@@ -33,8 +33,8 @@ export default function Board(props: IBoardProps): JSX.Element {
                     <DynamicSquare
                         index={i}
                         gameSize={gameSize}
-                        value={props.squares[i]}
-                        highlight={shouldHighlightSquare(i)}
+                        signValue={props.squares[i]}
+                        highlightSign={shouldHighlightSquare(i)}
                         handleClick={() => props.handleClick(i)}
                         key={i}
                     />

@@ -49,7 +49,7 @@ function StackingOnlineTicTacToe() {
             <OnlineRoom ref={roomRef} handleNewMessage={handleNewMessage} />
 
             <StackingTicTacToe
-                game={game}
+                {...game}
                 loadingGame={!hasGameStarted(game)}
                 loadingText={'Waiting for other player to connect'}
             />

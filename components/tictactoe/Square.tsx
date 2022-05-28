@@ -8,8 +8,8 @@ import { deserializeSign } from '../../tictactoe/squareSign';
 interface ISquareProps {
     index: number;
     gameSize: number;
-    value: string | null;
-    highlight: boolean;
+    signValue: string | null;
+    highlightSign: boolean;
 
     handleClick(): void;
 }
@@ -19,7 +19,6 @@ export default function Square(props: ISquareProps): JSX.Element {
 
     return (
         <GridItem
-            className={`sq-${props.index}`}
             onClick={props.handleClick}
             boxSize={squareSize}
             rowSpan={1}
@@ -48,7 +47,10 @@ export default function Square(props: ISquareProps): JSX.Element {
             }
         >
             <Center w={'100%'} h={'100%'}>
-                <PlayerIcon sign={props.value} isFocus={props.highlight} />
+                <PlayerIcon
+                    sign={props.signValue}
+                    isFocus={props.highlightSign}
+                />
             </Center>
         </GridItem>
     );
@@ -88,7 +90,7 @@ export function PlayerIcon(props: {
         >
             <Icon
                 as={sign === 'X' ? X : Circle}
-                boxSize={props.boxSize || size || '60%'}
+                boxSize={props.boxSize || size}
                 transition={'opacity 0.3s ease-out'}
                 opacity={props.isFocus ? 1 : 0.2}
             />

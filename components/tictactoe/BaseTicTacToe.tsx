@@ -1,6 +1,5 @@
 import {
     Center,
-    Flex,
     Grid,
     GridItem,
     Spinner,
@@ -59,7 +58,6 @@ export default function BaseTicTacToe(props: BaseTicTacToeProps) {
     const gameStarted = hasGameStarted(props.game);
     return (
         <VStack width={'100%'}>
-            <Flex>{props.game.isPlayerTurn}</Flex>
             <Grid
                 templateRows={'1fr'}
                 templateColumns={'1fr'}
