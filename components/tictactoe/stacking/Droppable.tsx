@@ -12,14 +12,16 @@ export default function Droppable(props: IDroppable) {
     const { isOver, setNodeRef } = useDroppable({
         id: id,
     });
-    const style = {
-        bgColor: isOver ? 'gray.500' : undefined,
-        opacity: isOver ? '50%' : '0%',
-    };
 
     return (
         <Grid templateRows={'1fr'} templateColumns={'1fr'} ref={setNodeRef}>
-            <GridItem rowStart={1} colStart={1} sx={style} />
+            <GridItem
+                rowStart={1}
+                colStart={1}
+                bgColor={isOver ? 'teal.300' : undefined}
+                opacity={isOver ? '50%' : '0%'}
+                borderRadius={'10%'}
+            />
             <GridItem rowStart={1} colStart={1}>
                 {props.children}
             </GridItem>

@@ -12,18 +12,14 @@ export default function Draggable(props: IDraggable) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: id,
     });
-    const style = {
-        touchAction: 'none',
-        transform: `translate3d(${transform?.x}px, ${transform?.y}px, 0)`,
-    };
-
     return (
         <Flex
             id={id}
             ref={setNodeRef}
-            sx={style}
+            transform={`translate3d(${transform?.x}px, ${transform?.y}px, 0)`}
             {...listeners}
             {...attributes}
+            sx={{ touchAction: 'none' }}
         >
             {props.children}
         </Flex>
