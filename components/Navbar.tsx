@@ -312,6 +312,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Online Tic-Tac-Toe',
         href: '/tictactoe/online',
     },
+    {
+        label: 'Stacking Tic-Tac-Toe',
+        href: '/tictactoe/stacking',
+    },
     // {
     //     label: 'Find Work',
     //     children: [

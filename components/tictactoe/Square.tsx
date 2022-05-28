@@ -1,8 +1,9 @@
-import { Center, GridItem, Icon } from '@chakra-ui/react';
+import { Center, Flex, GridItem, Icon } from '@chakra-ui/react';
 import React from 'react';
 
 import { Circle, X } from 'phosphor-react';
 import { squareSize } from './BaseTicTacToe';
+import { deserializeSign } from '../../tictactoe/squareSign';
 
 interface ISquareProps {
     index: number;
@@ -74,15 +75,23 @@ export function PlayerIcon(props: {
     isFocus: boolean;
     boxSize?: any;
 }) {
-    if (!props.sign) {
+    const deserializedSign = deserializeSign(props.sign);
+    if (!deserializedSign) {
         return <></>;
     }
+
+    const { sign, size, filled } = deserializedSign;
     return (
-        <Icon
-            as={props.sign === 'X' ? X : Circle}
-            boxSize={props.boxSize || '60%'}
-            transition={'opacity 0.3s ease-out'}
-            opacity={props.isFocus ? 1 : 0.2}
-        />
+        <Flex
+            bgColor={filled ? 'teal.300' : 'transparent'}
+            borderRadius={'20%'}
+        >
+            <Icon
+                as={sign === 'X' ? X : Circle}
+                boxSize={props.boxSize || size || '60%'}
+                transition={'opacity 0.3s ease-out'}
+                opacity={props.isFocus ? 1 : 0.2}
+            />
+        </Flex>
     );
 }

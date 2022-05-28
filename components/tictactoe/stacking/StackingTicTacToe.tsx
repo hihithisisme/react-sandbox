@@ -3,43 +3,28 @@ import {
     Flex,
     Grid,
     GridItem,
+    HStack,
     Spinner,
     Stack,
     Tag,
     Text,
     VStack,
 } from '@chakra-ui/react';
-import { Blob } from '../Blob';
-import Board from './Board';
-import { hasGameEnded, hasGameStarted, IGame } from '../../tictactoe/game';
-import { PlayerIcon } from './Square';
+import { Blob } from '../../Blob';
+import Board from '../Board';
+import { hasGameEnded, hasGameStarted, IGame } from '../../../tictactoe/game';
+import { PlayerIcon } from '../Square';
+import { paddedBoardSize } from '../BaseTicTacToe';
 
-const gameSize = 3;
-const baseSize = gameSize * 100;
-export const boardSize = { base: `${baseSize}px`, md: `${baseSize * 1.5}px` };
-export const paddedBoardSize = {
-    base: `${baseSize + 50}px`,
-    md: `${baseSize * 1.5 + 50}px`,
-};
-export const squareSize = {
-    base: `${baseSize / gameSize}px`,
-    md: `${(baseSize * 1.5) / gameSize}px`,
-};
-
-export interface BaseTicTacToeProps {
+export interface StackingTicTacToeProps {
     game: IGame;
     // setGame: Dispatch<SetStateAction<IGame>>;
     loadingGame?: boolean;
     loadingText?: string;
-
-    handleSquareClick(index: number): void;
 }
 
-function BaseGame(props: {
-    game: IGame;
-    handleClick: (index: number) => void;
-}) {
-    return <Board {...props.game} handleClick={props.handleClick} />;
+function StackingGame(props: { game: IGame }) {
+    return <Board {...props.game} handleClick={() => {}} />;
 }
 
 function LoadingGame({ value }: { value: string | undefined }) {
@@ -53,7 +38,7 @@ function LoadingGame({ value }: { value: string | undefined }) {
     );
 }
 
-export default function BaseTicTacToe(props: BaseTicTacToeProps) {
+export default function StackingTicTacToe(props: StackingTicTacToeProps) {
     const loading = props.loadingGame || false;
 
     const gameStarted = hasGameStarted(props.game);
@@ -66,16 +51,13 @@ export default function BaseTicTacToe(props: BaseTicTacToeProps) {
                 boxSize={paddedBoardSize}
             >
                 <GridItem rowStart={1} colStart={1}>
-                    <Blob />
+                    <Blob boxSize={'100%'} />
                 </GridItem>
                 <GridItem rowStart={1} colStart={1}>
                     {loading ? (
                         <LoadingGame value={props.loadingText} />
                     ) : (
-                        <BaseGame
-                            game={props.game}
-                            handleClick={props.handleSquareClick}
-                        />
+                        <StackingGame game={props.game} />
                     )}
                 </GridItem>
             </Grid>
@@ -104,10 +86,19 @@ export default function BaseTicTacToe(props: BaseTicTacToeProps) {
                     </Tag>
                 )}
 
-            {/*<GameOptions gameMode={gameSize} setGameMode={(gameSize: number) => {*/}
-            {/*    setGameSize(gameSize);*/}
-            {/*    createSquares(gameSize);*/}
-            {/*}}/>*/}
+            <HStack>
+                {Array(3)
+                    .fill(0)
+                    .map((_, index) => {
+                        return (
+                            <PlayerIcon
+                                sign={`X-${index}`}
+                                isFocus={true}
+                                key={index}
+                            />
+                        );
+                    })}
+            </HStack>
         </VStack>
     );
 }
