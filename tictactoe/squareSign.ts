@@ -24,20 +24,17 @@ export function deserializeSign(str: string | null): ISign | null {
     return { sign, size, filled };
 }
 
-export function serializeSign(sign: ISign | null): string | null {
+export function encodeSign(
+    sign: string | null,
+    relativeSize?: number
+): string | null {
     if (sign === null) {
         return null;
-    } else if (sign.size === null) {
-        return sign.sign;
+    } else if (relativeSize === undefined) {
+        return sign;
     }
 
-    const size = squareSizeMap
-        .map((value, index) => {
-            return sign.sign === value ? index : -1;
-        })
-        .filter((value) => value !== -1)[0];
-
-    return `${sign.sign}-${size}`;
+    return `${sign}-${relativeSize}`;
 }
 
 // TODO: Possibly make the square sizes similarly responsive as the board size

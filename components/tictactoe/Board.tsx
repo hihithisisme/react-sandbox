@@ -1,7 +1,7 @@
 import { Center, Grid } from '@chakra-ui/react';
-import dynamic from 'next/dynamic';
 import { boardSize } from './BaseTicTacToe';
 import { getWinningLine, IGame, isMovesLeft } from '../../tictactoe/game';
+import Square from './Square';
 
 interface IBoardProps extends IGame {
     handleClick(i: number): void;
@@ -30,7 +30,7 @@ export default function Board(props: IBoardProps): JSX.Element {
                 templateColumns={`repeat(${gameSize}, 1fr)`}
             >
                 {props.squares.map((_, i) => (
-                    <DynamicSquare
+                    <Square
                         index={i}
                         gameSize={gameSize}
                         signValue={props.squares[i]}
@@ -43,5 +43,3 @@ export default function Board(props: IBoardProps): JSX.Element {
         </Center>
     );
 }
-
-const DynamicSquare = dynamic(() => import('./Square'), { ssr: false });

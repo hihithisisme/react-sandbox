@@ -87,7 +87,7 @@ export default function BaseTicTacToe(props: BaseTicTacToeProps) {
                 >
                     <Text>You are: </Text>
                     <PlayerIcon
-                        sign={props.game.playerSign}
+                        signValue={props.game.playerSign}
                         isFocus={true}
                         boxSize={'1rem'}
                     />

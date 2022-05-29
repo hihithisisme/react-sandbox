@@ -87,7 +87,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
         }));
 
         return (
-            <Flex pb={8}>
+            <Flex>
                 <Modal
                     isOpen={isOpen}
                     onClose={onClose}

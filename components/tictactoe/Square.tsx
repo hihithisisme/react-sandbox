@@ -5,7 +5,7 @@ import { Circle, X } from 'phosphor-react';
 import { squareSize } from './BaseTicTacToe';
 import { deserializeSign } from '../../tictactoe/squareSign';
 
-interface ISquareProps {
+export interface ISquareProps {
     index: number;
     gameSize: number;
     signValue: string | null;
@@ -48,7 +48,7 @@ export default function Square(props: ISquareProps): JSX.Element {
         >
             <Center w={'100%'} h={'100%'}>
                 <PlayerIcon
-                    sign={props.signValue}
+                    signValue={props.signValue}
                     isFocus={props.highlightSign}
                 />
             </Center>
@@ -72,12 +72,14 @@ function isRightEdge(index: number, gameSize: number) {
     return index % gameSize === gameSize - 1;
 }
 
-export function PlayerIcon(props: {
-    sign: string | null;
+export interface IPlayerIconProps {
+    signValue: string | null;
     isFocus: boolean;
     boxSize?: any;
-}) {
-    const deserializedSign = deserializeSign(props.sign);
+}
+
+export function PlayerIcon(props: IPlayerIconProps) {
+    const deserializedSign = deserializeSign(props.signValue);
     if (!deserializedSign) {
         return <></>;
     }

@@ -1,16 +1,13 @@
 import { Button, VStack } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import {
-    emptyGame,
-    hasGameEnded,
-    hasGameStarted,
-} from '../../../tictactoe/game';
+import { hasGameEnded, hasGameStarted } from '../../../tictactoe/game';
 import { ICommand, InitCmd, MoveCmd } from '../../../tictactoe/messages';
 import OnlineRoom, { OnlineRoomRefProps } from '../../../websocket/OnlineRoom';
 import StackingTicTacToe from './StackingTicTacToe';
+import { emptyStackingGame } from '../../../tictactoe/stacking/stackingGame';
 
 function StackingOnlineTicTacToe() {
-    const [game, setGame] = useState(emptyGame());
+    const [game, setGame] = useState(emptyStackingGame());
     const roomRef = useRef<OnlineRoomRefProps>(null);
 
     function handleNewMessage(message: ICommand): void {
@@ -23,6 +20,8 @@ function StackingOnlineTicTacToe() {
                     isPlayerTurn: data.playerTurn,
                     playerSign: data.playerSign,
                     squares: data.squares,
+                    playerRemainingPieces: [4, 3, 2],
+                    oppRemainingPieces: [4, 3, 2],
                 });
                 break;
             }
@@ -49,6 +48,7 @@ function StackingOnlineTicTacToe() {
             <OnlineRoom ref={roomRef} handleNewMessage={handleNewMessage} />
 
             <StackingTicTacToe
+                setGame={setGame}
                 {...game}
                 loadingGame={!hasGameStarted(game)}
                 loadingText={'Waiting for other player to connect'}
