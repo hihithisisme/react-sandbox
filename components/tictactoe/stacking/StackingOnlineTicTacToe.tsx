@@ -1,6 +1,6 @@
 import { Button, useToast, VStack } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import { hasGameEnded, hasGameStarted, isNotAllowedToPlay } from '../../../tictactoe/game';
+import { hasGameEnded, hasGameStarted } from '../../../tictactoe/game';
 import { ICommand, InitCmd, MoveCmd } from '../../../tictactoe/stacking/messages';
 import OnlineRoom, { OnlineRoomRefProps } from '../../../websocket/OnlineRoom';
 import StackingTicTacToe from './StackingTicTacToe';
@@ -18,7 +18,7 @@ function StackingOnlineTicTacToe() {
             const dropData = event.over.data.current!;
             const dragData = event.active.data.current!;
 
-            if (isNotAllowedToPlay(game, dropData.id)) {
+            if (!props.isPlayerTurn) {
                 toast({
                     title: 'Sorry, not your turn yet',
                     status: 'warning',
