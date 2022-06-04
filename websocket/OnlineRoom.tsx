@@ -216,7 +216,7 @@ function generateRandomRoomId(roomIdLength: number) {
 
 const buildWsAddress = (roomCode: string): string => {
     if (typeof window !== 'undefined') {
-        const url = new URL(window.location.origin.replace(/^http/, 'ws'));
+        const url = new URL(window.location.href.replace(/^http/, 'ws'));
         url.searchParams.set(roomIdUrlParamKey, roomCode);
         return url.toString();
     }

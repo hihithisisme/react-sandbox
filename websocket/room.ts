@@ -24,8 +24,8 @@ export abstract class Player {
     }
 }
 
-export abstract class Room {
-    public players: Player[];
+export abstract class Room<P extends Player> {
+    public players: P[];
     public roomId: string;
 
     protected constructor(roomId: string) {
@@ -33,7 +33,7 @@ export abstract class Room {
         this.roomId = roomId;
     }
 
-    public addPlayer(player: Player): void {
+    public addPlayer(player: P): void {
         this.players.push(player);
     }
 
@@ -43,9 +43,7 @@ export abstract class Room {
 
     protected removeDisconnectedPlayers() {
         this.players = this.players.filter((player) => {
-            return ![ReadyState.CLOSING, ReadyState.CLOSED].includes(
-                player.socket.readyState
-            );
+            return ![ReadyState.CLOSING, ReadyState.CLOSED].includes(player.socket.readyState);
         });
     }
 }

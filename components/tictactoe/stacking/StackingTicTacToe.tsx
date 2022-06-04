@@ -1,20 +1,11 @@
-import {
-    Center,
-    Grid,
-    GridItem,
-    HStack,
-    Spinner,
-    Stack,
-    Tag,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
+import { Center, Grid, GridItem, HStack, Spinner, Stack, Tag, Text, VStack } from '@chakra-ui/react';
 import {
     getWinningLine,
     hasGameEnded,
     hasGameStarted,
     IGame,
     isMovesLeft,
+    otherPlayerSign,
 } from '../../../tictactoe/game';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { PlayerIcon } from '../Square';
@@ -22,12 +13,14 @@ import { boardSize, paddedBoardSize } from '../BaseTicTacToe';
 import { Blob } from '../../Blob';
 import DraggablePiece from './DraggablePiece';
 import DroppableSquare from './DroppableSquare';
-import { deserializeSign, encodeSign } from '../../../tictactoe/squareSign';
+import { encodeSign } from '../../../tictactoe/squareSign';
 import { IStackingGame } from '../../../tictactoe/stacking/stackingGame';
 import { Dispatch, SetStateAction } from 'react';
 
 export interface StackingTicTacToeProps extends IStackingGame {
     setGame: Dispatch<SetStateAction<IStackingGame>>;
+
+    handleDragEnd(event: DragEndEvent, props: IStackingGame): void;
 
     loadingGame?: boolean;
     loadingText?: string;
@@ -44,77 +37,27 @@ function LoadingGame({ value }: { value: string | undefined }) {
     );
 }
 
-function handleDragEnd(event: DragEndEvent, props: StackingTicTacToeProps) {
-    if (event.over) {
-        const dropData = event.over.data.current!;
-        const dragData = event.active.data.current!;
-
-        const relativePieceSize: number = dragData.id;
-        const playerRemainingPieces = [...props.playerRemainingPieces];
-        playerRemainingPieces[relativePieceSize] =
-            playerRemainingPieces[relativePieceSize] - 1;
-
-        const squares = props.squares;
-        const selectedSquare = squares[dropData.id];
-        const existingSign = deserializeSign(selectedSquare);
-
-        // TODO: move this logic to DroppableSquare and BE logic
-        if (
-            existingSign &&
-            existingSign.size < deserializeSign(dragData.signValue)!.size
-        ) {
-            squares[dropData.id] = dragData.signValue;
-
-            props.setGame({
-                ...props,
-                playerRemainingPieces,
-                squares,
-            });
-        }
-    }
-}
-
 export default function StackingTicTacToe(props: StackingTicTacToeProps) {
     const loading = props.loadingGame || false;
 
     const gameStarted = hasGameStarted(props);
 
     return (
-        <DndContext
-            id={'dndcontext'}
-            onDragEnd={(event: DragEndEvent) => handleDragEnd(event, props)}
-        >
+        <DndContext id={'dndcontext'} onDragEnd={(event: DragEndEvent) => props.handleDragEnd(event, props)}>
             <VStack width={'100%'}>
-                <Grid
-                    templateRows={'1fr'}
-                    templateColumns={'1fr'}
-                    boxSize={paddedBoardSize}
-                >
+                <Grid templateRows={'1fr'} templateColumns={'1fr'} boxSize={paddedBoardSize}>
                     <GridItem rowStart={1} colStart={1}>
                         <Blob />
                     </GridItem>
                     <GridItem rowStart={1} colStart={1}>
-                        {loading ? (
-                            <LoadingGame value={props.loadingText} />
-                        ) : (
-                            <StackingGame {...props} />
-                        )}
+                        {loading ? <LoadingGame value={props.loadingText} /> : <StackingGame {...props} />}
                     </GridItem>
                 </Grid>
 
                 {gameStarted && (
-                    <Stack
-                        direction={'row'}
-                        w={'100%'}
-                        justifyContent={'center'}
-                        alignItems={'center'}
-                    >
+                    <Stack direction={'row'} w={'100%'} justifyContent={'center'} alignItems={'center'}>
                         <Text>You are: </Text>
-                        <PlayerIcon
-                            signValue={props.playerSign}
-                            isFocus={true}
-                            boxSize={'1rem'}
-                        />
+                        <PlayerIcon signValue={props.playerSign} isFocus={true} boxSize={'1rem'} />
                     </Stack>
                 )}
 
@@ -142,7 +85,7 @@ function RemainingPieces(props: IStackingGame) {
                             <Text>{props.playerRemainingPieces[index]}</Text>
                             <DraggablePiece
                                 id={index}
-                                signValue={encodeSign('X', index)}
+                                signValue={encodeSign(props.playerSign, index)}
                                 isFocus={true}
                                 boxSize={`${index * 10 + 20}px`}
                             />
@@ -154,7 +97,7 @@ function RemainingPieces(props: IStackingGame) {
                     {arr3.map((_, index) => (
                         <HStack alignItems={'center'} spacing={2} key={index}>
                             <PlayerIcon
-                                signValue={encodeSign('O', index)}
+                                signValue={encodeSign(otherPlayerSign(props.playerSign), index)}
                                 isFocus={true}
                                 boxSize={`${index * 10 + 20}px`} //TODO: refactor this hardcoding boxSize
                             />
@@ -185,10 +128,7 @@ function StackingGame(props: IGame) {
 
     return (
         <Center boxSize={'100%'}>
-            <Grid
-                boxSize={boardSize}
-                templateColumns={`repeat(${gameSize}, 1fr)`}
-            >
+            <Grid boxSize={boardSize} templateColumns={`repeat(${gameSize}, 1fr)`}>
                 {props.squares.map((_, i) => (
                     <DroppableSquare
                         key={i}

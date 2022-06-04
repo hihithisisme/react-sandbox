@@ -1,12 +1,12 @@
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import { SimpleOnlineController } from '../tictactoe/SimpleOnlineController';
+import { WsController } from './controller';
+import { StackingController } from '../tictactoe/stacking/StackingController';
 
 export class WebSocketRouter {
     public server: WebSocket.Server;
-    // TODO: pathMap to mount multiple routes
-    // private pathMap: { [path: string]: WsTicTacToe }
-    private tttController: SimpleOnlineController;
+    private pathMap: { [path: string]: WsController<any, any, any> };
 
     constructor() {
         this.server = new WebSocket.Server({ noServer: true });
@@ -14,12 +14,16 @@ export class WebSocketRouter {
         this.server.on('error', this.onError.bind(this));
         this.server.on('close', this.onClose.bind(this));
 
-        this.tttController = new SimpleOnlineController();
+        this.pathMap = {
+            '/tictactoe/online': new SimpleOnlineController(),
+            '/tictactoe/stacking': new StackingController(),
+        };
     }
 
     onConnection(ws: WebSocket, request: http.IncomingMessage): void {
-        // const url = new URL(request.url!, `ws://${request.headers.host}`)
-        this.tttController.onConnection(ws, request);
+        const path = new URL(request.url!, `ws://${request.headers.host}`)
+            .pathname;
+        this.pathMap[path].onConnection(ws, request);
     }
 
     onError(err: Error): void {

@@ -25,32 +25,13 @@ export default function Square(props: ISquareProps): JSX.Element {
             colSpan={1}
             rowStart={~~(props.index / props.gameSize) + 1}
             colStart={(props.index % props.gameSize) + 1}
-            borderBottom={
-                isBottomEdge(props.index, props.gameSize)
-                    ? 'transparent'
-                    : defaultBorder
-            }
-            borderTop={
-                isTopEdge(props.index, props.gameSize)
-                    ? 'transparent'
-                    : defaultBorder
-            }
-            borderLeft={
-                isLeftEdge(props.index, props.gameSize)
-                    ? 'transparent'
-                    : defaultBorder
-            }
-            borderRight={
-                isRightEdge(props.index, props.gameSize)
-                    ? 'transparent'
-                    : defaultBorder
-            }
+            borderBottom={isBottomEdge(props.index, props.gameSize) ? 'transparent' : defaultBorder}
+            borderTop={isTopEdge(props.index, props.gameSize) ? 'transparent' : defaultBorder}
+            borderLeft={isLeftEdge(props.index, props.gameSize) ? 'transparent' : defaultBorder}
+            borderRight={isRightEdge(props.index, props.gameSize) ? 'transparent' : defaultBorder}
         >
             <Center w={'100%'} h={'100%'}>
-                <PlayerIcon
-                    signValue={props.signValue}
-                    isFocus={props.highlightSign}
-                />
+                <PlayerIcon signValue={props.signValue} isFocus={props.highlightSign} />
             </Center>
         </GridItem>
     );
@@ -78,6 +59,17 @@ export interface IPlayerIconProps {
     boxSize?: any;
 }
 
+function getBgColor(filled: boolean, isFocus: boolean) {
+    if (!filled) {
+        return 'transparent';
+    }
+
+    if (isFocus) {
+        return 'teal.300';
+    }
+    return 'teal.200';
+}
+
 export function PlayerIcon(props: IPlayerIconProps) {
     const deserializedSign = deserializeSign(props.signValue);
     if (!deserializedSign) {
@@ -86,10 +78,7 @@ export function PlayerIcon(props: IPlayerIconProps) {
 
     const { sign, size, filled } = deserializedSign;
     return (
-        <Flex
-            bgColor={filled ? 'teal.300' : 'transparent'}
-            borderRadius={'20%'}
-        >
+        <Flex bgColor={getBgColor(filled, props.isFocus)} borderRadius={'20%'}>
             <Icon
                 as={sign === 'X' ? X : Circle}
                 boxSize={props.boxSize || size}

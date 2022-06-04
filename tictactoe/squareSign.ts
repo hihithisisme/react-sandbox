@@ -24,10 +24,7 @@ export function deserializeSign(str: string | null): ISign | null {
     return { sign, size, filled };
 }
 
-export function encodeSign(
-    sign: string | null,
-    relativeSize?: number
-): string | null {
+export function encodeSign(sign: string | null, relativeSize?: number): string | null {
     if (sign === null) {
         return null;
     } else if (relativeSize === undefined) {
@@ -35,6 +32,21 @@ export function encodeSign(
     }
 
     return `${sign}-${relativeSize}`;
+}
+
+export function decodeSign(sign: string): {
+    sign: string;
+    relativeSize?: number;
+} {
+    const parts = sign.split('-');
+    if (parts.length === 1) {
+        return { sign };
+    }
+
+    return {
+        sign: parts[0],
+        relativeSize: parseInt(parts[1], 10),
+    };
 }
 
 // TODO: Possibly make the square sizes similarly responsive as the board size

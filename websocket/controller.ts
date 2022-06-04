@@ -2,7 +2,7 @@ import * as WebSocket from 'ws';
 import * as http from 'http';
 import { MessageWithState, Player, Room } from './room';
 
-export abstract class WsController<M, P extends Player, R extends Room> {
+export abstract class WsController<M, P extends Player, R extends Room<P>> {
     // TODO: abstract roomMap management into an abstract class
     public roomMap: { [key: string]: R };
 
@@ -14,11 +14,7 @@ export abstract class WsController<M, P extends Player, R extends Room> {
 
     abstract onMessage(state: MessageWithState<M>): void;
 
-    public defaultAddOnMessage(
-        ws: WebSocket,
-        request: http.IncomingMessage,
-        player: P
-    ) {
+    public defaultAddOnMessage(ws: WebSocket, request: http.IncomingMessage, player: P) {
         ws.on('message', (data: Buffer) => {
             const parsedData = JSON.parse(data.toString());
             this.onMessage({
@@ -30,7 +26,7 @@ export abstract class WsController<M, P extends Player, R extends Room> {
     }
 
     protected emitToAllPlayers(room: R, command: M) {
-        room.players.forEach((player) => {
+        room.players.forEach((player: Player) => {
             this.emitToPlayer(player, command);
         });
     }
@@ -40,8 +36,7 @@ export abstract class WsController<M, P extends Player, R extends Room> {
     }
 
     protected getRoomId(request: http.IncomingMessage): string {
-        const params = new URL(request.url!, `ws://${request.headers.host}`)
-            .searchParams;
+        const params = new URL(request.url!, `ws://${request.headers.host}`).searchParams;
         return params.get('roomId')!;
     }
 
@@ -51,6 +46,18 @@ export abstract class WsController<M, P extends Player, R extends Room> {
 
     protected setRoom(room: R): void {
         this.roomMap[room.roomId] = room;
+    }
+
+    protected getSourcePlayer(state: MessageWithState<M>): P {
+        const roomPlayers = this.getRoom(state.request).players;
+
+        for (let i = 0; i < roomPlayers.length; i++) {
+            const player = roomPlayers[i];
+            if (player.id === state.player.id) {
+                return player;
+            }
+        }
+        throw new Error('Nonexistent Player???');
     }
 }
 

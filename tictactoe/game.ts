@@ -1,3 +1,5 @@
+import { decodeSign } from './squareSign';
+
 export interface IGame {
     squares: Array<string | null>;
     isPlayerTurn: boolean;
@@ -36,8 +38,7 @@ export function getLines(game: IGame): number[][] {
     for (let i = 0; i < game.squares.length; i++) {
         const v = i % size;
         const h = ~~(i / size); // floor division. note: only value for positive numbers
-        const d0 =
-            i % (size - 1) === 0 && i !== 0 && i !== game.squares.length - 1; // checks if belongs to topright-bottomleft diagonal
+        const d0 = i % (size - 1) === 0 && i !== 0 && i !== game.squares.length - 1; // checks if belongs to topright-bottomleft diagonal
         const d1 = i % (size + 1) === 0; // checks if belongs to topleft-bottomright diagonal
 
         verticalIndices[v].push(i);
@@ -61,9 +62,12 @@ export function getWinningLine(game: IGame): number[] | null {
             continue;
         }
 
-        const someoneWon = line.every(
-            (value) => game.squares[value] == firstVal
-        );
+        const someoneWon = line.every((value) => {
+            if (game.squares[value] === null) {
+                return false;
+            }
+            return decodeSign(game.squares[value]!).sign == decodeSign(firstVal).sign;
+        });
         // const numOfX = line
         //     .map((i): number => (game.squares[i] === 'X' ? 1 : 0))
         //     .reduce((a, b) => a + b);
@@ -88,11 +92,7 @@ export function getWinner(game: IGame): string {
 }
 
 export function isNotAllowedToPlay(game: IGame, index: number) {
-    return (
-        game.squares.slice()[index] ||
-        getWinningLine(game) ||
-        !game.isPlayerTurn
-    );
+    return game.squares.slice()[index] || getWinningLine(game) || !game.isPlayerTurn;
 }
 
 export function otherPlayerSign(playerSign: string): string {
@@ -108,7 +108,5 @@ export function hasGameStarted(game: IGame): boolean {
 }
 
 export function hasGameEnded(game: IGame): boolean {
-    return (
-        hasGameStarted(game) && (!isMovesLeft(game) || !!getWinningLine(game))
-    );
+    return hasGameStarted(game) && (!isMovesLeft(game) || !!getWinningLine(game));
 }
