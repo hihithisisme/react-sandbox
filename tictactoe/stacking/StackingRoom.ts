@@ -22,8 +22,8 @@ export class StackingRoom extends Room<StackingPlayer> {
         this.squares = game.squares;
         this.turnSign = game.playerSign;
         if (this.isReady()) {
-            this.players[0].remainingPieces = game.playerRemainingPieces;
-            this.players[1].remainingPieces = game.playerRemainingPieces;
+            this.players[0].remainingPieces = [...game.playerRemainingPieces];
+            this.players[1].remainingPieces = [...game.playerRemainingPieces];
         }
     }
 

@@ -22,7 +22,7 @@ export function emptyStackingGame(): IStackingGame {
         squares: Array(0),
         isPlayerTurn: true,
         playerSign: 'z',
-        playerRemainingPieces: INITIAL_PIECES,
-        oppRemainingPieces: INITIAL_PIECES,
+        playerRemainingPieces: [...INITIAL_PIECES],
+        oppRemainingPieces: [...INITIAL_PIECES],
     };
 }

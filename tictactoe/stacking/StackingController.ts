@@ -75,18 +75,17 @@ export class StackingController extends WsController<ICommand, StackingPlayer, S
         // UPDATE BE STATE
         room.squares[data.move] = data.playerSign;
         room.turnSign = otherPlayerSign(room.turnSign);
-        remainingPieces[relativeSize] -= 1;
+        remainingPieces[relativeSize]--;
 
         // PASSING ON MESSAGE
         room.players.forEach((player: StackingPlayer) => {
-            const isSourcePlayer = player.id === state.player.id;
             const oppPlayerRemainingPieces = this.getOppPlayer(player, room).remainingPieces;
             const command = {
                 action: 'MOVE',
                 data: {
                     ...state.message.data,
-                    playerRemainingPieces: isSourcePlayer ? player.remainingPieces : oppPlayerRemainingPieces,
-                    oppRemainingPieces: isSourcePlayer ? oppPlayerRemainingPieces : player.remainingPieces,
+                    playerRemainingPieces: player.remainingPieces,
+                    oppRemainingPieces: oppPlayerRemainingPieces,
                 } as MoveCmd,
             };
             this.emitToPlayer(player, command);
