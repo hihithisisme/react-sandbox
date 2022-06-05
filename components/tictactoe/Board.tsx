@@ -11,24 +11,17 @@ export default function Board(props: IBoardProps): JSX.Element {
     const gameSize = props.squares.length ** 0.5;
 
     function shouldHighlightSquare(i: number): boolean {
-        if (!isMovesLeft(props)) {
-            return false;
-        }
-
         const winningLine = getWinningLine(props);
         if (winningLine) {
             return winningLine.includes(i);
         }
 
-        return true;
+        return isMovesLeft(props);
     }
 
     return (
         <Center boxSize={'100%'}>
-            <Grid
-                boxSize={boardSize}
-                templateColumns={`repeat(${gameSize}, 1fr)`}
-            >
+            <Grid boxSize={boardSize} templateColumns={`repeat(${gameSize}, 1fr)`}>
                 {props.squares.map((_, i) => (
                     <Square
                         index={i}

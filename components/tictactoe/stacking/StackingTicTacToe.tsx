@@ -1,12 +1,5 @@
 import { Center, Grid, GridItem, HStack, Spinner, Stack, Tag, Text, VStack } from '@chakra-ui/react';
-import {
-    getWinningLine,
-    hasGameEnded,
-    hasGameStarted,
-    IGame,
-    isMovesLeft,
-    otherPlayerSign,
-} from '../../../tictactoe/game';
+import { getWinningLine, hasGameStarted, otherPlayerSign } from '../../../tictactoe/game';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { PlayerIcon } from '../Square';
 import { boardSize, paddedBoardSize } from '../BaseTicTacToe';
@@ -14,7 +7,7 @@ import { Blob } from '../../Blob';
 import DraggablePiece from './DraggablePiece';
 import DroppableSquare from './DroppableSquare';
 import { encodeSign } from '../../../tictactoe/squareSign';
-import { IStackingGame } from '../../../tictactoe/stacking/stackingGame';
+import { hasGameEnded, hasMovesLeft, IStackingGame } from '../../../tictactoe/stacking/stackingGame';
 import { Dispatch, SetStateAction } from 'react';
 
 export interface StackingTicTacToeProps extends IStackingGame {
@@ -110,20 +103,16 @@ function RemainingPieces(props: IStackingGame) {
     );
 }
 
-function StackingGame(props: IGame) {
+function StackingGame(props: IStackingGame) {
     const gameSize = props.squares.length ** 0.5;
 
     function shouldHighlightSquare(i: number): boolean {
-        if (!isMovesLeft(props)) {
-            return false;
-        }
-
         const winningLine = getWinningLine(props);
         if (winningLine) {
             return winningLine.includes(i);
         }
 
-        return true;
+        return hasMovesLeft(props);
     }
 
     return (

@@ -7,11 +7,7 @@ import { otherPlayerSign } from './game';
 import { MessageWithState } from '../websocket/room';
 import { WsController } from '../websocket/controller';
 
-export class SimpleOnlineController extends WsController<
-    ICommand,
-    OnlineBaseTTTPlayer,
-    SimpleOnlineRoom
-> {
+export class SimpleOnlineController extends WsController<ICommand, OnlineBaseTTTPlayer, SimpleOnlineRoom> {
     constructor() {
         super();
     }
@@ -26,6 +22,7 @@ export class SimpleOnlineController extends WsController<
         this.setRoom(room);
 
         this.defaultAddOnMessage(ws, request, player);
+        this.defaultScheduledPing(ws);
 
         if (room.isReady()) {
             this.emitInit(room);
@@ -56,10 +53,7 @@ export class SimpleOnlineController extends WsController<
 
         // VALIDATION
         if (squares[move] !== null) {
-            console.log(
-                `Invalid move by player. Square is already occupied. Move=${move}, squares=`,
-                room.squares
-            );
+            console.log(`Invalid move by player. Square is already occupied. Move=${move}, squares=`, room.squares);
             return;
         } else if (data.playerSign !== room.turnSign) {
             console.log(`Invalid move by player. Not player's turn.`, data);
@@ -84,9 +78,7 @@ export class SimpleOnlineController extends WsController<
                 action: 'INIT',
                 data: {
                     squares: room.squares,
-                    playerSign: isFirstPlayer
-                        ? room.turnSign
-                        : otherPlayerSign(room.turnSign),
+                    playerSign: isFirstPlayer ? room.turnSign : otherPlayerSign(room.turnSign),
                     playerTurn: isFirstPlayer,
                 } as InitCmd,
             });

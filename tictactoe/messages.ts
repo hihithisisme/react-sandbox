@@ -19,3 +19,6 @@ export interface InitCmd {
 
 // triggered by client
 export interface ResetCmd {}
+
+// triggered by server as workaround Heroku's 55s timeout
+export interface PingCmd {}

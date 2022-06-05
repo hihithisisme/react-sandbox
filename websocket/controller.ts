@@ -1,6 +1,8 @@
 import * as WebSocket from 'ws';
 import * as http from 'http';
 import { MessageWithState, Player, Room } from './room';
+import { ICommand } from '../tictactoe/messages';
+import { ReadyState } from 'react-use-websocket';
 
 export abstract class WsController<M, P extends Player, R extends Room<P>> {
     // TODO: abstract roomMap management into an abstract class
@@ -23,6 +25,15 @@ export abstract class WsController<M, P extends Player, R extends Room<P>> {
                 request,
             });
         });
+    }
+
+    public defaultScheduledPing(ws: WebSocket): void {
+        const interval: NodeJS.Timer = setInterval(() => {
+            if ([ReadyState.CLOSING, ReadyState.CLOSED].includes(ws.readyState)) {
+                return clearInterval(interval);
+            }
+            ws.send(JSON.stringify({ action: 'PING' } as ICommand));
+        }, 30000);
     }
 
     protected emitToAllPlayers(room: R, command: M) {

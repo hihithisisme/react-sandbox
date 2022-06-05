@@ -24,13 +24,7 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import {
-    ForwardedRef,
-    forwardRef,
-    useEffect,
-    useImperativeHandle,
-    useState,
-} from 'react';
+import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { LinkSimple } from 'phosphor-react';
 
@@ -45,136 +39,113 @@ export interface OnlineRoomRefProps {
     sendWsMessage(message: ICommand): void;
 }
 
-const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>(
-    (props: OnlineRoomProps, ref: ForwardedRef<any>) => {
-        const [roomId, setRoomId] = useState('');
-        const [inRoom, setInRoom] = useState(false);
-        const { isOpen, onClose } = useDisclosure({ isOpen: !inRoom });
-        const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-            buildWsAddress(roomId),
-            { retryOnError: true, reconnectAttempts: 3 },
-            roomId.length === roomIdLength
-        );
-        const { hasCopied, onCopy } = useClipboard(getCurrentURL());
-        const toast = useToast();
+const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: OnlineRoomProps, ref: ForwardedRef<any>) => {
+    const [roomId, setRoomId] = useState('');
+    const [inRoom, setInRoom] = useState(false);
+    const { isOpen, onClose } = useDisclosure({ isOpen: !inRoom });
+    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+        buildWsAddress(roomId),
+        { retryOnError: true, reconnectAttempts: 3 },
+        roomId.length === roomIdLength
+    );
+    const { hasCopied, onCopy } = useClipboard(getCurrentURL());
+    const toast = useToast();
 
-        const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
+    const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
 
-        useEffect(() => {
-            setRoomId(tryGetRoomId());
-        }, []);
+    useEffect(() => {
+        setRoomId(tryGetRoomId());
+    }, []);
 
-        useEffect(() => {
-            if (ReadyState.OPEN === readyState) {
-                setInRoom(() => true);
+    useEffect(() => {
+        if (ReadyState.OPEN === readyState) {
+            setInRoom(() => true);
 
-                const url = new URL(window.location.href);
-                url.searchParams.set(roomIdUrlParamKey, roomId);
-                window.history.pushState('', '', url);
-            }
-        }, [readyState, roomId]);
+            const url = new URL(window.location.href);
+            url.searchParams.set(roomIdUrlParamKey, roomId);
+            window.history.pushState('', '', url);
+        }
+    }, [readyState, roomId]);
 
-        useEffect(() => {
-            if (lastJsonMessage) {
-                props.handleNewMessage(lastJsonMessage);
-            }
-        }, [lastJsonMessage]);
+    useEffect(() => {
+        if (lastJsonMessage) {
+            if (lastJsonMessage.action === 'PING') return;
+            props.handleNewMessage(lastJsonMessage);
+        }
+    }, [lastJsonMessage]);
 
-        useImperativeHandle(ref, () => ({
-            sendWsMessage(message: ICommand) {
-                sendJsonMessage(message);
-            },
-        }));
+    useImperativeHandle(ref, () => ({
+        sendWsMessage(message: ICommand) {
+            sendJsonMessage(message);
+        },
+    }));
 
-        return (
-            <Flex>
-                <Modal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    closeOnOverlayClick={false}
-                    closeOnEsc={false}
-                    size={modalSize}
+    return (
+        <Flex>
+            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false} size={modalSize}>
+                <ModalOverlay />
+                <ModalContent
+                    borderRadius={{
+                        base: '0.375rem 0.375rem 0rem 0rem',
+                        md: '0.375rem',
+                    }}
+                    mt={'3.75rem'}
                 >
-                    <ModalOverlay />
-                    <ModalContent
-                        borderRadius={{
-                            base: '0.375rem 0.375rem 0rem 0rem',
-                            md: '0.375rem',
-                        }}
-                        mt={'3.75rem'}
-                    >
-                        <ModalHeader>Play against your friend!</ModalHeader>
-                        {/*<ModalCloseButton />*/}
-                        <ModalBody>
-                            <Text>Get the Room code from your friend!</Text>
-                            <RoomIdInput
-                                roomId={roomId}
-                                onChange={(value) =>
-                                    setRoomId(value.toLocaleUpperCase())
-                                }
-                            />
-                        </ModalBody>
+                    <ModalHeader>Play against your friend!</ModalHeader>
+                    {/*<ModalCloseButton />*/}
+                    <ModalBody>
+                        <Text>Get the Room code from your friend!</Text>
+                        <RoomIdInput roomId={roomId} onChange={(value) => setRoomId(value.toLocaleUpperCase())} />
+                    </ModalBody>
 
-                        <ModalFooter>
-                            <Stack
-                                direction={{ base: 'column', md: 'row' }}
-                                spacing={3}
+                    <ModalFooter>
+                        <Stack direction={{ base: 'column', md: 'row' }} spacing={3}>
+                            <Button
+                                colorScheme="teal"
+                                onClick={() => {
+                                    setRoomId(generateRandomRoomId(roomIdLength));
+                                }}
                             >
-                                <Button
-                                    colorScheme="teal"
-                                    onClick={() => {
-                                        setRoomId(
-                                            generateRandomRoomId(roomIdLength)
-                                        );
-                                    }}
-                                >
-                                    Create a new room
+                                Create a new room
+                            </Button>
+                            <LinkBox>
+                                <Button variant="ghost">
+                                    <LinkOverlay href={'/'}>Return to homepage</LinkOverlay>
                                 </Button>
-                                <LinkBox>
-                                    <Button variant="ghost">
-                                        <LinkOverlay href={'/'}>
-                                            Return to homepage
-                                        </LinkOverlay>
-                                    </Button>
-                                </LinkBox>
-                            </Stack>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal>
+                            </LinkBox>
+                        </Stack>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
 
-                <Center w={'100%'} h={'3rem'}>
-                    <Skeleton isLoaded={inRoom}>
-                        <Code fontSize={'2rem'} borderRadius={'0.5rem'}>
-                            {inRoom ? roomId : '----'}
-                        </Code>
-                    </Skeleton>
-                    <IconButton
-                        aria-label={'copy to clipboard'}
-                        icon={<LinkSimple size={'2rem'} />}
-                        onClick={() => {
-                            onCopy();
-                            toast({
-                                title: 'Room URL copied',
-                                description:
-                                    'Give the URL to your friend to start the game.',
-                                status: 'success',
-                                duration: 5000,
-                                isClosable: true,
-                            });
-                        }}
-                        ml={2}
-                        variant={hasCopied ? 'solid' : 'ghost'}
-                    />
-                </Center>
-            </Flex>
-        );
-    }
-);
+            <Center w={'100%'} h={'3rem'}>
+                <Skeleton isLoaded={inRoom}>
+                    <Code fontSize={'2rem'} borderRadius={'0.5rem'}>
+                        {inRoom ? roomId : '----'}
+                    </Code>
+                </Skeleton>
+                <IconButton
+                    aria-label={'copy to clipboard'}
+                    icon={<LinkSimple size={'2rem'} />}
+                    onClick={() => {
+                        onCopy();
+                        toast({
+                            title: 'Room URL copied',
+                            description: 'Give the URL to your friend to start the game.',
+                            status: 'success',
+                            duration: 5000,
+                            isClosable: true,
+                        });
+                    }}
+                    ml={2}
+                    variant={hasCopied ? 'solid' : 'ghost'}
+                />
+            </Center>
+        </Flex>
+    );
+});
 
-function RoomIdInput(props: {
-    roomId: string;
-    onChange: (value: string) => void;
-}) {
+function RoomIdInput(props: { roomId: string; onChange: (value: string) => void }) {
     return (
         <HStack justifyContent={'center'}>
             <PinInput
@@ -198,11 +169,7 @@ function tryGetRoomId(): string {
     const url = new URL(window.location.href);
     const searchParams = url.searchParams;
 
-    return (
-        searchParams.has(roomIdUrlParamKey)
-            ? searchParams.get(roomIdUrlParamKey)!
-            : ''
-    ).toLocaleUpperCase();
+    return (searchParams.has(roomIdUrlParamKey) ? searchParams.get(roomIdUrlParamKey)! : '').toLocaleUpperCase();
 }
 
 function generateRandomRoomId(roomIdLength: number) {

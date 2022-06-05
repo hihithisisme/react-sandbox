@@ -9,6 +9,7 @@ export class StackingRoom extends Room<StackingPlayer> {
 
     turnSign!: string;
     playerIndexWhoStartsFirst!: number;
+    initialPieces?: number[];
 
     constructor(roomId: string) {
         super(roomId);
@@ -17,7 +18,7 @@ export class StackingRoom extends Room<StackingPlayer> {
 
     reset() {
         this.playerIndexWhoStartsFirst = Math.random() < 0.5 ? 0 : 1;
-        const game = newStackingGame(gameSize, true);
+        const game = newStackingGame(gameSize, true, this.initialPieces || [4, 3, 2]);
 
         this.squares = game.squares;
         this.turnSign = game.playerSign;

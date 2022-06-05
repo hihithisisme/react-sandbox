@@ -23,8 +23,17 @@ export class StackingController extends WsController<ICommand, StackingPlayer, S
         this.setRoom(room);
 
         this.defaultAddOnMessage(ws, request, player);
+        this.defaultScheduledPing(ws);
 
         if (room.isReady()) {
+            const initialPieces = new URL(request.url!, `ws://${request.headers.host}`).searchParams.get('pieces');
+            if (initialPieces !== null) {
+                try {
+                    room.initialPieces = initialPieces.split(',').map((v) => parseInt(v, 10));
+                } catch (e) {
+                    console.log('Invalid arg', request.url, e);
+                }
+            }
             this.emitInit(room);
         }
     }
