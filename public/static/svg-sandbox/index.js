@@ -29,5 +29,5 @@ lines.forEach((line, i) => {
         .ease('<>')
         .loop(Infinity, true)
         .height(10)
-        .y(45);
+        .dy(45);
 });
