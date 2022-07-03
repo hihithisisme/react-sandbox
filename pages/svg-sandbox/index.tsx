@@ -7,7 +7,7 @@ const DynamicComponent = dynamic(() => import('../../components/SVGSandbox'), {
     ssr: false,
 });
 
-const size = 600;
+const size = 800;
 
 function SVGSandboxPage() {
     return (

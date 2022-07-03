@@ -1,15 +1,9 @@
-import {
-    Box,
-    Button,
-    Container,
-    Flex,
-    Heading,
-    LinkBox,
-    LinkOverlay,
-    Stack,
-    Text,
-} from '@chakra-ui/react';
-import AITicTacToe from '../components/tictactoe/AITicTacToe';
+import { Button, Center, Container, Flex, Heading, LinkBox, LinkOverlay, Stack, Text, VStack } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import React, { useEffect, useState } from 'react';
+import { randomPalette } from './generative/utils/colours';
+import { RepeatIcon } from '@chakra-ui/icons';
+import tinycolor from 'tinycolor2';
 
 export default function CallToActionWithHero() {
     return (
@@ -24,13 +18,7 @@ export default function CallToActionWithHero() {
                     <CTAText />
                     <CTAButton />
                 </Stack>
-                <Flex
-                    flex={1}
-                    justify={'center'}
-                    align={'center'}
-                    position={'relative'}
-                    w={'full'}
-                >
+                <Flex flex={1} justify={'center'} align={'center'} position={'relative'} w={'full'}>
                     <HeroComponent />
                 </Flex>
             </Stack>
@@ -40,11 +28,7 @@ export default function CallToActionWithHero() {
 
 function Header() {
     return (
-        <Heading
-            lineHeight={1.1}
-            fontWeight={600}
-            fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}
-        >
+        <Heading lineHeight={1.1} fontWeight={600} fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}>
             {/*<Text*/}
             {/*    as={'span'}*/}
             {/*    position={'relative'}*/}
@@ -74,9 +58,8 @@ function CTAText() {
         <>
             <Header />
             <Text color={'gray.500'}>
-                Just playing around with web development. Not really trying to
-                do anything. Something like a playground, yeah? Hopefully, I
-                will add more stuff as things go.
+                Just playing around with web development. Not really trying to do anything. Something like a playground,
+                yeah? Hopefully, I will add more stuff as things go.
             </Text>
         </>
     );
@@ -84,10 +67,7 @@ function CTAText() {
 
 function CTAButton() {
     return (
-        <Stack
-            spacing={{ base: 4, sm: 6 }}
-            direction={{ base: 'column', sm: 'row' }}
-        >
+        <Stack spacing={{ base: 4, sm: 6 }} direction={{ base: 'column', sm: 'row' }}>
             <LinkBox>
                 <Button
                     rounded={'full'}
@@ -98,29 +78,48 @@ function CTAButton() {
                     bg={'red.400'}
                     _hover={{ bg: 'red.500' }}
                 >
-                    <LinkOverlay href={'/tictactoe/online'}>
-                        Play against a friend
-                    </LinkOverlay>
+                    <LinkOverlay href={'/generative/squiggles'}>Try it out!</LinkOverlay>
                 </Button>
             </LinkBox>
         </Stack>
     );
 }
 
+const Squiggles = dynamic(() => import('./generative/Squiggles'), {
+    ssr: false,
+});
+
 function HeroComponent() {
+    const [palette, setPalette] = useState(['']);
+    useEffect(() => {
+        setPalette(randomPalette());
+    }, []);
+    const textColour = tinycolor(palette[0]).isLight() ? 'black' : 'white';
     return (
         // On creating a squared element with dynamic width
         // https://stackoverflow.com/a/13625843
-        <Box
-            // bgColor={'teal.100'}
-            // borderRadius={'10px'}
-            h={0}
-            w={{ base: '100%' }}
-            pb={{ base: '100%' }}
-            justifyContent={'center'}
-        >
-            <AITicTacToe />
-        </Box>
+        // <Box
+        //     // bgColor={'teal.100'}
+        //     // borderRadius={'10px'}
+        //     h={0}
+        //     w={{ base: '100%' }}
+        //     pb={{ base: '100%' }}
+        //     justifyContent={'center'}
+        // >
+        <Center width={300}>
+            <VStack>
+                <Squiggles height={300} width={300} palette={palette} />
+                <Button
+                    backgroundColor={palette[0]}
+                    color={textColour}
+                    leftIcon={<RepeatIcon />}
+                    onClick={() => setPalette(randomPalette())}
+                >
+                    Refresh
+                </Button>
+            </VStack>
+        </Center>
+        // </Box>
 
         // <>
         //     <Blob

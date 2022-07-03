@@ -1,5 +1,6 @@
 // from https://unpkg.com/nice-color-palettes@3.0.0/100.json
 import { randomIntFromInterval } from './numbers';
+import tinycolor from 'tinycolor2';
 
 export const unpkgPalettes = [
     ['#69d2e7', '#a7dbd8', '#e0e4cc', '#f38630', '#fa6900'],
@@ -105,9 +106,16 @@ export const unpkgPalettes = [
 ];
 
 export function randomPalette(): string[] {
-    return unpkgPalettes[randomIntFromInterval(0, 99)].slice(0, 4);
+    return unpkgPalettes[randomIntFromInterval(0, 99)];
 }
 
 export function randomColourFromPalette(palette: string[]): string {
     return palette[randomIntFromInterval(0, 4)];
+}
+
+export function generateBackgroundImage(palette: string[]): string {
+    const bg = tinycolor(palette[0]).lighten(20).desaturate(10).toString();
+    const bgInner = tinycolor(bg).lighten(10).toString();
+    const bgOuter = tinycolor(bg).darken(10).toString();
+    return `linear-gradient(70deg, ${bgInner}, ${bgOuter})`;
 }
