@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Svg, SVG } from '@svgdotjs/svg.js';
-import { Box, Center } from '@chakra-ui/react';
+import { Box, Center, IconButton } from '@chakra-ui/react';
 import { v4 as uuidv4 } from 'uuid';
 import { randomBool, randomIntFromInterval, randomlyChooseElement, weightedRandomSample } from './utils/numbers';
 import tinycolor from 'tinycolor2';
+import { DownloadSimple } from 'phosphor-react';
+import { downloadAsSVG } from './utils/export';
 
 const squareSize = 75;
 
@@ -135,17 +137,37 @@ function Squiggles({ width, height, palette }: { width: number; height: number; 
         generativeGrid(svg, width, height, elementId, palette);
     }, [palette]);
 
+    const downloadButtonSize = 7;
+    const backgroundColour = tinycolor(palette[0]).desaturate(20).toString();
+    const contrastColour = tinycolor(backgroundColour).isLight() ? 'black' : 'white';
+
     return (
         <Center width={width} height={height}>
             <Box
                 id={elementId}
+                position={'relative'}
                 width={width}
                 height={height}
                 sx={{
                     shapeRendering: 'crispEdges',
                     '.curve': { shapeRendering: 'geometricPrecision' },
                 }}
-            />
+            >
+                <IconButton
+                    position={'absolute'}
+                    right={0}
+                    roundedTop={0}
+                    bottom={-downloadButtonSize}
+                    width={downloadButtonSize}
+                    height={downloadButtonSize}
+                    backgroundColor={backgroundColour}
+                    color={contrastColour}
+                    aria-label={'Download Squiggles SVG'}
+                    icon={<DownloadSimple weight={'bold'} />}
+                    onClick={() => downloadAsSVG(canvas.svg())}
+                    _hover={{ background: backgroundColour, color: contrastColour }}
+                />
+            </Box>
         </Center>
     );
 }
