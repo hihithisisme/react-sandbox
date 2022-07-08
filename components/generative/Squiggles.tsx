@@ -10,7 +10,7 @@ const squareSize = 75;
 function getTwoColours(palette: string[]) {
     const list = palette.slice(1, 4);
     const background = tinycolor(palette[0]).desaturate(20).toString();
-    const foreground = weightedRandomSample(list, [70, 20, 10]);
+    const foreground = weightedRandomSample(list, [60, 30, 10]);
 
     return {
         foreground,
@@ -20,7 +20,6 @@ function getTwoColours(palette: string[]) {
 
 function Squiggles({ width, height, palette }: { width: number; height: number; palette: string[] }) {
     const svg: Svg = SVG();
-    const padding = 0;
     const elementId = `svg-${uuidv4()}`;
 
     const [canvas, setCanvas] = useState(svg);
@@ -108,25 +107,24 @@ function Squiggles({ width, height, palette }: { width: number; height: number; 
         function generateBigBlock() {
             const multiplier = randomIntFromInterval(2, 3);
             const bigSquareSize = squareSize * multiplier;
-            const x = randomIntFromInterval(0, nRows - multiplier) * squareSize;
-            const y = randomIntFromInterval(0, nCols - multiplier) * squareSize;
+            const x = randomIntFromInterval(0, n - multiplier) * squareSize;
+            const y = randomIntFromInterval(0, n - multiplier) * squareSize;
             const style = randomlyChooseElement(blockStyles);
             style(x, y, bigSquareSize);
         }
 
-        const nRows = randomIntFromInterval(7, 10);
-        const nCols = randomIntFromInterval(7, 10);
+        const n = randomIntFromInterval(6, 12);
 
         canvas.remove();
         setCanvas(
             svg
                 .addTo(`#${elementId}`)
                 .size(width, height)
-                .viewbox(`0 0 ${nRows * squareSize} ${nCols * squareSize}`)
+                .viewbox(`0 0 ${n * squareSize} ${n * squareSize}`)
         );
 
-        for (let i = 0; i < nRows; i++) {
-            for (let j = 0; j < nCols; j++) {
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
                 generateLittleBlock(i, j);
             }
         }
@@ -134,15 +132,15 @@ function Squiggles({ width, height, palette }: { width: number; height: number; 
     }
 
     useEffect(() => {
-        generativeGrid(svg, width - padding, height - padding, elementId, palette);
+        generativeGrid(svg, width, height, elementId, palette);
     }, [palette]);
 
     return (
         <Center width={width} height={height}>
             <Box
                 id={elementId}
-                width={width - padding}
-                height={height - padding}
+                width={width}
+                height={height}
                 sx={{
                     shapeRendering: 'crispEdges',
                     '.curve': { shapeRendering: 'geometricPrecision' },

@@ -114,6 +114,7 @@ function HeroComponent() {
                     color={textColour}
                     leftIcon={<RepeatIcon />}
                     onClick={() => setPalette(randomPalette())}
+                    _hover={{ background: palette[0], color: textColour }}
                 >
                     Refresh
                 </Button>
