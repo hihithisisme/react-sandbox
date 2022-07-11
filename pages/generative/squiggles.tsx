@@ -39,7 +39,7 @@ function SquigglesPage() {
 
     const textColour = tinycolor(palette[0]).isLight() ? 'black' : 'white';
     return (
-        <Layout background={generateBackgroundImage(palette)}>
+        <Layout background={generateBackgroundImage(palette[0])}>
             <Center>
                 <VStack spacing={3} py={5}>
                     <Intro textColour={textColour} />

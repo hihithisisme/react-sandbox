@@ -113,9 +113,10 @@ export function randomColourFromPalette(palette: string[]): string {
     return palette[randomIntFromInterval(0, 4)];
 }
 
-export function generateBackgroundImage(palette: string[]): string {
-    const bg = tinycolor(palette[0]).lighten(20).desaturate(10).toString();
+export function generateBackgroundImage(colour: string, deg?: number): string {
+    const angle = deg ? deg : randomIntFromInterval(0, 360);
+    const bg = tinycolor(colour).lighten(20).desaturate(10).toString();
     const bgInner = tinycolor(bg).lighten(10).toString();
     const bgOuter = tinycolor(bg).darken(10).toString();
-    return `linear-gradient(70deg, ${bgInner}, ${bgOuter})`;
+    return `linear-gradient(${angle}deg, ${bgInner}, ${bgOuter})`;
 }
