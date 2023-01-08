@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Circle, X } from 'phosphor-react';
 import { squareSize } from './BaseTicTacToe';
-import { deserializeSign } from '../../tictactoe/squareSign';
+import { deserializeSign } from '../logic/squareSign';
 
 export interface ISquareProps {
     index: number;

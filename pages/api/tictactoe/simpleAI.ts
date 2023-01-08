@@ -5,7 +5,7 @@ import {
     IGame,
     isMovesLeft,
     otherPlayerSign,
-} from '../../../tictactoe/game';
+} from '../../../features/tictactoe/logic/game';
 
 export type AIResponse = {
     bestMove: number;

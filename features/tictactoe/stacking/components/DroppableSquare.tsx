@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import { Grid, GridItem } from '@chakra-ui/react';
-import Square, { ISquareProps } from '../Square';
+import Square, { ISquareProps } from '../../components/Square';
 
 // TODO: add isDisabled props
 interface IDroppable extends ISquareProps {

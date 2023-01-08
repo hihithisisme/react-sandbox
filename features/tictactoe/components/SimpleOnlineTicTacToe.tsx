@@ -6,10 +6,10 @@ import {
     hasGameStarted,
     isNotAllowedToPlay,
     otherPlayerSign,
-} from '../../tictactoe/game';
+} from '../logic/game';
 import BaseTicTacToe from './BaseTicTacToe';
-import { ICommand, InitCmd, MoveCmd } from '../../tictactoe/messages';
-import OnlineRoom, { OnlineRoomRefProps } from '../../websocket/OnlineRoom';
+import { ICommand, InitCmd, MoveCmd } from '../logic/messages';
+import OnlineRoom, { OnlineRoomRefProps } from '../../../websocket/OnlineRoom';
 
 function SimpleOnlineTicTacToe() {
     const [game, setGame] = useState(emptyGame());

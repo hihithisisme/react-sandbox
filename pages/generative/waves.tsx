@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
-import Layout from '../../components/Layout';
+import Layout from '../../features/structural/components/Layout';
 import tinycolor from 'tinycolor2';
 
-const DynamicComponent = dynamic(() => import('../../components/generative/Waves'), {
+const DynamicComponent = dynamic(() => import('../../features/generative/components/Waves'), {
     ssr: false,
 });
 

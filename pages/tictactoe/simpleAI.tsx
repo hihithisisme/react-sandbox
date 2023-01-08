@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
-import Layout from '../../components/Layout';
-import AITicTacToe from '../../components/tictactoe/AITicTacToe';
+import Layout from '../../features/structural/components/Layout';
+import AITicTacToe from '../../features/tictactoe/components/AITicTacToe';
 
 function TicTacToePage() {
     return (

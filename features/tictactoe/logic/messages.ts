@@ -5,6 +5,7 @@ export interface ICommand {
 
 // triggered by client upon clicking
 export interface MoveCmd {
+    playerRemainingPieces: number[];
     // squares: Array<string | null>;
     move: number;
     playerSign: string;
@@ -18,7 +19,7 @@ export interface InitCmd {
 }
 
 // triggered by client
-export interface ResetCmd {}
+export interface ResetCmd { }
 
 // triggered by server as workaround Heroku's 55s timeout
-export interface PingCmd {}
+export interface PingCmd { }

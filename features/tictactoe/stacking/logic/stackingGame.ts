@@ -1,5 +1,5 @@
-import { getWinningLine, hasGameStarted, IGame } from '../game';
-import { decodeSign } from '../squareSign';
+import { getWinningLine, hasGameStarted, IGame } from '../../logic/game';
+import { decodeSign } from '../../logic/squareSign';
 
 const INITIAL_PIECES = [0, 0, 0];
 

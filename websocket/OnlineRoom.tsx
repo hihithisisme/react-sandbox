@@ -1,4 +1,3 @@
-import { ICommand } from '../tictactoe/messages';
 import {
     Button,
     Center,
@@ -32,11 +31,11 @@ const roomIdLength = 4;
 const roomIdUrlParamKey = 'roomId';
 
 interface OnlineRoomProps {
-    handleNewMessage: (message: ICommand) => void;
+    handleNewMessage: (message: any) => void;
 }
 
 export interface OnlineRoomRefProps {
-    sendWsMessage(message: ICommand): void;
+    sendWsMessage(message: any): void;
 }
 
 const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: OnlineRoomProps, ref: ForwardedRef<any>) => {
@@ -75,7 +74,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: Onlin
     }, [lastJsonMessage]);
 
     useImperativeHandle(ref, () => ({
-        sendWsMessage(message: ICommand) {
+        sendWsMessage(message: any) {
             sendJsonMessage(message);
         },
     }));

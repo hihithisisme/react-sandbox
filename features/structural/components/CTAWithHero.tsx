@@ -1,7 +1,7 @@
 import { Button, Center, Container, Flex, Heading, LinkBox, LinkOverlay, Stack, Text, VStack } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
-import { randomPalette } from './generative/utils/colours';
+import { randomPalette } from '../../generative/logic/colours';
 import { RepeatIcon } from '@chakra-ui/icons';
 import tinycolor from 'tinycolor2';
 
@@ -85,7 +85,7 @@ function CTAButton() {
     );
 }
 
-const Squiggles = dynamic(() => import('./generative/Squiggles'), {
+const Squiggles = dynamic(() => import('../../generative/components/Squiggles'), {
     ssr: false,
 });
 

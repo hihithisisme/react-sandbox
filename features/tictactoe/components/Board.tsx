@@ -1,6 +1,6 @@
 import { Center, Grid } from '@chakra-ui/react';
 import { boardSize } from './BaseTicTacToe';
-import { getWinningLine, IGame, isMovesLeft } from '../../tictactoe/game';
+import { getWinningLine, IGame, isMovesLeft } from '../logic/game';
 import Square from './Square';
 
 interface IBoardProps extends IGame {

@@ -2,17 +2,18 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { G, SVG } from '@svgdotjs/svg.js';
 import { v4 as uuidv4 } from 'uuid';
-import useResize from '../../hooks/useResize';
-import PathHelper from '../../svg-utils/path';
 import { makeNoise2D } from 'open-simplex-noise';
-import IterativeControls from './utils/IterativeControls';
 import tinycolor from 'tinycolor2';
-import { randomIntFromInterval } from './utils/numbers';
+import useResize from '../../structural/logic/useResize';
+import PathHelper from '../logic/svgPath';
+import { randomIntFromInterval } from '../logic/numbers';
+import IterativeControls from './IterativeControls';
 
 /* TODO: consider making this into DesertNight instead
  *  - shadows
  *  - more pointy tops (perhaps play with distance between end point and control point)
  *  - more sky variations -- translucent cloud, moon, lights from different angles, smoke
+ *  - animation -- snow falling / star twinking / between transitions
  *  - focal point (another dune? or perhaps camels?)
  * */
 export default function Waves({ palette, height, width }: { palette: string[]; height: string; width: string }) {
@@ -122,6 +123,7 @@ export default function Waves({ palette, height, width }: { palette: string[]; h
                 .toString()}, #423278 70%, #423278)`}
         >
             <Box id={elementId} ref={ref} height={height} width={width} />
+            {/* TODO: consider using useMediaQuery to get initial default values */}
             <IterativeControls
                 controls={[
                     {
@@ -142,7 +144,7 @@ export default function Waves({ palette, height, width }: { palette: string[]; h
                         name: 'noise amplitude',
                         type: 'slider',
                         setterFunc: (v) => setNoiseAmp(v),
-                        min: 30,
+                        min: 10,
                         max: 150,
                         step: 10,
                         defaultValue: 50,

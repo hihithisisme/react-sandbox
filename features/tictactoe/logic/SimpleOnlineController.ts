@@ -4,8 +4,8 @@ import { randomUUID } from 'crypto';
 import { OnlineBaseTTTPlayer, SimpleOnlineRoom } from './SimpleOnlineRoom';
 import { ICommand, InitCmd, MoveCmd } from './messages';
 import { otherPlayerSign } from './game';
-import { MessageWithState } from '../websocket/room';
-import { WsController } from '../websocket/controller';
+import { MessageWithState } from '../../../websocket/room';
+import { WsController } from '../../../websocket/controller';
 
 export class SimpleOnlineController extends WsController<ICommand, OnlineBaseTTTPlayer, SimpleOnlineRoom> {
     constructor() {

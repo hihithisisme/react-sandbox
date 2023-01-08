@@ -1,8 +1,8 @@
 import * as http from 'http';
 import * as WebSocket from 'ws';
-import { SimpleOnlineController } from '../tictactoe/SimpleOnlineController';
+import { SimpleOnlineController } from '../features/tictactoe/logic/SimpleOnlineController';
 import { WsController } from './controller';
-import { StackingController } from '../tictactoe/stacking/StackingController';
+import { StackingController } from '../features/tictactoe/stacking/logic/StackingController';
 
 export class WebSocketRouter {
     public server: WebSocket.Server;

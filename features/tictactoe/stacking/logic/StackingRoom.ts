@@ -1,4 +1,4 @@
-import { Player, Room } from '../../websocket/room';
+import { Player, Room } from '../../../../websocket/room';
 import * as WebSocket from 'ws';
 import { newStackingGame } from './stackingGame';
 

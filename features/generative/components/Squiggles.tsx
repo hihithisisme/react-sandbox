@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Svg, SVG } from '@svgdotjs/svg.js';
 import { Box, Center, IconButton } from '@chakra-ui/react';
 import { v4 as uuidv4 } from 'uuid';
-import { randomBool, randomIntFromInterval, randomlyChooseElement, weightedRandomSample } from './utils/numbers';
+import { randomBool, randomIntFromInterval, randomlyChooseElement, weightedRandomSample } from '../logic/numbers';
 import tinycolor from 'tinycolor2';
 import { DownloadSimple } from 'phosphor-react';
-import { downloadAsSVG } from './utils/export';
+import { downloadAsSVG } from '../logic/export';
 
 const squareSize = 75;
 

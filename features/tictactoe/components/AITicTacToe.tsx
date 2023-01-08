@@ -1,7 +1,7 @@
 import { Button, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import { AIResponse } from '../../pages/api/tictactoe/simpleAI';
+import { AIResponse } from '../../../pages/api/tictactoe/simpleAI';
 import BaseTicTacToe from './BaseTicTacToe';
 import {
     getWinningLine,
@@ -9,7 +9,7 @@ import {
     isNotAllowedToPlay,
     newGame,
     otherPlayerSign,
-} from '../../tictactoe/game';
+} from '../logic/game';
 
 const gameSize = 3;
 

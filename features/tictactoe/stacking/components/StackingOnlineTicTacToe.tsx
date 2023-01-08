@@ -1,12 +1,12 @@
 import { Button, useToast, VStack } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import { hasGameEnded, hasGameStarted } from '../../../tictactoe/game';
-import { ICommand, InitCmd, MoveCmd } from '../../../tictactoe/stacking/messages';
-import OnlineRoom, { OnlineRoomRefProps } from '../../../websocket/OnlineRoom';
+import { hasGameEnded, hasGameStarted } from '../../logic/game';
+import { ICommand, InitCmd, MoveCmd } from '../logic/messages';
+import OnlineRoom, { OnlineRoomRefProps } from '../../../../websocket/OnlineRoom';
 import StackingTicTacToe from './StackingTicTacToe';
-import { emptyStackingGame, IStackingGame } from '../../../tictactoe/stacking/stackingGame';
+import { emptyStackingGame, IStackingGame } from '../logic/stackingGame';
 import { DragEndEvent } from '@dnd-kit/core';
-import { deserializeSign } from '../../../tictactoe/squareSign';
+import { deserializeSign } from '../../logic/squareSign';
 
 function StackingOnlineTicTacToe() {
     const [game, setGame] = useState(emptyStackingGame());

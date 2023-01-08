@@ -1,9 +1,9 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
-import Layout from '../../components/Layout';
+import Layout from '../../features/structural/components/Layout';
 import { Center } from '@chakra-ui/react';
 
-const DynamicComponent = dynamic(() => import('../../components/SVGSandbox'), {
+const DynamicComponent = dynamic(() => import('../../features/structural/components/SVGSandbox'), {
     ssr: false,
 });
 

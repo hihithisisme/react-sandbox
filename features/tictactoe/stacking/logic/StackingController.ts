@@ -3,10 +3,10 @@ import * as http from 'http';
 import { randomUUID } from 'crypto';
 import { StackingPlayer, StackingRoom } from './StackingRoom';
 import { ICommand, InitCmd, MoveCmd } from './messages';
-import { otherPlayerSign } from '../game';
-import { MessageWithState } from '../../websocket/room';
-import { WsController } from '../../websocket/controller';
-import { decodeSign } from '../squareSign';
+import { otherPlayerSign } from '../../logic/game';
+import { MessageWithState } from '../../../../websocket/room';
+import { WsController } from '../../../../websocket/controller';
+import { decodeSign } from '../../logic/squareSign';
 
 export class StackingController extends WsController<ICommand, StackingPlayer, StackingRoom> {
     constructor() {

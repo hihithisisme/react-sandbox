@@ -1,14 +1,14 @@
 import { Center, Grid, GridItem, HStack, Spinner, Stack, Tag, Text, VStack } from '@chakra-ui/react';
-import { getWinningLine, hasGameStarted, otherPlayerSign } from '../../../tictactoe/game';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import { PlayerIcon } from '../Square';
-import { boardSize, paddedBoardSize } from '../BaseTicTacToe';
-import { Blob } from '../../Blob';
+import { PlayerIcon } from '../../components/Square';
+import { boardSize, paddedBoardSize } from '../../components/BaseTicTacToe';
+import { Blob } from '../../../structural/components/Blob';
 import DraggablePiece from './DraggablePiece';
 import DroppableSquare from './DroppableSquare';
-import { encodeSign } from '../../../tictactoe/squareSign';
-import { hasGameEnded, hasMovesLeft, IStackingGame } from '../../../tictactoe/stacking/stackingGame';
 import { Dispatch, SetStateAction } from 'react';
+import { hasMovesLeft, IStackingGame } from '../logic/stackingGame';
+import { getWinningLine, hasGameEnded, hasGameStarted, otherPlayerSign } from '../../logic/game';
+import { encodeSign } from '../../logic/squareSign';
 
 export interface StackingTicTacToeProps extends IStackingGame {
     setGame: Dispatch<SetStateAction<IStackingGame>>;
@@ -126,7 +126,7 @@ function StackingGame(props: IStackingGame) {
                         gameSize={gameSize}
                         signValue={props.squares[i]}
                         highlightSign={shouldHighlightSquare(i)}
-                        handleClick={() => {}}
+                        handleClick={() => { }}
                     />
                 ))}
             </Grid>

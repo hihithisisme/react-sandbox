@@ -8,9 +8,9 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react';
-import { Blob } from '../Blob';
+import { Blob } from '../../structural/components/Blob';
 import Board from './Board';
-import { hasGameEnded, hasGameStarted, IGame } from '../../tictactoe/game';
+import { hasGameEnded, hasGameStarted, IGame } from '../logic/game';
 import { PlayerIcon } from './Square';
 
 const gameSize = 3;

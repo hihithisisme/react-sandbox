@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
 import { Flex } from '@chakra-ui/react';
-import { IPlayerIconProps, PlayerIcon } from '../Square';
+import { IPlayerIconProps, PlayerIcon } from '../../components/Square';
 
 // TODO: add isDisabled props
 interface IDraggable extends IPlayerIconProps {

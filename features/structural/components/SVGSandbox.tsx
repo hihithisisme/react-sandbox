@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Svg, SVG, Timeline } from '@svgdotjs/svg.js';
 import { Box, Center } from '@chakra-ui/react';
 import { v4 as uuidv4 } from 'uuid';
-import { randomPalette } from './generative/utils/colours';
+import { randomPalette } from '../../generative/logic/colours';
 
 function purpleLoadingBars(canvas: Svg, width: number, height: number, elementId: string) {
     canvas.addTo(`#${elementId}`).size(width, height);

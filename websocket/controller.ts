@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import * as http from 'http';
 import { MessageWithState, Player, Room } from './room';
-import { ICommand } from '../tictactoe/messages';
+import { ICommand } from '../features/tictactoe/logic/messages';
 import { ReadyState } from 'react-use-websocket';
 
 export abstract class WsController<M, P extends Player, R extends Room<P>> {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import Layout from '../../components/Layout';
+import Layout from '../../features/structural/components/Layout';
 import { Button, Center, Heading, Link, Text, useBreakpointValue, VStack } from '@chakra-ui/react';
-import { generateBackgroundImage, randomPalette } from '../../components/generative/utils/colours';
+import { generateBackgroundImage, randomPalette } from '../../features/generative/logic/colours';
 import { ExternalLinkIcon, RepeatIcon } from '@chakra-ui/icons';
 import tinycolor from 'tinycolor2';
 
-const DynamicComponent = dynamic(() => import('../../components/generative/Squiggles'), {
+const DynamicComponent = dynamic(() => import('../../features/generative/components/Squiggles'), {
     ssr: false,
 });
 

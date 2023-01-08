@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
-import Layout from '../../components/Layout';
-import SimpleOnlineTicTacToe from '../../components/tictactoe/SimpleOnlineTicTacToe';
+import Layout from '../../features/structural/components/Layout';
+import SimpleOnlineTicTacToe from '../../features/tictactoe/components/SimpleOnlineTicTacToe';
 
 function SimpleOnlineTicTacToePage() {
     return (
