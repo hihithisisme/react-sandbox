@@ -271,6 +271,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Stacking Tic-Tac-Toe',
         href: '/tictactoe/stacking',
     },
+    {
+        label: 'SanGuoSha',
+        href: '/sanguosha',
+    }
     // {
     //     label: 'Find Work',
     //     children: [

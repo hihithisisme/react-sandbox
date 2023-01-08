@@ -3,8 +3,6 @@ import { Box, Heading, Image, Link, SimpleGrid, Spinner, Text, VStack } from "@c
 import { useEffect, useState } from "react";
 import { randomlyChooseElement } from "../../generative/logic/numbers";
 
-// const HERO_HEIGHT = '500px';
-
 export interface HeroInfo {
     name: string;
     url: string;
