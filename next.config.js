@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    webpack5: true,
+    webpack: (config) => {
+        config.resolve.fallback = { fs: false, process: false };
+
+        return config;
+    },
     reactStrictMode: true,
     rewrites: async () => {
         return [
