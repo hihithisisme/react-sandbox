@@ -1,13 +1,19 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Flex, Heading, Image, Link, SimpleGrid, Spinner, Stack, Text, VStack } from "@chakra-ui/react";
+import { Divider, Flex, Heading, Image, Link, SimpleGrid, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { randomlyChooseElement } from "../../generative/logic/numbers";
+
+interface AbilityInfo {
+    title: string;
+    description: string;
+}
 
 export interface HeroInfo {
     name: string;
     url: string;
     imgUrl: string;
-    abilityText: string;
+    // abilityText: string;
+    ability: AbilityInfo[]
 }
 
 function HeroDisplay({ hero }: { hero: HeroInfo }) {
@@ -19,14 +25,18 @@ function HeroDisplay({ hero }: { hero: HeroInfo }) {
                     <ExternalLinkIcon mx={2} />
                 </Link>
             </Heading>
-            <Image
-                src={hero.imgUrl}
-                w='80%'
-            />
-            {/* TODO: use yuxuan's regex to parse the character ability heading from description */}
-            <Text>
-                {hero.abilityText}
-            </Text>
+            <Image src={hero.imgUrl} w='80%' />
+            {
+                hero.ability.map((a) => {
+                    return (
+                        <>
+                            <Divider />
+                            <Heading as={'h3'} size={'sm'}>{a.title}</Heading>
+                            <Text>{a.description}</Text>
+                        </>
+                    )
+                })
+            }
         </VStack>
     )
 }

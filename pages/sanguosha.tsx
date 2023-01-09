@@ -1,12 +1,10 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Center, Heading, Link, Text } from '@chakra-ui/react';
+import { Center, Heading } from '@chakra-ui/react';
 import { readFile } from 'fs/promises';
-import React from 'react';
 import SanGuoSha, { HeroInfo } from '../features/sanguosha/components/SanGuoSha';
 import Layout from '../features/structural/components/Layout';
 
 
-const HERO_INFO_JSON_FILEPATH = 'features/sanguosha/characters_dump.json';
+const HERO_INFO_JSON_FILEPATH = 'features/sanguosha/characters.json';
 let heroInfoJson: HeroInfo[];
 
 const SanGuoShaPage = ({ json }: { json: HeroInfo[] }) => {
