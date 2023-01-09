@@ -6,7 +6,7 @@ import SanGuoSha, { HeroInfo } from '../features/sanguosha/components/SanGuoSha'
 import Layout from '../features/structural/components/Layout';
 
 
-const HERO_INFO_JSON_FILEPATH = 'public/static/characters_dump.json';
+const HERO_INFO_JSON_FILEPATH = 'features/sanguosha/characters_dump.json';
 let heroInfoJson: HeroInfo[];
 
 const SanGuoShaPage = ({ json }: { json: HeroInfo[] }) => {
