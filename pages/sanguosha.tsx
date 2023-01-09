@@ -34,7 +34,7 @@ async function fetchHeroInfoJson(): Promise<HeroInfo[]> {
 
 function Intro() {
     return (
-        <Center w={'100vw'} py={3} px={5} backgroundColor={'rgba(0, 0, 0, .1)'}>
+        <Center w={'100vw'} py={3} px={5} bg={'blackAlpha.300'}>
             <Center maxW={600} flexDirection={'column'}>
                 <Heading as={'h1'} >
                     三国杀 Hero Picker
