@@ -41,6 +41,8 @@ function HeroDisplay({ hero }: { hero: HeroInfo }) {
     )
 }
 
+// TODO: shift functionality to websockets + cookies
+// TODO: add in a replace hero functionality
 // TODO: add in a I'm a ruler button to show the ruler cards
 function ThreeHeroDisplay({ json }: { json: HeroInfo[] }) {
     const [heroes, setHeroes] = useState<HeroInfo[] | undefined>(undefined);

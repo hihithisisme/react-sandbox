@@ -21,50 +21,61 @@ import {
     useBreakpointValue,
     useClipboard,
     useDisclosure,
-    useToast,
+    useToast
 } from '@chakra-ui/react';
-import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { LinkSimple } from 'phosphor-react';
+import { useEffect, useState } from 'react';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
 
-const roomIdLength = 4;
-const roomIdUrlParamKey = 'roomId';
+const ROOM_ID_LENGTH = 4;
+const ROOM_ID_URL_PARAM_KEY = 'roomId';
 
 interface OnlineRoomProps {
     handleNewMessage: (message: any) => void;
+    wsHook: WebSocketHook<MessageEvent<any>>;
+    roomId: string;
+    setRoomId: (roomId: string) => void;
 }
-
-export interface OnlineRoomRefProps {
-    sendWsMessage(message: any): void;
-}
-
-const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: OnlineRoomProps, ref: ForwardedRef<any>) => {
+export function useOnlineRoom() {
     const [roomId, setRoomId] = useState('');
-    const [inRoom, setInRoom] = useState(false);
-    const { isOpen, onClose } = useDisclosure({ isOpen: !inRoom });
-    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+
+    const wsHook = useWebSocket(
         buildWsAddress(roomId),
         { retryOnError: true, reconnectAttempts: 3 },
-        roomId.length === roomIdLength
+        roomId.length === ROOM_ID_LENGTH
     );
+
+    useEffect(() => {
+        setRoomId(tryGetRoomId());
+    }, []);
+
+    return {
+        sendWsMessage: wsHook.sendJsonMessage,
+        wsHook,
+        roomId,
+        setRoomId,
+    }
+}
+
+function OnlineRoom(props: OnlineRoomProps) {
+    const [inRoom, setInRoom] = useState(false);
+    const { isOpen, onClose } = useDisclosure({ isOpen: !inRoom });
+    const { lastJsonMessage, readyState } = props.wsHook;
     const { hasCopied, onCopy } = useClipboard(getCurrentURL());
     const toast = useToast();
 
     const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
 
     useEffect(() => {
-        setRoomId(tryGetRoomId());
-    }, []);
-
-    useEffect(() => {
         if (ReadyState.OPEN === readyState) {
             setInRoom(() => true);
 
             const url = new URL(window.location.href);
-            url.searchParams.set(roomIdUrlParamKey, roomId);
+            url.searchParams.set(ROOM_ID_URL_PARAM_KEY, props.roomId);
             window.history.pushState('', '', url);
         }
-    }, [readyState, roomId]);
+    }, [readyState, props.roomId]);
 
     useEffect(() => {
         if (lastJsonMessage) {
@@ -72,12 +83,6 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: Onlin
             props.handleNewMessage(lastJsonMessage);
         }
     }, [lastJsonMessage]);
-
-    useImperativeHandle(ref, () => ({
-        sendWsMessage(message: any) {
-            sendJsonMessage(message);
-        },
-    }));
 
     return (
         <Flex>
@@ -94,7 +99,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: Onlin
                     {/*<ModalCloseButton />*/}
                     <ModalBody>
                         <Text>Get the Room code from your friend!</Text>
-                        <RoomIdInput roomId={roomId} onChange={(value) => setRoomId(value.toLocaleUpperCase())} />
+                        <RoomIdInput roomId={props.roomId} onChange={(value) => props.setRoomId(value.toLocaleUpperCase())} />
                     </ModalBody>
 
                     <ModalFooter>
@@ -102,7 +107,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: Onlin
                             <Button
                                 colorScheme="teal"
                                 onClick={() => {
-                                    setRoomId(generateRandomRoomId(roomIdLength));
+                                    props.setRoomId(generateRandomRoomId(ROOM_ID_LENGTH));
                                 }}
                             >
                                 Create a new room
@@ -120,7 +125,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: Onlin
             <Center w={'100%'} h={'3rem'}>
                 <Skeleton isLoaded={inRoom}>
                     <Code fontSize={'2rem'} borderRadius={'0.5rem'}>
-                        {inRoom ? roomId : '----'}
+                        {inRoom ? props.roomId : '----'}
                     </Code>
                 </Skeleton>
                 <IconButton
@@ -142,7 +147,7 @@ const OnlineRoom = forwardRef<OnlineRoomRefProps, OnlineRoomProps>((props: Onlin
             </Center>
         </Flex>
     );
-});
+}
 
 function RoomIdInput(props: { roomId: string; onChange: (value: string) => void }) {
     return (
@@ -154,7 +159,7 @@ function RoomIdInput(props: { roomId: string; onChange: (value: string) => void 
                 value={props.roomId}
                 onChange={props.onChange}
             >
-                {Array(roomIdLength)
+                {Array(ROOM_ID_LENGTH)
                     .fill(null)
                     .map((_, i) => (
                         <PinInputField key={i} />
@@ -168,7 +173,7 @@ function tryGetRoomId(): string {
     const url = new URL(window.location.href);
     const searchParams = url.searchParams;
 
-    return (searchParams.has(roomIdUrlParamKey) ? searchParams.get(roomIdUrlParamKey)! : '').toLocaleUpperCase();
+    return (searchParams.has(ROOM_ID_URL_PARAM_KEY) ? searchParams.get(ROOM_ID_URL_PARAM_KEY)! : '').toLocaleUpperCase();
 }
 
 function generateRandomRoomId(roomIdLength: number) {
@@ -183,7 +188,7 @@ function generateRandomRoomId(roomIdLength: number) {
 const buildWsAddress = (roomCode: string): string => {
     if (typeof window !== 'undefined') {
         const url = new URL(window.location.href.replace(/^http/, 'ws'));
-        url.searchParams.set(roomIdUrlParamKey, roomCode);
+        url.searchParams.set(ROOM_ID_URL_PARAM_KEY, roomCode);
         return url.toString();
     }
     return '';

@@ -1,16 +1,16 @@
 import { Button, useToast, VStack } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
-import { hasGameEnded, hasGameStarted } from '../../logic/game';
-import { ICommand, InitCmd, MoveCmd } from '../logic/messages';
-import OnlineRoom, { OnlineRoomRefProps } from '../../../../websocket/OnlineRoom';
-import StackingTicTacToe from './StackingTicTacToe';
-import { emptyStackingGame, IStackingGame } from '../logic/stackingGame';
 import { DragEndEvent } from '@dnd-kit/core';
+import { useState } from 'react';
+import OnlineRoom, { useOnlineRoom } from '../../../../websocket/OnlineRoom';
+import { hasGameEnded, hasGameStarted } from '../../logic/game';
 import { deserializeSign } from '../../logic/squareSign';
+import { ICommand, InitCmd, MoveCmd } from '../logic/messages';
+import { emptyStackingGame, IStackingGame } from '../logic/stackingGame';
+import StackingTicTacToe from './StackingTicTacToe';
 
 function StackingOnlineTicTacToe() {
     const [game, setGame] = useState(emptyStackingGame());
-    const roomRef = useRef<OnlineRoomRefProps>(null);
+    const roomState = useOnlineRoom();
     const toast = useToast();
 
     function handleDragEnd(event: DragEndEvent, props: IStackingGame) {
@@ -41,10 +41,10 @@ function StackingOnlineTicTacToe() {
 
             // TODO: move this logic to DroppableSquare and BE logic
             if (!existingSign || existingSign.size < deserializeSign(dragData.signValue)!.size) {
-                console.log('setting move', dragData.signValue);
+                // console.log('setting move', dragData.signValue);
                 playerRemainingPieces[relativePieceSize] = playerRemainingPieces[relativePieceSize] - 1;
 
-                roomRef.current!.sendWsMessage({
+                roomState.sendWsMessage({
                     action: 'MOVE',
                     data: {
                         move: dropData.id,
@@ -58,7 +58,7 @@ function StackingOnlineTicTacToe() {
     }
 
     function handleNewMessage(message: ICommand): void {
-        console.log('handling new message', message);
+        // console.log('handling new message', message);
 
         switch (message.action) {
             case 'INIT': {
@@ -95,7 +95,7 @@ function StackingOnlineTicTacToe() {
 
     return (
         <VStack>
-            <OnlineRoom ref={roomRef} handleNewMessage={handleNewMessage} />
+            <OnlineRoom handleNewMessage={handleNewMessage} {...roomState} />
 
             <StackingTicTacToe
                 setGame={setGame}
@@ -111,7 +111,7 @@ function StackingOnlineTicTacToe() {
                     colorScheme="teal"
                     variant={'outline'}
                     onClick={() => {
-                        roomRef.current!.sendWsMessage({
+                        roomState.sendWsMessage({
                             action: 'RESET',
                             data: {},
                         });

@@ -9,18 +9,18 @@ import {
 } from '../logic/game';
 import BaseTicTacToe from './BaseTicTacToe';
 import { ICommand, InitCmd, MoveCmd } from '../logic/messages';
-import OnlineRoom, { OnlineRoomRefProps } from '../../../websocket/OnlineRoom';
+import OnlineRoom, { useOnlineRoom } from '../../../websocket/OnlineRoom';
 
 function SimpleOnlineTicTacToe() {
     const [game, setGame] = useState(emptyGame());
-    const roomRef = useRef<OnlineRoomRefProps>(null);
+    const roomState = useOnlineRoom();
 
     async function handleClick(i: number) {
         if (isNotAllowedToPlay(game, i)) {
             return;
         }
 
-        roomRef.current!.sendWsMessage({
+        roomState.sendWsMessage({
             action: 'MOVE',
             data: {
                 move: i,
@@ -32,8 +32,6 @@ function SimpleOnlineTicTacToe() {
     }
 
     function handleNewMessage(message: ICommand): void {
-        // console.log('handling new message', message);
-
         switch (message.action) {
             case 'INIT': {
                 const data = message.data as InitCmd;
@@ -64,7 +62,7 @@ function SimpleOnlineTicTacToe() {
 
     return (
         <VStack>
-            <OnlineRoom ref={roomRef} handleNewMessage={handleNewMessage} />
+            <OnlineRoom handleNewMessage={handleNewMessage} {...roomState} />
 
             <BaseTicTacToe
                 handleSquareClick={handleClick}
@@ -79,7 +77,7 @@ function SimpleOnlineTicTacToe() {
                     colorScheme="teal"
                     variant={'outline'}
                     onClick={() => {
-                        roomRef.current!.sendWsMessage({
+                        roomState.sendWsMessage({
                             action: 'RESET',
                             data: {},
                         });
