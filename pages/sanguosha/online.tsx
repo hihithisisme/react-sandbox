@@ -1,26 +1,23 @@
 import { Center, Flex, Heading } from '@chakra-ui/react';
-import SanGuoSha, { HeroInfo } from '../features/sanguosha/components/SanGuoSha';
-import { Deck } from '../features/sanguosha/logic/deck';
-import Layout from '../features/structural/components/Layout';
+import OnlineSGS from '../../features/sanguosha/components/OnlineSGS';
+import Layout from '../../features/structural/components/Layout';
 
-const SanGuoShaPage = ({ heroes }: { heroes: HeroInfo[] }) => {
+const OnlineSGSPage = () => {
     return (
         <Layout>
             <Intro />
-            <Flex p={5}>
-                <SanGuoSha heroes={heroes} />
+            <Flex p={5} justify={'center'}>
+                <OnlineSGS />
             </Flex>
         </Layout>
     );
 };
 
-SanGuoShaPage.getInitialProps = async () => {
-    const deck = new Deck();
-    await deck.loadDeck();
-    return { heroes: deck.draw(3) };
-}
+// OnlineSGSPage.getInitialProps = async () => {
+//     return { json: await fetchHeroInfoJson() };
+// }
 
-export default SanGuoShaPage;
+export default OnlineSGSPage;
 
 function Intro() {
     return (

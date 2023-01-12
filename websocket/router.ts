@@ -3,6 +3,7 @@ import * as WebSocket from 'ws';
 import { SimpleOnlineController } from '../features/tictactoe/logic/SimpleOnlineController';
 import { WsController } from './controller';
 import { StackingController } from '../features/tictactoe/stacking/logic/StackingController';
+import { SGSController } from '../features/sanguosha/logic/SGSOnlineController';
 
 export class WebSocketRouter {
     public server: WebSocket.Server;
@@ -17,6 +18,7 @@ export class WebSocketRouter {
         this.pathMap = {
             '/tictactoe/online': new SimpleOnlineController(),
             '/tictactoe/stacking': new StackingController(),
+            '/sanguosha/online': new SGSController(),
         };
     }
 

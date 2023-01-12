@@ -274,6 +274,12 @@ const NAV_ITEMS: Array<NavItem> = [
     {
         label: 'SanGuoSha',
         href: '/sanguosha',
+        children: [
+            {
+                label: 'Play with Friends',
+                href: '/sanguosha/online',
+            }
+        ]
     }
     // {
     //     label: 'Find Work',

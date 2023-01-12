@@ -1,5 +1,5 @@
 import { Button, VStack } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
     emptyGame,
     hasGameEnded,
