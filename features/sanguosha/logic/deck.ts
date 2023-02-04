@@ -49,7 +49,7 @@ export class Deck {
     removeHeroes(...heroes: HeroInfo[]) {
         for (const toBeRemoved of heroes) {
             this.deck = this.deck.filter((heroInfo) => {
-                return heroInfo !== toBeRemoved;
+                return heroInfo.name !== toBeRemoved.name;
             });
         }
     }
@@ -70,11 +70,11 @@ async function fetchHeroInfoJson(): Promise<HeroInfo[]> {
     if (heroInfoJson === undefined) {
         heroInfoJson = JSON.parse(await readFile(HERO_INFO_JSON_FILEPATH, "utf8"));
     }
-    return heroInfoJson;
+    return [...heroInfoJson];
 }
 async function fetchRulerHeroInfoJson(): Promise<HeroInfo[]> {
     if (rulerHeroInfoJson === undefined) {
         rulerHeroInfoJson = JSON.parse(await readFile(RULER_HERO_INFO_JSON_FILEPATH, "utf8"));
     }
-    return rulerHeroInfoJson;
+    return [...rulerHeroInfoJson];
 }

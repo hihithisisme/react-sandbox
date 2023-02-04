@@ -1,11 +1,13 @@
 import {
+    Box,
     Button,
     Center,
     Code,
     Flex,
+    FormControl, FormLabel,
     HStack,
     IconButton,
-    LinkBox,
+    Input, LinkBox,
     LinkOverlay,
     Modal,
     ModalBody,
@@ -21,10 +23,11 @@ import {
     useBreakpointValue,
     useClipboard,
     useDisclosure,
-    useToast
+    useToast,
+    VStack
 } from '@chakra-ui/react';
 import { LinkSimple } from 'phosphor-react';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
 
@@ -36,25 +39,49 @@ interface OnlineRoomProps {
     wsHook: WebSocketHook<MessageEvent<any>>;
     roomId: string;
     setRoomId: (roomId: string) => void;
+    username: string;
+    setUsername: (username: string) => void;
+    isUsernameValid: string;
+    setIsUsernameValid: (valid: boolean) => void;
+    setTryConnect: (tryConnect: boolean) => void;
 }
+
 export function useOnlineRoom() {
     const [roomId, setRoomId] = useState('');
+    const [username, setUsername] = useState('');
+    const [isUsernameValid, setIsUsernameValid] = useState(false);
+    const [tryConnect, setTryConnect] = useState(false);
+
+    const isRoomValidToStart = roomId.length === ROOM_ID_LENGTH && isUsernameValid;
 
     const wsHook = useWebSocket(
         buildWsAddress(roomId),
         { retryOnError: true, reconnectAttempts: 3 },
-        roomId.length === ROOM_ID_LENGTH
+        isRoomValidToStart && tryConnect,
     );
 
     useEffect(() => {
         setRoomId(tryGetRoomId());
     }, []);
 
+    useEffect(() => {
+        if (tryConnect) {
+            if (!isRoomValidToStart) {
+                setTryConnect(false);
+            }
+        }
+    }, [tryConnect])
+
     return {
         sendWsMessage: wsHook.sendJsonMessage,
         wsHook,
         roomId,
         setRoomId,
+        username,
+        setUsername,
+        isUsernameValid,
+        setIsUsernameValid,
+        setTryConnect,
     }
 }
 
@@ -68,7 +95,7 @@ function OnlineRoom(props: OnlineRoomProps) {
     const modalSize = useBreakpointValue({ base: 'full', md: 'md' });
 
     useEffect(() => {
-        if (ReadyState.OPEN === readyState) {
+        if (ReadyState.OPEN === readyState && props.username !== '') {
             setInRoom(() => true);
 
             const url = new URL(window.location.href);
@@ -84,6 +111,15 @@ function OnlineRoom(props: OnlineRoomProps) {
         }
     }, [lastJsonMessage]);
 
+    function onUsernameChange(event: ChangeEvent<HTMLInputElement>) {
+        let name = event.target.value;
+        if (name.length > 8) {
+            name = name.slice(0, 8);
+        }
+        props.setUsername(name);
+        props.setIsUsernameValid(name.length > 0);
+    }
+
     return (
         <Flex>
             <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false} size={modalSize}>
@@ -96,10 +132,29 @@ function OnlineRoom(props: OnlineRoomProps) {
                     mt={'3.75rem'}
                 >
                     <ModalHeader>Play against your friend!</ModalHeader>
-                    {/*<ModalCloseButton />*/}
                     <ModalBody>
-                        <Text>Get the Room code from your friend!</Text>
-                        <RoomIdInput roomId={props.roomId} onChange={(value) => props.setRoomId(value.toLocaleUpperCase())} />
+                        <VStack p={3} spacing={6}>
+
+                            <FormControl isRequired>
+                                <FormLabel>Username</FormLabel>
+                                <Input
+                                    isInvalid={!props.isUsernameValid}
+                                    placeholder={'Username here!'}
+                                    value={props.username}
+                                    onChange={onUsernameChange}
+                                />
+                                {/* {!isUsernameValid ?
+                                    <FormErrorMessage>
+                                        You need a username
+                                    </FormErrorMessage> :
+                                    <FormHelperText>
+                                        Please enter a username
+                                    </FormHelperText>
+                                } */}
+                            </FormControl>
+                            <RoomIdInput roomId={props.roomId} onChange={(value) => props.setRoomId(value.toLocaleUpperCase())} />
+                        </VStack>
+
                     </ModalBody>
 
                     <ModalFooter>
@@ -107,10 +162,17 @@ function OnlineRoom(props: OnlineRoomProps) {
                             <Button
                                 colorScheme="teal"
                                 onClick={() => {
-                                    props.setRoomId(generateRandomRoomId(ROOM_ID_LENGTH));
+                                    if (props.username === '') {
+                                        return;
+                                    }
+
+                                    if (props.roomId === '') {
+                                        props.setRoomId(generateRandomRoomId(ROOM_ID_LENGTH));
+                                    }
+                                    props.setTryConnect(true);
                                 }}
                             >
-                                Create a new room
+                                {props.roomId === '' ? 'Create a new room' : 'Join room'}
                             </Button>
                             <LinkBox>
                                 <Button variant="ghost">
@@ -151,21 +213,25 @@ function OnlineRoom(props: OnlineRoomProps) {
 
 function RoomIdInput(props: { roomId: string; onChange: (value: string) => void }) {
     return (
-        <HStack justifyContent={'center'}>
-            <PinInput
-                focusBorderColor={'teal.400'}
-                type={'alphanumeric'}
-                size={'lg'}
-                value={props.roomId}
-                onChange={props.onChange}
-            >
-                {Array(ROOM_ID_LENGTH)
-                    .fill(null)
-                    .map((_, i) => (
-                        <PinInputField key={i} />
-                    ))}
-            </PinInput>
-        </HStack>
+        <Box>
+            <Text>Get the Room code from your friend!</Text>
+            <HStack justifyContent={'center'}>
+                <PinInput
+                    focusBorderColor={'teal.400'}
+                    type={'alphanumeric'}
+                    size={'lg'}
+                    value={props.roomId}
+                    onChange={props.onChange}
+                >
+                    {Array(ROOM_ID_LENGTH)
+                        .fill(null)
+                        .map((_, i) => (
+                            <PinInputField key={i} />
+                        ))}
+                </PinInput>
+            </HStack>
+        </Box>
+
     );
 }
 
