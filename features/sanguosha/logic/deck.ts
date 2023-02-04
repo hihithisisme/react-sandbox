@@ -2,22 +2,28 @@ import { readFile } from "fs/promises";
 import { HeroInfo } from "../components/SanGuoSha";
 
 const HERO_INFO_JSON_FILEPATH = 'features/sanguosha/characters.json';
+const RULER_HERO_INFO_JSON_FILEPATH = 'features/sanguosha/ruler_characters.json';
 let heroInfoJson: HeroInfo[];
+let rulerHeroInfoJson: HeroInfo[];
 
 export class Deck {
     private deck: HeroInfo[];
+    private rulerDeck: HeroInfo[];
 
     constructor() {
         this.deck = [];
+        this.rulerDeck = [];
     }
 
     async loadDeck() {
         this.deck = await fetchHeroInfoJson();
+        this.rulerDeck = await fetchRulerHeroInfoJson();
         this.shuffle();
     }
 
     private shuffle(): void {
         shuffleArray(this.deck);
+        shuffleArray(this.rulerDeck);
     }
 
     length(): number {
@@ -30,6 +36,22 @@ export class Deck {
             res.push(this.deck.pop()!);
         }
         return res;
+    }
+
+    drawRulers(n: number): HeroInfo[] {
+        const res = [];
+        for (let i = 0; i < n; i++) {
+            res.push(this.rulerDeck.pop()!);
+        }
+        return res;
+    }
+
+    removeHeroes(...heroes: HeroInfo[]) {
+        for (const toBeRemoved of heroes) {
+            this.deck = this.deck.filter((heroInfo) => {
+                return heroInfo !== toBeRemoved;
+            });
+        }
     }
 }
 
@@ -49,4 +71,10 @@ async function fetchHeroInfoJson(): Promise<HeroInfo[]> {
         heroInfoJson = JSON.parse(await readFile(HERO_INFO_JSON_FILEPATH, "utf8"));
     }
     return heroInfoJson;
+}
+async function fetchRulerHeroInfoJson(): Promise<HeroInfo[]> {
+    if (rulerHeroInfoJson === undefined) {
+        rulerHeroInfoJson = JSON.parse(await readFile(RULER_HERO_INFO_JSON_FILEPATH, "utf8"));
+    }
+    return rulerHeroInfoJson;
 }

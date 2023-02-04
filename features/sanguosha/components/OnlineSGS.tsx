@@ -32,7 +32,6 @@ export default function OnlineSGS() {
             }
             case SGSAction.SHOW_CMD: {
                 const { playersSelection } = message.data as ShowCmd;
-                // TODO: implement
                 setPlayersSelection(playersSelection);
                 break;
             }
@@ -71,6 +70,7 @@ export default function OnlineSGS() {
             }
             {
                 Object.keys(playersSelection).length > 1 ? (
+                    // TODO: make this arrangement responsive -- or reuse HeroCards
                     Object.entries(playersSelection).map((entry, idx) => {
                         return (
                             <HeroCard key={idx} hero={entry[1]} ownerId={entry[0]} />

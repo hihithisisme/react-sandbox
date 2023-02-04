@@ -1,0 +1,186 @@
+[
+    {
+        "name": "Liú Bèi 刘备",
+        "url": "http://sanguoshaenglish.blogspot.com/2010/07/liu-bei.html",
+        "demi-god": false,
+        "imgUrl": "http://2.bp.blogspot.com/_cZXVdsBvjyM/TEhTjL7v0fI/AAAAAAAAADk/q89ZnRg__4c/s1600/shualiubei.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Benevolence 仁德 (rén dé) \"\n",
+                "description": "You can give any amount of on-hand cards to any amount of players in his turn. If the total number of cards given away is 2 or more, you regain 1 unit of health.\n"
+            },
+            {
+                "title": "Character ability 2: [Ruler Ability] \"Rouse 激将 (jī jiàng)\"\n",
+                "description": "You can ask any Shu 蜀 character that is in play to use an ATTACK 杀 card for you.\n(The attack is considered as being \"used\" by Liu Bei even though the card itself comes from another player. This means the attack properties such as range and element is based on Liu Bei, not the player that issued the card. Of course, Shu characters in play can choose not to use an ATTACK card for him.)"
+            }
+        ]
+    },
+    {
+        "name": "Liú Shàn 刘禅",
+        "url": "http://sanguoshaenglish.blogspot.com/2011/08/liu-shan.html",
+        "demi-god": false,
+        "imgUrl": "http://3.bp.blogspot.com/-mB8NwGfqsaU/TkKbp8ct1KI/AAAAAAAAA30/2pczIuUU8is/s1600/liushan.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Relish 享乐 (xiǎng lè)\" [Enforced ability]\n",
+                "description": "Whenever other player targets an ATTACK 杀 at you, he/she must discard a basic card, or that ATTACK has no effect on you.\n"
+            },
+            {
+                "title": "Character ability 2: \"Devolution 放权 (fàng quán)\"\n",
+                "description": "You can skip your action phase. If you do so, you can discard an on-hand card at the end of your turn and let another player go an extra turn.\n"
+            },
+            {
+                "title": "Character ability 3: \"Eiron 若愚\" [Ruler ability] [Awakening ability]\n",
+                "description": "At the start of your turn, if your health is the least or among the least, you must raise your maximum health by 1 unit, regain 1 unit of health and permanently acquire get the ability \"Rouse 激将\".\n(Note: \"Rouse\" is Liu Bei's Ruler ability, where Shu characters can use an ATTACK on his behalf.)"
+            }
+        ]
+    },
+    {
+        "name": "Liú Beì 刘备 (*SP007)",
+        "url": "http://sanguoshaenglish.blogspot.com/2012/08/liu-bei-sp007.html",
+        "demi-god": false,
+        "imgUrl": "http://1.bp.blogspot.com/-unntsaQ_axE/UB3uTrPj0yI/AAAAAAAABdw/xeH_mdShBig/s1600/spliubei.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: Shining Martyr 昭烈 (zhāo liè)\n",
+                "description": "During your drawing phase, you can draw 1 card less, then ask a player within your attacking range to display the top 3 cards from the deck. Discard the non-Basic cards and PEACH 桃 amongst these 3 cards, (the remaining basic cards will be needed below).\nThe player must choose 1 out of the following 2 options:\n1. You inflict X units of damage on that player. The player then gets to acquire the remaining basic cards.\n2. The player discards X number of cards, and you acquire the remaining basic cards.\n(X is the number of non-Basic cards discarded amongst the 3 cards displayed.)\n"
+            },
+            {
+                "title": "Character ability 2: Oath of Vengeance 誓仇 (shì choú) [Ruler Ability] [Single-use Ability]\n",
+                "description": "At the beginning of your turn, you can select 1 player from the Shu allegiance and give him 2 cards. Every instance you receive damage throughout the game, this other player will receive the same amount of damage on your behalf, then this player will draw as many cards as damage received. This ability will perpetuate until this player enters brink of death for the first time."
+            }
+        ]
+    },
+    {
+        "name": "Cáo Cāo 曹操",
+        "url": "http://sanguoshaenglish.blogspot.com/2010/08/cao-cao.html",
+        "demi-god": false,
+        "imgUrl": "http://3.bp.blogspot.com/_cZXVdsBvjyM/TFdvdaBYYMI/AAAAAAAAAFc/WrOCG8kXq3k/s1600/weicaocao.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Villainous Hero 奸雄 (jiān xióng)\"\n",
+                "description": "You can immediately acquire the card (or cards) that resulted in you suffering damage.\nHere are some examples of how that works:\nExample 1 - When he is the target of ATTACK 杀, Cao Cao can choose not use DODGE 闪, suffer the 1 unit of damage, and acquire the ATTACK card that was used.\nExample 2 - When he is recipient of fire damage that has been transmitted via\nIRON SHACKLES 铁索连环\n, he receives the card that caused the fire damage even though he was not the initial target.\n[Edited 28th Jan 2011] Example 3 (complex scenario) - When he uses DODGE to evade an ATTACK but the attacker has equipped\nStone Cleaving Axe 贯石斧\nand chooses to discard 2 cards to cause damage anyways, Cao Cao suffers the damage but cannot pick up BOTH of the cards that were discarded to cause the damage. This is because the card that causes the damage is the ATTACK and not the discarded cards. Contrast this to the\nSerpent Halberd 丈八蛇矛\n, where the 2 cards used in that instance represents an ATTACK card, and thus Cao Cao can pick up both of those cards if he suffers damage.\n"
+            },
+            {
+                "title": "Character ability 2: [Ruler ability] \"Royal Escort 护驾 (hù jià)\"\n",
+                "description": "You can ask any Wei character 魏将 to use DODGE on your behalf where applicable."
+            }
+        ]
+    },
+    {
+        "name": "Cáo Pī 曹丕",
+        "url": "http://sanguoshaenglish.blogspot.com/2010/09/cao-pi.html",
+        "demi-god": false,
+        "imgUrl": "http://4.bp.blogspot.com/_cZXVdsBvjyM/TH8Y8LHiwwI/AAAAAAAAAYk/qxt2GrNggWQ/s1600/weicaopi.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Unnatural Death 行殇 (xíng shāng)\"\n",
+                "description": "You can immediately take possession of all the cards (both on-hand and equipped) of any player that dies.\n"
+            },
+            {
+                "title": "Character ability 2: \"Banish into Exile 放逐 (fàng zhú)\"\n",
+                "description": "Everytime you suffer damage, you can force any player (except yourself) to draw X number of cards. X being the units of health you have lost (measured from your max health level) after the damage has been taken into account. By doing so, this player will have to\n\"Flip Character Card\"\n(please click on link for more info).\n"
+            },
+            {
+                "title": "Character ability 3: [Ruler ability] \"Exalt the Powerful 颂威 (sǒng wēi)\"\n",
+                "description": "Whenever any Wei Character (other than yourself) makes a judgement, if the judgement card that takes effect is the suit of \"clubs\" or \"spades\", that character can choose to let you draw 1 card from the deck."
+            }
+        ]
+    },
+    {
+        "name": "Sūn Quán 孙权",
+        "url": "http://sanguoshaenglish.blogspot.com/2013/03/sun-quan.html",
+        "demi-god": false,
+        "imgUrl": "http://sanguoshaenglish.files.wordpress.com/2010/08/wusunquan.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Balance of Power 制衡 (zhì héng)\"\n",
+                "description": "During your action phase, you can discard any number of cards (both on-hand or equipped) and draw the same number of new cards from the deck. Limited to once per turn.\n"
+            },
+            {
+                "title": "Character ability 2: [Ruler ability] [Enforced ability] \"Rescued 救援 (jiù yuán)\"\n",
+                "description": "When you are rescued from the brink of death by other Wu characters via the use of\nPEACH 桃\n, you recover 1 additional unit of health (from zero health to two units of health)."
+            }
+        ]
+    },
+    {
+        "name": "Sūn Cè 孙策",
+        "url": "http://sanguoshaenglish.blogspot.com/2013/03/sun-ce.html",
+        "demi-god": false,
+        "imgUrl": "http://sanguoshaenglish.files.wordpress.com/2011/08/sunce.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Ardor 激昂 (jī áng)\"\n",
+                "description": "Whenever you use (or become the target of) DUEL 决斗 or a red-suited ATTACK 杀, you can draw a card.\n"
+            },
+            {
+                "title": "Character ability 2: \"Divine Aura 魂姿 (hún zī)\" [Awakening ability]\n",
+                "description": "At the beginning of your turn, if your health is 1 unit, you must reduce your maximum health by 1 unit. You then permanently acquire the abilities \"Dashing Hero 英姿\" and \"Lingering Spirit 英魂\".\n(Note: \"Dashing Hero\" is Zhou Yu 周瑜's ability that allows him to draw 3 cards. \"Linering Spirit\" is Sun Jian's ability \"Draw X discard 1\" or \"Draw 1 discard X\".)\n"
+            },
+            {
+                "title": "Character ability 3: \"Hegemony 制霸 (zhì bà)\" [Ruler ability]\n",
+                "description": "During the action phase of other Wu characters, they can choose to “Points Duel” once with you. If they do not win the “Points Duel”, you can take the cards used in “Points Duel” from both parties. After your Awakening ability activates, you can refuse the \"Points Duel\"."
+            }
+        ]
+    },
+    {
+        "name": "Yuán Shào 袁绍",
+        "url": "http://sanguoshaenglish.blogspot.com/2010/08/yuan-shao.html",
+        "demi-god": false,
+        "imgUrl": "http://2.bp.blogspot.com/_cZXVdsBvjyM/THhagsuNgDI/AAAAAAAAAUU/2RGlLw6iuGU/s1600/qunyuanshao.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Chaos Strike 乱击 (luàn jī)\"\n",
+                "description": "During your action phase, you can choose to discard any 2 on-hand cards with the same suit as\nRAINING ARROWS 万箭齐发\n.\n"
+            },
+            {
+                "title": "Character ability 2: [Ruler ability] [Enforced ability] \"Bloodline 血裔 (xuè yì)\"\n",
+                "description": "Your limit for on-hand cards at the end of your turn increases by 2 for every one Heroes 群雄 character (other than yourself) still in play."
+            }
+        ]
+    },
+    {
+        "name": "Zhāng Jiǎo 张角",
+        "url": "http://sanguoshaenglish.blogspot.com/2010/08/zhang-jiao.html",
+        "demi-god": false,
+        "imgUrl": "http://2.bp.blogspot.com/_cZXVdsBvjyM/THha4Q9mEfI/AAAAAAAAAUc/L2VnWu3Kr70/s1600/qunzhangjiao.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Lightning Strike 雷击 (léi jī)\"\n",
+                "description": "Whenever you use a DODGE 闪 card, you can target any player to make a judgement. If the judgement card is of the \"spades\" suit, the target player suffers 2 units of lightning attribute damage.\n"
+            },
+            {
+                "title": "Character ability 2: \"Dark Sorcery 鬼道 (gǔi dào)\"\n",
+                "description": "You can exchange the judgement card of any player before it takes effect with any of his \"spades\" or \"clubs\" suit cards (on-hand or equipped).\n(Note that the cards are exchanged, meaning Zhang Jiao can retrieve the original judgement card back into his hand.)\n"
+            },
+            {
+                "title": "Character ability 3: [Ruler ability] \"Amber Sky 黄天 (huáng tiān)\"\n",
+                "description": "All Heroes 群雄 characters can give you one DODGE or\nLIGHTNING 闪电\ncard during their individual turns."
+            }
+        ]
+    },
+    {
+        "name": "Dǒng Zhuó 董卓",
+        "url": "http://sanguoshaenglish.blogspot.com/2010/09/dong-zhuo.html",
+        "demi-god": false,
+        "imgUrl": "http://4.bp.blogspot.com/_cZXVdsBvjyM/TH0ODGkMhCI/AAAAAAAAAWc/yaDlXjz8_uU/s1600/qundongzhuo.jpg",
+        "ability": [
+            {
+                "title": "Character ability 1: \"Drown in Wine 酒池 (jiǔ chí)\"\n",
+                "description": "You can use any of your on-hand cards with a suit of \"spades\" as\nWINE 酒\n.\n"
+            },
+            {
+                "title": "Character ability 2: [Enforced ability] \"Garden of Lust 肉林 (ròu lín)\"\n",
+                "description": "When you use ATTACK 杀 on a female character and vice versa, the targeted character needs to use 2 DODGE 闪 cards to successfully evade the attack.\n"
+            },
+            {
+                "title": "Character ability 3: [Enforced ability] \"Disintegrate 崩坏 (bēng huài)\"\n",
+                "description": "At the end of every turn, if your health is not the least or amongst the least, you must lose 1 unit of health or reduce his maximum health by 1 unit.\n"
+            },
+            {
+                "title": "Character ability 4: [Ruler ability] \"The Tyrant 暴虐 (bào nüè)\"\n",
+                "description": "When other Heroes 群雄 characters cause any damage to other players, you can flip a judgement card. If the judgement card is the suit of \"spades\", Dong Zhuo will regain 1 unit of health."
+            }
+        ]
+    }
+]

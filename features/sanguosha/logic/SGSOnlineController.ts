@@ -3,6 +3,7 @@ import * as http from 'http';
 import * as WebSocket from 'ws';
 import { WsController } from "../../../websocket/controller";
 import { MessageWithState } from '../../../websocket/room';
+import { HeroInfo } from '../components/SanGuoSha';
 import { DrawCmd, SGSAction, SGSCommand, SubmitReq } from "./messages";
 import { SGSOnlineRoom, SGSPlayer } from "./SGSOnlineRoom";
 
@@ -67,6 +68,7 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
         room.playerSubmits(playerId, submitReqPayload.hero)
         if (playerId === room.rulerId) {
             this.emitShowRuler(room);
+            room.deck.removeHeroes(submitReqPayload.hero);
             this.emitDrawForNonRuler(room);
         }
         console.log('selectedHeros', room.selectedHeroes, Object.keys(room.selectedHeroes).length);
@@ -94,12 +96,13 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
 
     private emitDrawForRuler(room: SGSOnlineRoom) {
         const rulerPlayer = room.players.filter(p => p.id === room.rulerId).pop()!;
+        // TODO: There is a small chance that there might be a duplicate (ruler) hero appear
+        const heroes: HeroInfo[] = Array().concat(room.deck.draw(3), room.deck.drawRulers(3));
 
         this.emitToPlayer(rulerPlayer, {
             action: SGSAction.DRAW_CMD,
             data: {
-                // TODO: add in ruler-specific draw logic
-                heroes: room.deck.draw(5),
+                heroes,
             }
         })
     }
