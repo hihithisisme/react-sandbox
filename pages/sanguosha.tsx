@@ -18,7 +18,7 @@ SanGuoShaPage.getInitialProps = async () => {
     const deck = new Deck();
     await deck.loadDeck();
     return { heroes: deck.draw(3) };
-}
+};
 
 export default SanGuoShaPage;
 

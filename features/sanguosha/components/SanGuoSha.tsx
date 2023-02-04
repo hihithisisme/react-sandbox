@@ -21,12 +21,12 @@ export interface HeroInfo {
 
 interface HeroCardProps {
     hero: HeroInfo;
-    onSelect?: MouseEventHandler<HTMLButtonElement>;
-    ownerId?: string;
+    onSubmit?: (hero: HeroInfo) => void;
+    ownerUsername?: string;
 }
 
 export function HeroCard(props: HeroCardProps) {
-    const { hero, onSelect } = props;
+    const { hero, onSubmit } = props;
     return (
         <VStack p={5} rounded={10} borderWidth={2} shadow='md' spacing={3} bg={'blackAlpha.50'}        >
             <Heading as='h2'>
@@ -36,7 +36,7 @@ export function HeroCard(props: HeroCardProps) {
                 </Link>
             </Heading>
             {
-                props.ownerId && <Heading as='h3' size='md'>{props.ownerId}</Heading>
+                props.ownerUsername && <Heading as='h3' size='md'>{props.ownerUsername}</Heading>
             }
             <Image src={hero.imgUrl} w='80%' />
             {
@@ -50,8 +50,8 @@ export function HeroCard(props: HeroCardProps) {
                     )
                 })
             }
-            {props.onSelect &&
-                <Button onClick={onSelect}>Select!</Button>
+            {onSubmit &&
+                <Button onClick={() => onSubmit(hero)}>Select!</Button>
             }
         </VStack>
     )
@@ -71,8 +71,7 @@ Use Cases for HeroCardsDisplay:
  */
 interface HeroCardsProps {
     heroes?: HeroInfo[];
-    interactive?: boolean;
-    sendWsMessage?: SendJsonMessage;
+    onSubmit?: (heroInfo: HeroInfo) => void;
 }
 
 export function HeroCards(props: HeroCardsProps) {
@@ -89,19 +88,14 @@ export function HeroCards(props: HeroCardsProps) {
         );
     }
 
-    function emitSelectReq(hero: HeroInfo): void {
-        if (!props.sendWsMessage) {
-            return;
-        }
-        props.sendWsMessage({
-            action: SGSAction.SUBMIT_REQ,
-            data: { hero },
-        })
-    }
 
     return (
         <SimpleGrid spacing={3} columns={{ base: 1, sm: 3 }}>
-            {props.heroes.map((hero, idx) => <HeroCard key={idx} hero={hero} onSelect={() => emitSelectReq(hero)} />)}
+            {
+                props.heroes.map(
+                    (hero, idx) => <HeroCard key={idx} hero={hero} onSubmit={props.onSubmit} />
+                )
+            }
         </SimpleGrid>
     )
 }

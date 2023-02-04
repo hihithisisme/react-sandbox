@@ -1,4 +1,5 @@
 import { HeroInfo } from "../components/SanGuoSha";
+import { SGSPlayer } from "./SGSOnlineRoom";
 
 export enum SGSAction {
     INIT_CMD = 'INIT',
@@ -13,7 +14,7 @@ export enum SGSAction {
 
 export interface SGSCommand {
     action: SGSAction;
-    data?: DrawCmd | InitCmd | SubmitReq | ShowRulerCmd | ShowCmd;
+    data?: DrawCmd | InitCmd | SubmitReq | ShowRulerCmd | ShowCmd | RulerReq;
 }
 
 /* 
@@ -28,28 +29,30 @@ Commands for Websocket
 */
 
 export interface InitCmd {
-    rulerId: string;
+    ruler: SGSPlayer;
 }
 
 export interface DrawCmd {
     heroes: HeroInfo[];
 }
 
-export interface RulerReq { }
+export interface RulerReq {
+    rulerUsername: string;
+}
 
 export interface ShowRulerCmd {
-    rulerId: string;
-    hero: HeroInfo;
+    ruler: SGSPlayer;
 }
 
 export interface ReplaceReq { }
 
 export interface SubmitReq {
+    username: string;
     hero: HeroInfo;
 }
 
 export interface ShowCmd {
-    playersSelection: Record<string, HeroInfo>;
+    players: SGSPlayer[];
 }
 
 export interface ResetCmd { }

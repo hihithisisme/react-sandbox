@@ -1,38 +1,39 @@
-import { Button, Center, Flex, Text, VStack } from "@chakra-ui/react";
+import { Button, Center, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import OnlineRoom, { useOnlineRoom } from "../../../websocket/OnlineRoom";
 import { DrawCmd, InitCmd, SGSAction, ShowCmd, ShowRulerCmd } from "../logic/messages";
+import { SGSPlayer } from "../logic/SGSOnlineRoom";
 import { HeroCard, HeroCards, HeroInfo } from "./SanGuoSha";
 
 export default function OnlineSGS() {
     const roomState = useOnlineRoom();
-    const [heroes, setHeroes] = useState<HeroInfo[] | undefined>(undefined);
-    const [rulerId, setRulerId] = useState('');
-    const [playersSelection, setPlayersSelection] = useState<Record<string, HeroInfo>>({});
+    const [heroChoices, setHeroChoices] = useState<HeroInfo[] | undefined>(undefined);
+    const [ruler, setRuler] = useState<SGSPlayer | undefined>(undefined);
+    const [players, setPlayers] = useState<SGSPlayer[]>([]);
 
     function handleNewMessage(message: any): void {
         console.log('incoming message', message);
         switch (message.action) {
             case SGSAction.INIT_CMD: {
-                const { rulerId } = message.data as InitCmd;
-                setRulerId(rulerId);
+                const { ruler } = message.data as InitCmd;
+                setRuler(ruler);
                 break;
             }
             case SGSAction.DRAW_CMD: {
                 const { heroes } = message.data as DrawCmd;
-                setHeroes(heroes);
+                setHeroChoices(heroes);
                 break;
             }
             case SGSAction.SHOW_RULER_CMD: {
-                const { rulerId, hero } = message.data as ShowRulerCmd;
+                const { ruler } = message.data as ShowRulerCmd;
                 // TODO: implement
-                setRulerId(rulerId);
-                setPlayersSelection({ [rulerId]: hero });
+                setRuler(ruler);
+                setPlayers([ruler]);
                 break;
             }
             case SGSAction.SHOW_CMD: {
-                const { playersSelection } = message.data as ShowCmd;
-                setPlayersSelection(playersSelection);
+                const { players } = message.data as ShowCmd;
+                setPlayers(players);
                 break;
             }
             default:
@@ -45,15 +46,27 @@ export default function OnlineSGS() {
         // TODO: implement player names
         roomState.sendWsMessage({
             action: SGSAction.RULER_REQ,
+            data: {
+                rulerUsername: roomState.username,
+            }
         })
     }
 
-    return (
+    function onHeroSubmit(hero: HeroInfo) {
+        roomState.sendWsMessage({
+            action: SGSAction.SUBMIT_REQ,
+            data: {
+                hero,
+                username: roomState.username,
+            },
+        });
+    }
 
+    return (
         <VStack>
             <OnlineRoom handleNewMessage={handleNewMessage} {...roomState} />
 
-            {!rulerId &&
+            {!ruler &&
                 (
                     <Button onClick={rulerDeclaration}>
                         I'm the Ruler!
@@ -62,25 +75,28 @@ export default function OnlineSGS() {
             }
             {/* TODO: implement proper info bar. Idea: Modal that you can expand to see Ruler's Hero */}
             {
-                rulerId && Object.keys(playersSelection).length === 1 && (
+                ruler && Object.keys(players).length === 1 && (
                     <Center>
-                        <Text>{`Ruler is ${rulerId} and he chose ${playersSelection[rulerId].name}`}</Text>
+                        <Text>{`Ruler is ${ruler.username} and he chose ${ruler.selectedHero?.name}`}</Text>
                     </Center>
                 )
             }
-            {
-                Object.keys(playersSelection).length > 1 ? (
-                    // TODO: make this arrangement responsive -- or reuse HeroCards
-                    Object.entries(playersSelection).map((entry, idx) => {
-                        return (
-                            <HeroCard key={idx} hero={entry[1]} ownerId={entry[0]} />
-                        )
-                    })
-                ) : (
 
-                    <HeroCards heroes={heroes} interactive sendWsMessage={roomState.sendWsMessage} />
+            {
+                Object.keys(players).length > 1 ? (
+                    // TODO: make this arrangement responsive -- or reuse HeroCards
+                    <SimpleGrid spacing={3} columns={{ base: 1, sm: 3 }}>
+                        {players.map((player: SGSPlayer, idx: number) => {
+                            return (
+                                <HeroCard key={idx} hero={player.selectedHero!} ownerUsername={player.username} />
+                            )
+                        })}
+                    </SimpleGrid>
+                ) : (
+                    <HeroCards heroes={heroChoices} onSubmit={onHeroSubmit} />
                 )
             }
+
 
         </VStack>
     )

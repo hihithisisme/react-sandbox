@@ -29,7 +29,6 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
         console.log(`connection: roomId={${roomId}}`);
 
         const room = this.getRoom(request) || new SGSOnlineRoom(roomId);
-        // TODO: replace with player name
         const player = new SGSPlayer(randomUUID(), ws);
         room.addPlayer(player);
         this.setRoom(room);
@@ -65,15 +64,15 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
         const playerId = state.player.id;
         const room = this.getRoom(state.request);
 
-        room.playerSubmits(playerId, submitReqPayload.hero)
+        room.playerSubmits(playerId, submitReqPayload.hero, submitReqPayload.username);
         if (playerId === room.rulerId) {
             this.emitShowRuler(room);
             room.deck.removeHeroes(submitReqPayload.hero);
             this.emitDrawForNonRuler(room);
         }
-        console.log('selectedHeros', room.selectedHeroes, Object.keys(room.selectedHeroes).length);
         console.log('room.players', room.players);
-        if (Object.keys(room.selectedHeroes).length === room.players.length) {
+        const numOfSelectedHeroes = room.players.filter((player) => !!player.selectedHero).length;
+        if (numOfSelectedHeroes === room.players.length) {
             this.emitShow(room);
         }
     }
@@ -95,7 +94,7 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
     }
 
     private emitDrawForRuler(room: SGSOnlineRoom) {
-        const rulerPlayer = room.players.filter(p => p.id === room.rulerId).pop()!;
+        const rulerPlayer = room.getPlayerById(room.rulerId!)!;
         // TODO: There is a small chance that there might be a duplicate (ruler) hero appear
         const heroes: HeroInfo[] = Array().concat(room.deck.draw(3), room.deck.drawRulers(3));
 
@@ -123,12 +122,11 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
     }
 
     private emitShowRuler(room: SGSOnlineRoom) {
-        const rulerId = room.rulerId!;
+        const ruler = room.getPlayerById(room.rulerId!)!;
         this.emitToAllPlayers(room, {
             action: SGSAction.SHOW_RULER_CMD,
             data: {
-                rulerId,
-                hero: room.selectedHeroes[rulerId],
+                ruler,
             }
         })
     }
@@ -137,7 +135,7 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
         this.emitToAllPlayers(room, {
             action: SGSAction.SHOW_CMD,
             data: {
-                playersSelection: room.selectedHeroes,
+                players: room.players,
             }
         });
     }
@@ -149,13 +147,13 @@ export class SGSController extends WsController<SGSCommand, SGSPlayer, SGSOnline
         // room.reset();
 
         room.players.forEach((player) => {
-
             this.emitToPlayer(player, {
                 action: SGSAction.INIT_CMD,
                 data: {
-                    rulerId: room.rulerId!,
+                    ruler: room.getPlayerById(room.rulerId!)!,
                 },
             });
         });
     }
+
 }

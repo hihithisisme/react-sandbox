@@ -1,17 +1,15 @@
-import { Player, Room } from "../../../websocket/room";
 import * as WebSocket from 'ws';
-import { Deck } from "./deck";
+import { Player, Room } from "../../../websocket/room";
 import { HeroInfo } from "../components/SanGuoSha";
+import { Deck } from "./deck";
 
 export class SGSOnlineRoom extends Room<SGSPlayer> {
     rulerId?: string;
     deck: Deck;
-    selectedHeroes: Record<string, HeroInfo>;
 
     constructor(roomId: string) {
         super(roomId);
         this.deck = new Deck();
-        this.selectedHeroes = {}
         this.reset();
     }
 
@@ -20,9 +18,12 @@ export class SGSOnlineRoom extends Room<SGSPlayer> {
         this.rulerId = ruler;
     }
 
-    playerSubmits(playerId: string, hero: HeroInfo) {
-        this.selectedHeroes[playerId] = hero;
+    playerSubmits(playerId: string, hero: HeroInfo, username: string) {
+        const player = this.getPlayerById(playerId)!;
+        player.setUsername(username);
+        player.setSelectedHero(hero);
     }
+
 
     reset() {
         this.rulerId = undefined;
@@ -37,7 +38,19 @@ export class SGSOnlineRoom extends Room<SGSPlayer> {
 }
 
 export class SGSPlayer extends Player {
+    username: string;
+    selectedHero?: HeroInfo;
+
     constructor(id: string, socket: WebSocket) {
         super(id, socket);
+        this.username = id;
+    }
+
+    setUsername(username: string) {
+        this.username = username;
+    }
+
+    setSelectedHero(hero: HeroInfo) {
+        this.selectedHero = hero;
     }
 }

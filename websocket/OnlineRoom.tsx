@@ -41,7 +41,7 @@ interface OnlineRoomProps {
     setRoomId: (roomId: string) => void;
     username: string;
     setUsername: (username: string) => void;
-    isUsernameValid: string;
+    isUsernameValid: boolean;
     setIsUsernameValid: (valid: boolean) => void;
     setTryConnect: (tryConnect: boolean) => void;
 }
