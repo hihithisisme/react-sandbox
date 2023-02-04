@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, Button, Center, Divider, Flex, Heading, Image, Link, SimpleGrid, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, Container, Divider, Flex, Heading, HStack, Image, Link, SimpleGrid, Spinner, Tag, TagLabel, TagLeftIcon, Text, VStack } from "@chakra-ui/react";
+import { CrownSimple, User } from "phosphor-react";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import OnlineRoom, { useOnlineRoom } from "../../../websocket/OnlineRoom";
@@ -23,6 +24,24 @@ interface HeroCardProps {
     hero: HeroInfo;
     onSubmit?: (hero: HeroInfo) => void;
     ownerUsername?: string;
+    isRuler?: boolean;
+}
+
+function FilledUserIcon() {
+    return <User weight='fill' opacity={0.64} />;
+}
+
+function FilledCrownSimpleIcon() {
+    return <CrownSimple weight='fill' opacity={0.64} />;
+}
+
+function OwnerTag({ username, isRuler }: { username: string, isRuler?: boolean }) {
+    return (
+        <Tag variant={isRuler ? 'solid' : 'subtle'} size={'lg'} colorScheme='teal'>
+            <TagLeftIcon mr={4} as={isRuler ? FilledCrownSimpleIcon : FilledUserIcon} />
+            <TagLabel>{username}</TagLabel>
+        </Tag>
+    );
 }
 
 export function HeroCard(props: HeroCardProps) {
@@ -36,7 +55,7 @@ export function HeroCard(props: HeroCardProps) {
                 </Link>
             </Heading>
             {
-                props.ownerUsername && <Heading as='h3' size='md'>{props.ownerUsername}</Heading>
+                props.ownerUsername && <OwnerTag username={props.ownerUsername} isRuler={props.isRuler} />
             }
             <Image src={hero.imgUrl} w='80%' />
             {
@@ -50,10 +69,11 @@ export function HeroCard(props: HeroCardProps) {
                     )
                 })
             }
-            {onSubmit &&
-                <Button onClick={() => onSubmit(hero)}>Select!</Button>
+            {
+                onSubmit &&
+                <Button colorScheme={'teal'} variant={"solid"} onClick={() => onSubmit(hero)}>Select!</Button>
             }
-        </VStack>
+        </VStack >
     )
 }
 

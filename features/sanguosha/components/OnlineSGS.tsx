@@ -1,4 +1,5 @@
-import { Button, Center, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Button, Center, Link, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import OnlineRoom, { useOnlineRoom } from "../../../websocket/OnlineRoom";
 import { DrawCmd, InitCmd, SGSAction, ShowCmd, ShowRulerCmd } from "../logic/messages";
@@ -60,6 +61,7 @@ export default function OnlineSGS() {
                 username: roomState.username,
             },
         });
+        setHeroChoices(undefined);
     }
 
     return (
@@ -77,18 +79,29 @@ export default function OnlineSGS() {
             {
                 ruler && Object.keys(players).length === 1 && (
                     <Center>
-                        <Text>{`Ruler is ${ruler.username} and he chose ${ruler.selectedHero?.name}`}</Text>
+                        <Text mr={1}>{`Ruler is ${ruler.username} and he chose `}</Text>
+
+                        <Text as={'u'}>
+                            <Link href={ruler.selectedHero?.url} isExternal>
+                                {`${ruler.selectedHero?.name}`}
+                                <ExternalLinkIcon mx={2} />
+                            </Link>
+                        </Text>
                     </Center>
                 )
             }
 
             {
-                Object.keys(players).length > 1 ? (
-                    // TODO: make this arrangement responsive -- or reuse HeroCards
+                !heroChoices ? (
                     <SimpleGrid spacing={3} columns={{ base: 1, sm: 3 }}>
                         {players.map((player: SGSPlayer, idx: number) => {
                             return (
-                                <HeroCard key={idx} hero={player.selectedHero!} ownerUsername={player.username} />
+                                <HeroCard
+                                    key={idx}
+                                    hero={player.selectedHero!}
+                                    ownerUsername={player.username}
+                                    isRuler={player.id === ruler!.id}
+                                />
                             )
                         })}
                     </SimpleGrid>
@@ -96,7 +109,6 @@ export default function OnlineSGS() {
                     <HeroCards heroes={heroChoices} onSubmit={onHeroSubmit} />
                 )
             }
-
 
         </VStack>
     )
