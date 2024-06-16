@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, LinkBox, LinkOverlay } from '@chakra-ui/react';
 
 export function BlightDisplayCard({ blight, size = 'lg' }: { blight: BlightName, size?: 'lg' | 'sm' }) {
-    return (<LinkBox boxSize={size == 'sm' ? '150px' : undefined} >
+    return (<LinkBox width={size == 'sm' ? '150px' : undefined} height={'auto'}>
         {/* eslint-disable-next-line jsx-a11y/alt-text */}
         <Image src={BLIGHTS[blight].img} objectFit={'contain'} />
         <LinkOverlay href={BLIGHTS[blight].link} isExternal={true} />

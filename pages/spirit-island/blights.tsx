@@ -1,4 +1,17 @@
-import { Button, Center, Heading, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Center,
+    Flex,
+    Heading,
+    HStack,
+    Link,
+    Stack,
+    Text,
+    VStack,
+    Wrap,
+    WrapItem,
+} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { ExternalLinkIcon, RepeatIcon } from '@chakra-ui/icons';
 import Layout from '../../features/structural/components/Layout';
@@ -63,12 +76,13 @@ function SpiritBlightsPage() {
 
                     {/* history section */}
                     <Heading as={'h3'}>History</Heading>
-                    <HStack>
+                    <Wrap maxW={'90vw'} justify={'center'}>
                         {blights.map((blight) => {
-                            return (
-                                <BlightDisplayCard key={blight} blight={blight} size={'sm'} />);
+                            return (<WrapItem key={blight}>
+                                <BlightDisplayCard blight={blight} size={'sm'} />
+                            </WrapItem>);
                         })}
-                    </HStack>
+                    </Wrap>
                 </VStack>
             </Center>
         </Layout>
