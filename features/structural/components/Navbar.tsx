@@ -256,6 +256,10 @@ interface NavItem {
 
 const NAV_ITEMS: Array<NavItem> = [
     {
+        label: 'Spirit Blights',
+        href: '/spirit-island/blights',
+    },
+    {
         label: 'Generative Squiggles',
         href: '/generative/squiggles',
     },
