@@ -1,8 +1,9 @@
-import { Button, Center, Heading, Link, Text, VStack } from '@chakra-ui/react';
-import React from 'react';
+import { Button, Center, Heading, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { ExternalLinkIcon, RepeatIcon } from '@chakra-ui/icons';
 import Layout from '../../features/structural/components/Layout';
-import { BlightDisplayCard } from '../../features/spirit-island/BlightDisplayCard';
+import { BlightDisplayCard, BlightName, getAllBlightNames } from '../../features/spirit-island/BlightDisplayCard';
+import { randomlyChooseElement } from '../../features/generative/logic/numbers';
 
 function Intro({}: {}) {
     return (
@@ -30,21 +31,65 @@ function Intro({}: {}) {
 }
 
 function SpiritBlightsPage() {
+    const [blights, setBlights] = useState<BlightName[]>(['Healthy']);
+
     return (
         <Layout>
             <Center>
                 <VStack spacing={3} py={5}>
                     <Intro />
-                    <BlightDisplayCard />
-                    <Button
-                        leftIcon={<RepeatIcon />}
-                    >
-                        Setup a new blight card
-                    </Button>
+
+                    {/* main display */}
+                    <BlightDisplayCard blight={blights[blights.length - 1]} />
+                    <HStack>
+                        <Button
+                            variant={'ghost'}
+                            leftIcon={<RepeatIcon />}
+                            onClick={() => {
+                                setBlights(['Healthy']);
+                            }}
+                        >
+                            Restart
+                        </Button>
+
+                        <Button
+                            onClick={() => {
+                                setBlights(blights => addNewRandomBlight(blights));
+                            }}
+                        >
+                            Reveal a new blight card
+                        </Button>
+                    </HStack>
+
+                    {/* history section */}
+                    <Heading as={'h3'}>History</Heading>
+                    <HStack>
+                        {blights.map((blight) => {
+                            return (
+                                <BlightDisplayCard key={blight} blight={blight} size={'sm'} />);
+                        })}
+                    </HStack>
                 </VStack>
             </Center>
         </Layout>
     );
+}
+
+function getRandomBlight() {
+    return randomlyChooseElement(getAllBlightNames());
+}
+
+function addNewRandomBlight(blights: BlightName[]): BlightName[] {
+    let maybeBlight: BlightName;
+    for (let i = 0; i < 25; i++) {
+        maybeBlight = getRandomBlight();
+        if (!blights.includes(maybeBlight)) {
+            return [...blights, maybeBlight];
+        }
+    }
+
+    // TODO: throw alert or something
+    return [...blights];
 }
 
 export default SpiritBlightsPage;
