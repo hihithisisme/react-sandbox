@@ -1,6 +1,7 @@
-import * as WebSocket from 'ws';
-import { ReadyState } from 'react-use-websocket';
 import http from 'http';
+import { ReadyState } from 'react-use-websocket';
+import * as WebSocket from 'ws';
+import { replacer } from './jsonSerializer';
 
 export interface MessageWithState<T> {
     message: T;
@@ -19,7 +20,7 @@ export abstract class Player {
 
     public send(message: any): void {
         if (this.#socket.readyState == ReadyState.OPEN) {
-            this.#socket.send(JSON.stringify(message));
+            this.#socket.send(JSON.stringify(message, replacer));
         }
     }
 
@@ -56,7 +57,9 @@ export abstract class Room<P extends Player> {
 
     protected removeDisconnectedPlayers() {
         this.players = this.players.filter((player) => {
-            return ![ReadyState.CLOSING, ReadyState.CLOSED].includes(player.getState());
+            return ![ReadyState.CLOSING, ReadyState.CLOSED].includes(
+                player.getState()
+            );
         });
     }
 }

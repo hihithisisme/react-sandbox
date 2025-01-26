@@ -30,6 +30,7 @@ import { LinkSimple } from 'phosphor-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
+import { reviver } from './jsonSerializer';
 
 const ROOM_ID_LENGTH = 4;
 const ROOM_ID_URL_PARAM_KEY = 'roomId';
@@ -52,12 +53,13 @@ export function useOnlineRoom() {
     const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [tryConnect, setTryConnect] = useState(false);
 
-    const isRoomValidToStart = roomId.length === ROOM_ID_LENGTH && isUsernameValid;
+    const isRoomValidToStart =
+        roomId.length === ROOM_ID_LENGTH && isUsernameValid;
 
     const wsHook = useWebSocket(
         buildWsAddress(roomId),
         { retryOnError: true, reconnectAttempts: 3 },
-        isRoomValidToStart && tryConnect,
+        isRoomValidToStart && tryConnect
     );
 
     useEffect(() => {
@@ -70,7 +72,7 @@ export function useOnlineRoom() {
                 setTryConnect(false);
             }
         }
-    }, [tryConnect])
+    }, [tryConnect]);
 
     return {
         sendWsMessage: wsHook.sendJsonMessage,
@@ -82,13 +84,13 @@ export function useOnlineRoom() {
         isUsernameValid,
         setIsUsernameValid,
         setTryConnect,
-    }
+    };
 }
 
 function OnlineRoom(props: OnlineRoomProps) {
     const [inRoom, setInRoom] = useState(false);
     const { isOpen, onClose } = useDisclosure({ isOpen: !inRoom });
-    const { lastJsonMessage, readyState } = props.wsHook;
+    const { lastMessage, readyState } = props.wsHook;
     const { hasCopied, onCopy } = useClipboard(getCurrentURL());
     const toast = useToast();
 
@@ -105,11 +107,12 @@ function OnlineRoom(props: OnlineRoomProps) {
     }, [readyState, props.roomId]);
 
     useEffect(() => {
-        if (lastJsonMessage) {
+        if (lastMessage) {
+            const lastJsonMessage = JSON.parse(lastMessage.data, reviver);
             if (lastJsonMessage.action === 'PING') return;
             props.handleNewMessage(lastJsonMessage);
         }
-    }, [lastJsonMessage]);
+    }, [lastMessage]);
 
     function onUsernameChange(event: ChangeEvent<HTMLInputElement>) {
         let name = event.target.value;
@@ -122,7 +125,13 @@ function OnlineRoom(props: OnlineRoomProps) {
 
     return (
         <Flex>
-            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false} size={modalSize}>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                closeOnOverlayClick={false}
+                closeOnEsc={false}
+                size={modalSize}
+            >
                 <ModalOverlay />
                 <ModalContent
                     borderRadius={{
@@ -134,7 +143,6 @@ function OnlineRoom(props: OnlineRoomProps) {
                     <ModalHeader>Play against your friend!</ModalHeader>
                     <ModalBody>
                         <VStack p={3} spacing={6}>
-
                             <FormControl isRequired>
                                 <FormLabel>Username</FormLabel>
                                 <Input
@@ -152,13 +160,20 @@ function OnlineRoom(props: OnlineRoomProps) {
                                     </FormHelperText>
                                 } */}
                             </FormControl>
-                            <RoomIdInput roomId={props.roomId} onChange={(value) => props.setRoomId(value.toLocaleUpperCase())} />
+                            <RoomIdInput
+                                roomId={props.roomId}
+                                onChange={(value) =>
+                                    props.setRoomId(value.toLocaleUpperCase())
+                                }
+                            />
                         </VStack>
-
                     </ModalBody>
 
                     <ModalFooter>
-                        <Stack direction={{ base: 'column', md: 'row' }} spacing={3}>
+                        <Stack
+                            direction={{ base: 'column', md: 'row' }}
+                            spacing={3}
+                        >
                             <Button
                                 colorScheme="teal"
                                 onClick={() => {
@@ -167,16 +182,22 @@ function OnlineRoom(props: OnlineRoomProps) {
                                     }
 
                                     if (props.roomId === '') {
-                                        props.setRoomId(generateRandomRoomId(ROOM_ID_LENGTH));
+                                        props.setRoomId(
+                                            generateRandomRoomId(ROOM_ID_LENGTH)
+                                        );
                                     }
                                     props.setTryConnect(true);
                                 }}
                             >
-                                {props.roomId === '' ? 'Create a new room' : 'Join room'}
+                                {props.roomId === ''
+                                    ? 'Create a new room'
+                                    : 'Join room'}
                             </Button>
                             <LinkBox>
                                 <Button variant="ghost">
-                                    <LinkOverlay href={'/'}>Return to homepage</LinkOverlay>
+                                    <LinkOverlay href={'/'}>
+                                        Return to homepage
+                                    </LinkOverlay>
                                 </Button>
                             </LinkBox>
                         </Stack>
@@ -197,7 +218,8 @@ function OnlineRoom(props: OnlineRoomProps) {
                         onCopy();
                         toast({
                             title: 'Room URL copied',
-                            description: 'Give the URL to your friend to start the game.',
+                            description:
+                                'Give the URL to your friend to start the game.',
                             status: 'success',
                             duration: 5000,
                             isClosable: true,
