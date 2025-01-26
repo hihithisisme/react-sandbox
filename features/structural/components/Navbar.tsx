@@ -1,4 +1,10 @@
 import {
+    ChevronDownIcon,
+    ChevronRightIcon,
+    CloseIcon,
+    HamburgerIcon,
+} from '@chakra-ui/icons';
+import {
     Box,
     Button,
     Collapse,
@@ -16,8 +22,7 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
-import { HouseSimple } from 'phosphor-react';
+import { HouseSimple } from '@phosphor-icons/react';
 
 export default function WithSubnavigation() {
     const { isOpen, onToggle } = useDisclosure();
@@ -35,7 +40,11 @@ export default function WithSubnavigation() {
                 borderColor={useColorModeValue('gray.200', 'gray.900')}
                 align={'center'}
             >
-                <Flex flex={{ base: 1, md: 'auto' }} ml={{ base: -2 }} display={{ base: 'flex', md: 'none' }}>
+                <Flex
+                    flex={{ base: 1, md: 'auto' }}
+                    ml={{ base: -2 }}
+                    display={{ base: 'flex', md: 'none' }}
+                >
                     <NavIconButton onClick={onToggle} open={isOpen} />
                 </Flex>
 
@@ -60,8 +69,19 @@ export default function WithSubnavigation() {
 
 const NavRightSide = () => {
     return (
-        <Stack flex={{ base: 1, md: 0 }} justify={'flex-end'} direction={'row'} spacing={6}>
-            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+        <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}
+        >
+            <Button
+                as={'a'}
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'link'}
+                href={'#'}
+            >
                 Sign In
             </Button>
             <Button
@@ -86,7 +106,13 @@ function NavIconButton(props: { onClick: () => void; open: boolean }) {
     return (
         <IconButton
             onClick={props.onClick}
-            icon={props.open ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
+            icon={
+                props.open ? (
+                    <CloseIcon w={3} h={3} />
+                ) : (
+                    <HamburgerIcon w={5} h={5} />
+                )
+            }
             variant={'ghost'}
             aria-label={'Toggle Navigation'}
         />
@@ -139,7 +165,10 @@ const DesktopNav = () => {
                             >
                                 <Stack>
                                     {navItem.children.map((child) => (
-                                        <DesktopSubNav key={child.label} {...child} />
+                                        <DesktopSubNav
+                                            key={child.label}
+                                            {...child}
+                                        />
                                     ))}
                                 </Stack>
                             </PopoverContent>
@@ -163,7 +192,11 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
         >
             <Stack direction={'row'} align={'center'}>
                 <Box>
-                    <Text transition={'all .3s ease'} _groupHover={{ color: 'pink.400' }} fontWeight={500}>
+                    <Text
+                        transition={'all .3s ease'}
+                        _groupHover={{ color: 'pink.400' }}
+                        fontWeight={500}
+                    >
                         {label}
                     </Text>
                     <Text fontSize={'sm'}>{subLabel}</Text>
@@ -180,7 +213,12 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
                     align={'center'}
                     flex={1}
                 >
-                    <Icon color={'pink.400'} w={5} h={5} as={ChevronRightIcon} />
+                    <Icon
+                        color={'pink.400'}
+                        w={5}
+                        h={5}
+                        as={ChevronRightIcon}
+                    />
                 </Flex>
             </Stack>
         </Link>
@@ -189,7 +227,11 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 
 const MobileNav = () => {
     return (
-        <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
+        <Stack
+            bg={useColorModeValue('white', 'gray.800')}
+            p={4}
+            display={{ md: 'none' }}
+        >
             {NAV_ITEMS.map((navItem) => (
                 <MobileNavItem key={navItem.label} {...navItem} />
             ))}
@@ -212,7 +254,10 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     textDecoration: 'none',
                 }}
             >
-                <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+                <Text
+                    fontWeight={600}
+                    color={useColorModeValue('gray.600', 'gray.200')}
+                >
                     {label}
                 </Text>
                 {children && (
@@ -226,7 +271,11 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 )}
             </Flex>
 
-            <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
+            <Collapse
+                in={isOpen}
+                animateOpacity
+                style={{ marginTop: '0!important' }}
+            >
                 <Stack
                     mt={2}
                     pl={4}
@@ -282,9 +331,9 @@ const NAV_ITEMS: Array<NavItem> = [
             {
                 label: 'Play with Friends',
                 href: '/sanguosha/online',
-            }
-        ]
-    }
+            },
+        ],
+    },
     // {
     //     label: 'Find Work',
     //     children: [

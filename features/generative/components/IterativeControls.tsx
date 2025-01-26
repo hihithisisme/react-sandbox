@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
     Button,
     IconButton,
@@ -17,13 +16,18 @@ import {
     Tooltip,
     VStack,
 } from '@chakra-ui/react';
-import { ArrowUp } from 'phosphor-react';
+import { ArrowUp } from '@phosphor-icons/react';
+import React, { useState } from 'react';
 
 interface commonControlProps {
     name: string;
 }
 
-type controlProps<T> = T extends 'button' ? buttonControls : T extends 'slider' ? sliderControls : never;
+type controlProps<T> = T extends 'button'
+    ? buttonControls
+    : T extends 'slider'
+    ? sliderControls
+    : never;
 
 type controlTypeNames = 'button' | 'slider';
 
@@ -45,7 +49,12 @@ function ControlSlider({ control, i }: { control: sliderControls; i: number }) {
     const [value, setValue] = useState(control.defaultValue);
 
     return (
-        <Stack w={'100%'} backgroundColor={'gray.100'} p={2} rounded={'0.375rem'}>
+        <Stack
+            w={'100%'}
+            backgroundColor={'gray.100'}
+            p={2}
+            rounded={'0.375rem'}
+        >
             <Text fontWeight={'semibold'}>{control.name}</Text>
             <Slider
                 defaultValue={control.defaultValue}
@@ -68,7 +77,11 @@ function ControlSlider({ control, i }: { control: sliderControls; i: number }) {
     );
 }
 
-export default function IterativeControls({ controls }: { controls: controlProps<any>[] }) {
+export default function IterativeControls({
+    controls,
+}: {
+    controls: controlProps<any>[];
+}) {
     return (
         <Popover>
             <PopoverTrigger>
@@ -98,12 +111,22 @@ export default function IterativeControls({ controls }: { controls: controlProps
                         {controls.map((control, i) => {
                             if (control.type === 'button') {
                                 return (
-                                    <Button key={i} w={'100%'} onClick={control.setterFunc}>
+                                    <Button
+                                        key={i}
+                                        w={'100%'}
+                                        onClick={control.setterFunc}
+                                    >
                                         {control.name}
                                     </Button>
                                 );
                             } else if (control.type === 'slider') {
-                                return <ControlSlider key={i} control={control} i={i} />;
+                                return (
+                                    <ControlSlider
+                                        key={i}
+                                        control={control}
+                                        i={i}
+                                    />
+                                );
                             }
                         })}
                     </VStack>

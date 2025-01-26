@@ -1,9 +1,9 @@
 import { Center, Flex, GridItem, Icon } from '@chakra-ui/react';
+import { Circle, X } from '@phosphor-icons/react';
 import React from 'react';
-
-import { Circle, X } from 'phosphor-react';
-import { squareSize } from './BaseTicTacToe';
 import { deserializeSign } from '../logic/squareSign';
+import { squareSize } from './BaseTicTacToe';
+
 
 export interface ISquareProps {
     index: number;

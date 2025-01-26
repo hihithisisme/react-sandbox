@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Svg, SVG } from '@svgdotjs/svg.js';
 import { Box, Center, IconButton } from '@chakra-ui/react';
-import { v4 as uuidv4 } from 'uuid';
-import { randomBool, randomIntFromInterval, randomlyChooseElement, weightedRandomSample } from '../logic/numbers';
+import { DownloadSimple } from '@phosphor-icons/react';
+import { Svg, SVG } from '@svgdotjs/svg.js';
+import React, { useEffect, useState } from 'react';
 import tinycolor from 'tinycolor2';
-import { DownloadSimple } from 'phosphor-react';
+import { v4 as uuidv4 } from 'uuid';
 import { downloadAsSVG } from '../logic/export';
+import {
+    randomBool,
+    randomIntFromInterval,
+    randomlyChooseElement,
+    weightedRandomSample,
+} from '../logic/numbers';
 
 const squareSize = 75;
 
@@ -20,13 +25,27 @@ function getTwoColours(palette: string[]) {
     };
 }
 
-function Squiggles({ width, height, palette }: { width: number; height: number; palette: string[] }) {
+function Squiggles({
+    width,
+    height,
+    palette,
+}: {
+    width: number;
+    height: number;
+    palette: string[];
+}) {
     const svg: Svg = SVG();
     const elementId = `svg-${uuidv4()}`;
 
     const [canvas, setCanvas] = useState(svg);
 
-    function generativeGrid(svg: Svg, width: number, height: number, elementId: string, palette: string[]) {
+    function generativeGrid(
+        svg: Svg,
+        width: number,
+        height: number,
+        elementId: string,
+        palette: string[]
+    ) {
         function drawQuadrantCircle(x: number, y: number, size: number) {
             const { foreground, background } = getTwoColours(palette);
             const group = svg.group().addClass('quad-circle-block');
@@ -139,7 +158,9 @@ function Squiggles({ width, height, palette }: { width: number; height: number; 
 
     const downloadButtonSize = 7;
     const backgroundColour = tinycolor(palette[0]).desaturate(20).toString();
-    const contrastColour = tinycolor(backgroundColour).isLight() ? 'black' : 'white';
+    const contrastColour = tinycolor(backgroundColour).isLight()
+        ? 'black'
+        : 'white';
 
     return (
         <Center width={width} height={height}>
@@ -165,7 +186,10 @@ function Squiggles({ width, height, palette }: { width: number; height: number; 
                     aria-label={'Download Squiggles SVG'}
                     icon={<DownloadSimple weight={'bold'} />}
                     onClick={() => downloadAsSVG(canvas.svg())}
-                    _hover={{ background: backgroundColour, color: contrastColour }}
+                    _hover={{
+                        background: backgroundColour,
+                        color: contrastColour,
+                    }}
                 />
             </Box>
         </Center>
