@@ -1,6 +1,14 @@
-import { Center, Grid, GridItem, VStack } from '@chakra-ui/react';
+import {
+    Button,
+    Center,
+    Grid,
+    GridItem,
+    Tag,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
 import { Hand, HandFist, HandPeace } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import OnlineRoom, { useOnlineRoom } from '../../../websocket/OnlineRoom';
 import {
     Coordinate,
@@ -13,6 +21,7 @@ import {
 } from '../logic/data';
 import RpsChessGame from '../logic/game';
 import { ICommand, InitCmd } from '../logic/message';
+import Trie from '../logic/trie';
 
 const gameSize = 8;
 const squareSize = 40;
@@ -23,23 +32,43 @@ export interface IRpsChess {
 }
 
 export default function RpsChess({ isOnline = true }: IRpsChess): JSX.Element {
-    const [game, setGame] = useState<IGameState>({
+    const roomState = useOnlineRoom();
+
+    const [displayGameState, setDisplayGameState] = useState(
+        RpsChessGame.buildInitialPieces()
+    );
+    const [gameState, setGameState] = useState<IGameState>({
         remainingPieces: RpsChessGame.buildInitialPieces(),
         currentPlayer: undefined,
     });
-    const roomState = useOnlineRoom();
+    const game = new RpsChessGame({
+        ...gameState,
+        remainingPieces: displayGameState,
+    });
+    const [isWhite, setIsWhite] = useState(true);
+    const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+    const [path, setPath] = useState<Coordinate[]>([]);
+
+    const possibleMovesTrie: Trie | null = useMemo(() => {
+        if (path.length === 0) {
+            console.log(`useMemo trie: no initial piece selected`);
+            return null;
+        }
+        const trie = game.getPossibleMoves(path[0]);
+        console.log(
+            `useMemo trie: ${coordToString(path[0])} | nextMoves: ${
+                trie?.root?.toString() || null
+            }`
+        );
+        return trie;
+    }, [path.length > 0 ? path[0] : null]);
 
     function handleNewMessage(message: ICommand): void {
         switch (message.action) {
             case 'INIT': {
                 const data = message.data as InitCmd;
-                console.log(
-                    `pieces in data: ${[
-                        ...data.gameState.remainingPieces.entries(),
-                    ]}`
-                );
-
-                setGame({ ...data.gameState });
+                setDisplayGameState(data.gameState.remainingPieces);
+                setGameState({ ...data.gameState });
                 break;
             }
             case 'MOVE': {
@@ -60,6 +89,36 @@ export default function RpsChess({ isOnline = true }: IRpsChess): JSX.Element {
         }
     }
 
+    function RenderedSquare(colIndex: number, rowIndex: number): JSX.Element {
+        // boardCoordinate corresponds to that in the board state in the backend
+        const boardCoordinate = newCoord(colIndex, rowIndex);
+        // displayCoordinate helps the frontend renders the board
+        // as how normal chess players tend to view coordinates
+        const displayCoordinate = getDisplayCoordFromBoardCoord(
+            boardCoordinate,
+            isWhite
+        );
+        const maybePiece =
+            displayGameState.get(coordToString(boardCoordinate)) || undefined;
+        return (
+            <Square
+                displayCoord={displayCoordinate}
+                boardCoord={boardCoordinate}
+                payload={{ piece: maybePiece }}
+                highlightSign={false}
+                handleClick={(boardCoord) => {
+                    if (!maybePiece) {
+                        setPath([]);
+                    } else {
+                        setPath([boardCoord]);
+                    }
+                    console.log(`clicked ${coordToString(boardCoord)}`);
+                }}
+                key={rowIndex * gameSize + colIndex}
+            />
+        );
+    }
+
     return (
         <VStack>
             {isOnline && (
@@ -69,48 +128,52 @@ export default function RpsChess({ isOnline = true }: IRpsChess): JSX.Element {
                 />
             )}
 
-            <Center boxSize={'100%'}>
+            <VStack boxSize={'100%'}>
                 <Grid
                     boxSize={boardSize}
                     templateColumns={`repeat(${gameSize}, 1fr)`}
                 >
                     {Array.from({ length: gameSize }).map((_, rowIndex) => {
                         return Array.from({ length: gameSize }).map(
-                            (_, colIndex) => {
-                                {
-                                    /* TODO: flip the board if starting first */
-                                }
-                                const displayCoordinate = newCoord(
-                                    colIndex,
-                                    rowIndex
-                                );
-                                const boardCoordinate = newCoord(
-                                    colIndex,
-                                    rowIndex
-                                );
-                                const maybePiece =
-                                    game.remainingPieces.get(
-                                        coordToString(boardCoordinate)
-                                    ) || undefined;
-                                return (
-                                    <Square
-                                        displayCoord={displayCoordinate}
-                                        boardCoord={boardCoordinate}
-                                        payload={{ piece: maybePiece }}
-                                        highlightSign={false}
-                                        handleClick={() =>
-                                            console.log('clicked')
-                                        }
-                                        key={rowIndex * gameSize + colIndex}
-                                    />
-                                );
-                            }
+                            (_, colIndex) => RenderedSquare(colIndex, rowIndex)
                         );
                     })}
                 </Grid>
-            </Center>
+
+                {isPlayerTurn ? (
+                    <Tag colorScheme={'teal'} variant={'solid'} rounded={'xl'}>
+                        <Text>Your Turn</Text>
+                    </Tag>
+                ) : (
+                    <Tag
+                        colorScheme={'teal'}
+                        variant={'outline'}
+                        rounded={'xl'}
+                    >
+                        <Text>Waiting...</Text>
+                    </Tag>
+                )}
+                <Button
+                    onClick={() => {
+                        setIsWhite(!isWhite);
+                        setIsPlayerTurn(!isPlayerTurn);
+                    }}
+                >
+                    Flip board
+                </Button>
+            </VStack>
         </VStack>
     );
+}
+
+function getDisplayCoordFromBoardCoord(
+    boardCoord: Coordinate,
+    isWhite: boolean
+): Coordinate {
+    const [colIndex, rowIndex] = [boardCoord.x, boardCoord.y];
+    return isWhite
+        ? newCoord(colIndex, gameSize - 1 - rowIndex)
+        : newCoord(gameSize - 1 - colIndex, rowIndex);
 }
 
 export interface ISquareProps {
@@ -119,27 +182,35 @@ export interface ISquareProps {
     payload: IDiceProps | null;
     highlightSign: boolean;
 
-    handleClick(): void;
+    handleClick(boardCoord: Coordinate): void;
 }
 
 function Square(props: ISquareProps): JSX.Element {
     const squareSizePx = `${squareSize}px`;
 
+    const clickHandler = () => {
+        props.handleClick(props.boardCoord);
+    };
+
     return (
         <GridItem
-            onClick={props.handleClick}
+            onClick={clickHandler}
             boxSize={squareSizePx}
             rowSpan={1}
             colSpan={1}
             rowStart={props.displayCoord.y + 1}
             colStart={props.displayCoord.x + 1}
-            // border={`1px black solid`}
         >
             <Center
                 w={'100%'}
                 h={'100%'}
                 backgroundColor={getSquareColor(props.boardCoord)}
             >
+                <Center position={'absolute'} zIndex={1} h={'2px'}>
+                    <Text fontSize={'xs'}>
+                        {coordToString(props.boardCoord)}
+                    </Text>
+                </Center>
                 {props.payload && <Dice {...props.payload} />}
             </Center>
         </GridItem>
@@ -161,11 +232,12 @@ interface IDiceProps {
 }
 
 function Dice(props: IDiceProps): JSX.Element {
+    const iconPadding = 4;
     if (!props.piece) {
         return <></>;
     }
     function icon(iconProps: any): JSX.Element {
-        switch (props.piece!.topFace) {
+        switch (props.piece!.getDisplay()) {
             case DiceFace.SCISSOR:
                 return <HandPeace {...iconProps} />;
             case DiceFace.ROCK:
@@ -185,10 +257,10 @@ function Dice(props: IDiceProps): JSX.Element {
                     : PlayerColor.WHITE
             }
             rounded={4}
-            p={'2px'}
+            p={`${iconPadding}px`}
         >
             {icon({
-                size: squareSize - 12,
+                size: squareSize - iconPadding * 2,
             })}
         </Center>
     );
