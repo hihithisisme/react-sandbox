@@ -5,7 +5,7 @@ import Layout from '../features/structural/components/Layout';
 function EpochPage() {
     return (
         <Layout>
-            <Flex py={5} px={5} justify={'center'}>
+            <Flex py={4} px={[8, 16]} justify={'start'}>
                 <EpochConverter />
             </Flex>
         </Layout>

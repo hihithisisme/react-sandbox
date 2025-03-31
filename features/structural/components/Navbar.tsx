@@ -305,6 +305,10 @@ interface NavItem {
 
 const NAV_ITEMS: Array<NavItem> = [
     {
+        label: 'Timezone Converter',
+        href: '/epoch',
+    },
+    {
         label: 'Spirit Blights',
         href: '/spirit-island/blights',
     },

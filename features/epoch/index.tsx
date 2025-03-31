@@ -1,32 +1,44 @@
+import {
+    Divider,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    IconButton,
+    Input,
+    InputGroup,
+    InputRightElement,
+    Stack,
+    useClipboard,
+} from '@chakra-ui/react';
+import { CheckSquare, Copy } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
-import styles from './styles.module.scss';
 import { parseTime } from './time';
 
-interface TimezoneRow {
-    id: number;
+interface TimezoneRowData {
+    label: string;
     timezone: string;
-    convertedTime: string;
+    convertedTime?: string;
 }
 
 export default function EpochConverter() {
     const [timeInput, setTimeInput] = useState('');
-    const [utcTime, setUtcTime] = useState('');
-    const [localTime, setLocalTime] = useState('');
-    const [timezoneRows, setTimezoneRows] = useState<TimezoneRow[]>([]);
-    const [timezones, setTimezones] = useState<string[]>([]);
+    // TODO: initialize TimezoneRows with browser's localstorage or default to local + UTC
+    // const [localTime, setLocalTime] = useState('');
+    const [timezoneRows, setTimezoneRows] = useState<TimezoneRowData[]>([]);
 
-    // Populate timezones on component mount
     useEffect(() => {
         // TODO: Somehow this is showing up as an error, but it works
-        const supportedTimezones = Intl.supportedValuesOf('timeZone');
-        setTimezones(supportedTimezones);
+        // const supportedTimezones = Intl.supportedValuesOf('timeZone');
 
         // Initial timezone row
         setTimezoneRows([
             {
-                id: 0,
-                timezone: '',
-                convertedTime: '',
+                label: 'Local',
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            },
+            {
+                label: 'UTC',
+                timezone: 'UTC',
             },
         ]);
     }, []);
@@ -36,10 +48,6 @@ export default function EpochConverter() {
         const parsedTime = parseTime(timeInput);
 
         if (parsedTime) {
-            // Set UTC and local times
-            setUtcTime(parsedTime.toUTCString());
-            setLocalTime(parsedTime.toString());
-
             // Convert for additional timezones
             const updatedRows = timezoneRows.map((row) => {
                 if (row.timezone) {
@@ -51,6 +59,7 @@ export default function EpochConverter() {
                             }),
                         };
                     } catch (error) {
+                        console.log('Invalid Timezone', error);
                         return {
                             ...row,
                             convertedTime: 'Invalid Timezone',
@@ -62,15 +71,7 @@ export default function EpochConverter() {
 
             setTimezoneRows(updatedRows);
         } else {
-            // Reset times if parsing fails
-            setUtcTime('Invalid Time Format');
-            setLocalTime('Invalid Time Format');
-
-            const resetRows = timezoneRows.map((row) => ({
-                ...row,
-                convertedTime: '',
-            }));
-            setTimezoneRows(resetRows);
+            // TODO: Reset times if parsing fails. Or maybe let's not act on any difference?
         }
     }, [timeInput, timezoneRows.length]);
 
@@ -79,9 +80,9 @@ export default function EpochConverter() {
         setTimezoneRows((prev) => [
             ...prev,
             {
-                id: prev.length,
+                order: prev.length,
+                label: 'New Timezone',
                 timezone: '',
-                convertedTime: '',
             },
         ]);
     };
@@ -89,80 +90,113 @@ export default function EpochConverter() {
     // Remove a timezone row
     const removeTimezoneRow = (id: number) => {
         if (timezoneRows.length > 1) {
-            setTimezoneRows((prev) => prev.filter((row) => row.id !== id));
+            setTimezoneRows((prev) => {
+                prev.splice(id, 1);
+                return prev;
+            });
         }
     };
 
     // Update timezone for a specific row
-    const updateTimezone = (id: number, timezone: string) => {
-        setTimezoneRows((prev) =>
-            prev.map((row) => (row.id === id ? { ...row, timezone } : row))
-        );
+    const updateTimezone = (id: number, newData: TimezoneRowData) => {
+        setTimezoneRows((prev) => {
+            prev[id] = { ...prev[id], ...newData };
+            return prev;
+        });
     };
 
     return (
-        <div className={styles.timezoneConverter}>
-            <div className={styles.timezoneConverterContainer}>
-                <h1>Timezone Converter</h1>
-
-                <div className={styles.timezoneConverterRow}>
-                    <input
-                        type="text"
-                        placeholder="Enter time (ISO, epoch)"
-                        value={timeInput}
-                        onChange={(e) => setTimeInput(e.target.value)}
-                    />
-                </div>
-
-                {timezoneRows.map((row) => (
-                    <div key={row.id} className={styles.timezoneConverterRow}>
-                        <select
-                            value={row.timezone}
-                            onChange={(e) =>
-                                updateTimezone(row.id, e.target.value)
-                            }
-                        >
-                            <option value="">Select Timezone</option>
-                            {timezones.map((tz) => (
-                                <option key={tz} value={tz}>
-                                    {tz}
-                                </option>
-                            ))}
-                        </select>
-                        <input
+        <Stack>
+            <Stack direction={'column'} spacing={4}>
+                <FormControl>
+                    <FormLabel htmlFor="time-input">
+                        Flexible Time Input
+                    </FormLabel>
+                    <InputGroup>
+                        <Input
+                            id="time-input"
                             type="text"
-                            value={row.convertedTime}
-                            readOnly
-                            placeholder="Converted Time"
+                            onChange={(e) => {
+                                console.log('time input', e.target.value);
+                                setTimeInput(e.target.value);
+                            }}
+                            value={timeInput}
                         />
-                        <button
-                            className={`${styles.timezoneConverterRowButton} ${styles.timezoneConverterRowButtonRemove}`}
-                            onClick={() => removeTimezoneRow(row.id)}
-                        >
-                            Remove
-                        </button>
-                    </div>
-                ))}
+                    </InputGroup>
+                    <FormHelperText>
+                        Put in your time and we will attempt to convert it.
+                    </FormHelperText>
+                </FormControl>
 
-                <div className={styles.timezoneConverterRow}>
-                    <button
-                        className={`${styles.timezoneConverterRowButton} ${styles.timezoneConverterRowButtonAdd}`}
-                        onClick={addTimezoneRow}
-                    >
-                        Add Timezone
-                    </button>
-                </div>
+                <Divider />
 
-                <div className={styles.timezoneConverterRow}>
-                    <label>UTC Time: </label>
-                    <input type="text" value={utcTime} readOnly />
-                </div>
+                {timezoneRows.map((row, index) => {
+                    return (
+                        <TimezoneRow
+                            key={index}
+                            index={index}
+                            data={row}
+                            // TODO: variant based on config
+                            variant={TimezoneRowVariant.CONCISE}
+                        />
+                    );
+                })}
+            </Stack>
+        </Stack>
+    );
+}
 
-                <div className={styles.timezoneConverterRow}>
-                    <label>Local Time: </label>
-                    <input type="text" value={localTime} readOnly />
-                </div>
-            </div>
-        </div>
+enum TimezoneRowVariant {
+    CONCISE,
+    COMFORTABLE,
+}
+
+interface TimezoneRowProps {
+    index: number;
+    data: TimezoneRowData;
+    variant: TimezoneRowVariant;
+}
+
+function TimezoneRow({ index, data, variant }: TimezoneRowProps) {
+    const label =
+        data.label == data.timezone
+            ? data.label
+            : `${data.label} (${data.timezone})`;
+    return (
+        <FormControl>
+            <FormLabel htmlFor={`timezone-${index}`}>{label}</FormLabel>
+            <InputGroup>
+                <Input
+                    isReadOnly
+                    // disable normal focus styling for readOnly
+                    _focus={{
+                        borderColor: 'blue.500',
+                    }}
+                    variant={'filled'}
+                    id={`timezone-${index}`}
+                    value={data.convertedTime}
+                />
+                <InputRightElement
+                    children={<CopyButton value={data.convertedTime} />}
+                />
+            </InputGroup>
+        </FormControl>
+    );
+}
+
+interface CopyButtonProps {
+    value?: string;
+}
+
+function CopyButton({ value }: CopyButtonProps) {
+    const { hasCopied, onCopy } = useClipboard(value || '');
+    return (
+        <IconButton
+            size={'sm'}
+            aria-label="Copy"
+            onClick={onCopy}
+            fontSize={'lg'}
+            icon={hasCopied ? <CheckSquare /> : <Copy />}
+        />
     );
 }
