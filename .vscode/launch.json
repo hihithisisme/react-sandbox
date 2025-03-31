@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Server-side",
+            "port": 9230,
+            "request": "attach",
+            "skipFiles": ["<node_internals>/**"],
+            "type": "node"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Chrome (client-side)",
+            "url": "http://localhost:3000/epoch",
+            "webRoot": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full stack",
+            "configurations": ["Chrome (client-side)", "Server-side"],
+            "stopAll": true
+        }
+    ]
+}
