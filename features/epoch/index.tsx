@@ -1,8 +1,11 @@
 import {
+    Box,
     Divider,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
+    FormLabelProps,
     IconButton,
     Input,
     InputGroup,
@@ -76,13 +79,14 @@ export default function EpochConverter() {
     }, [timeInput, timezoneRows.length]);
 
     // Add a new timezone row
-    const addTimezoneRow = () => {
+    const addTimezoneRow = (timezone: string) => {
         setTimezoneRows((prev) => [
             ...prev,
             {
                 order: prev.length,
                 label: 'New Timezone',
-                timezone: '',
+                // TODO: normalize timezone
+                timezone,
             },
         ]);
     };
@@ -117,7 +121,6 @@ export default function EpochConverter() {
                             id="time-input"
                             type="text"
                             onChange={(e) => {
-                                console.log('time input', e.target.value);
                                 setTimeInput(e.target.value);
                             }}
                             value={timeInput}
@@ -136,11 +139,21 @@ export default function EpochConverter() {
                             key={index}
                             index={index}
                             data={row}
+                            updateTimezone={(newData) =>
+                                updateTimezone(index, newData)
+                            }
                             // TODO: variant based on config
                             variant={TimezoneRowVariant.CONCISE}
                         />
                     );
                 })}
+                <TimezoneRow
+                    key={timezoneRows.length}
+                    index={timezoneRows.length}
+                    data={{ label: '', timezone: '' }}
+                    variant={TimezoneRowVariant.CONCISE}
+                    updateTimezone={() => {}}
+                />
             </Stack>
         </Stack>
     );
@@ -155,20 +168,48 @@ interface TimezoneRowProps {
     index: number;
     data: TimezoneRowData;
     variant: TimezoneRowVariant;
+    updateTimezone(newData: TimezoneRowData): void;
 }
 
-function TimezoneRow({ index, data, variant }: TimezoneRowProps) {
-    const label =
-        data.label == data.timezone
-            ? data.label
-            : `${data.label} (${data.timezone})`;
+function TimezoneRow({
+    index,
+    data,
+    variant,
+    updateTimezone,
+}: TimezoneRowProps) {
+    const showLabel = data.label === data.timezone;
+
     return (
         <FormControl>
-            <FormLabel htmlFor={`timezone-${index}`}>{label}</FormLabel>
+            <Box>
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <EditableFormLabel
+                        htmlFor={`timezone-${index}`}
+                        initialLabel={data.label}
+                        onLabelChange={(newLabel) => {
+                            updateTimezone({ ...data, label: newLabel });
+                        }}
+                        cursor="pointer"
+                        labelAlignment="left"
+                    />
+                    <EditableFormLabel
+                        htmlFor={`timezone-${index}`}
+                        initialLabel={data.timezone}
+                        onLabelChange={(newLabel) => {
+                            updateTimezone({ ...data, timezone: newLabel });
+                        }}
+                        cursor="pointer"
+                        labelAlignment="right"
+                    />
+                </Box>
+            </Box>
             <InputGroup>
                 <Input
                     isReadOnly
-                    // disable normal focus styling for readOnly
                     _focus={{
                         borderColor: 'blue.500',
                     }}
@@ -183,6 +224,111 @@ function TimezoneRow({ index, data, variant }: TimezoneRowProps) {
         </FormControl>
     );
 }
+interface EditableFormLabelProps {
+    initialLabel: string;
+    onLabelChange: (newLabel: string) => void;
+    htmlFor: string;
+    labelAlignment: 'left' | 'right';
+}
+
+function EditableFormLabel(props: EditableFormLabelProps & FormLabelProps) {
+    const { initialLabel, onLabelChange, htmlFor, labelAlignment } = props;
+    const [isEditing, setIsEditing] = useState(false);
+    const [editableLabel, setEditableLabel] = useState(initialLabel);
+
+    const handleLabelClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditableLabel(e.target.value);
+        onLabelChange(editableLabel);
+    };
+
+    const handleBlur = () => {
+        setIsEditing(false);
+    };
+
+    return (
+        <Flex
+            alignItems="center"
+            ml={labelAlignment === 'right' ? 'auto' : undefined}
+            mr={labelAlignment === 'left' ? 'auto' : undefined}
+        >
+            {isEditing ? (
+                <Input
+                    autoFocus
+                    value={editableLabel}
+                    onChange={handleLabelChange}
+                    onBlur={handleBlur}
+                    variant="unstyled"
+                    textAlign={labelAlignment}
+                    fontStyle={'italic'}
+                />
+            ) : (
+                <FormLabel
+                    htmlFor={htmlFor}
+                    onClick={handleLabelClick}
+                    cursor="pointer"
+                    mr={1}
+                    my={1}
+                    textAlign={labelAlignment}
+                >
+                    {editableLabel}
+                </FormLabel>
+            )}
+        </Flex>
+    );
+}
+
+// // TODO: should this be just reusing TimezoneRow? Editable label and timezones
+// function NewTimezoneRow({
+//     addTimezoneRow,
+// }: {
+//     addTimezoneRow: (timezone: string) => void;
+// }) {
+//     const [timezone, setTimezone] = useState('');
+
+//     const handleClick = (
+//         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+//     ) => {
+//         if (!!timezone) {
+//             addTimezoneRow(timezone);
+//         }
+//     };
+//     return (
+//         <FormControl>
+//             {/* <FormLabel htmlFor={`timezone-${index}`}>{label}</FormLabel> */}
+//             <InputGroup>
+//                 <FormLabel htmlFor={'new-timezone'}>kldsjf</FormLabel>
+//                 {/* TODO: change to autocomplete */}
+//                 <Input
+//                     // // disable normal focus styling for readOnly
+//                     // _focus={{
+//                     //     borderColor: 'blue.500',
+//                     // }}
+//                     id={'new-timezone'}
+//                     borderEndRadius={'full'}
+//                     variant={'outline'}
+//                     placeholder={'Add new timezone'}
+//                     value={timezone}
+//                     onChange={(e) => setTimezone(e.target.value)}
+//                 />
+//                 <InputRightElement>
+//                     <Box>
+//                         <IconButton
+//                             borderRadius={'full'}
+//                             onClick={handleClick}
+//                             icon={<PlusCircle />}
+//                             isDisabled={!timezone}
+//                             aria-label={'add timezone'}
+//                         />
+//                     </Box>
+//                 </InputRightElement>
+//             </InputGroup>
+//         </FormControl>
+//     );
+// }
 
 interface CopyButtonProps {
     value?: string;
