@@ -18,3 +18,18 @@ export function parseTime(input: string): Date | null {
     // If no parsing succeeded
     return null;
 }
+
+export function convertToTimezone(
+    parsedTime?: Date,
+    timeZone?: string
+): string {
+    if (!parsedTime) return '';
+
+    try {
+        return parsedTime.toLocaleString('en-US', {
+            timeZone,
+        });
+    } catch (error) {
+        return 'Invalid timezone';
+    }
+}

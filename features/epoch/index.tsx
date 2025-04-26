@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     Divider,
     Flex,
     FormControl,
@@ -11,20 +12,22 @@ import {
     InputGroup,
     InputRightElement,
     Stack,
+    Text,
     useClipboard,
 } from '@chakra-ui/react';
 import { CheckSquare, Copy } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
-import { parseTime } from './time';
+import { useEffect, useRef, useState } from 'react';
+import { convertToTimezone, parseTime } from './time';
 
 interface TimezoneRowData {
     label: string;
     timezone: string;
-    convertedTime?: string;
+    // convertedTime?: string;
 }
 
 export default function EpochConverter() {
     const [timeInput, setTimeInput] = useState('');
+    const parsedTime = parseTime(timeInput) || undefined;
     // TODO: initialize TimezoneRows with browser's localstorage or default to local + UTC
     // const [localTime, setLocalTime] = useState('');
     const [timezoneRows, setTimezoneRows] = useState<TimezoneRowData[]>([]);
@@ -46,49 +49,9 @@ export default function EpochConverter() {
         ]);
     }, []);
 
-    // Convert time whenever input changes
-    useEffect(() => {
-        const parsedTime = parseTime(timeInput);
-
-        if (parsedTime) {
-            // Convert for additional timezones
-            const updatedRows = timezoneRows.map((row) => {
-                if (row.timezone) {
-                    try {
-                        return {
-                            ...row,
-                            convertedTime: parsedTime.toLocaleString('en-US', {
-                                timeZone: row.timezone,
-                            }),
-                        };
-                    } catch (error) {
-                        console.log('Invalid Timezone', error);
-                        return {
-                            ...row,
-                            convertedTime: 'Invalid Timezone',
-                        };
-                    }
-                }
-                return row;
-            });
-
-            setTimezoneRows(updatedRows);
-        } else {
-            // TODO: Reset times if parsing fails. Or maybe let's not act on any difference?
-        }
-    }, [timeInput, timezoneRows.length]);
-
     // Add a new timezone row
-    const addTimezoneRow = (timezone: string) => {
-        setTimezoneRows((prev) => [
-            ...prev,
-            {
-                order: prev.length,
-                label: 'New Timezone',
-                // TODO: normalize timezone
-                timezone,
-            },
-        ]);
+    const appendTimezoneRow = (timezoneData: TimezoneRowData) => {
+        setTimezoneRows((prev) => [...prev, timezoneData]);
     };
 
     // Remove a timezone row
@@ -105,7 +68,7 @@ export default function EpochConverter() {
     const updateTimezone = (id: number, newData: TimezoneRowData) => {
         setTimezoneRows((prev) => {
             prev[id] = { ...prev[id], ...newData };
-            return prev;
+            return [...prev];
         });
     };
 
@@ -125,6 +88,18 @@ export default function EpochConverter() {
                             }}
                             value={timeInput}
                         />
+                        <InputRightElement>
+                            <Button
+                                mr={1}
+                                size="sm"
+                                onClick={() =>
+                                    // set to current epoch ms
+                                    setTimeInput(Date.now().toString())
+                                }
+                            >
+                                <Text textAlign={'right'}>now</Text>
+                            </Button>
+                        </InputRightElement>
                     </InputGroup>
                     <FormHelperText>
                         Put in your time and we will attempt to convert it.
@@ -138,10 +113,11 @@ export default function EpochConverter() {
                         <TimezoneRow
                             key={index}
                             index={index}
-                            data={row}
+                            timezoneRowData={row}
                             updateTimezone={(newData) =>
                                 updateTimezone(index, newData)
                             }
+                            inputTime={parsedTime}
                             // TODO: variant based on config
                             variant={TimezoneRowVariant.CONCISE}
                         />
@@ -150,9 +126,9 @@ export default function EpochConverter() {
                 <TimezoneRow
                     key={timezoneRows.length}
                     index={timezoneRows.length}
-                    data={{ label: '', timezone: '' }}
+                    timezoneRowData={{ label: '', timezone: '' }}
                     variant={TimezoneRowVariant.CONCISE}
-                    updateTimezone={() => {}}
+                    updateTimezone={(data) => appendTimezoneRow(data)}
                 />
             </Stack>
         </Stack>
@@ -166,18 +142,23 @@ enum TimezoneRowVariant {
 
 interface TimezoneRowProps {
     index: number;
-    data: TimezoneRowData;
+    timezoneRowData: TimezoneRowData;
     variant: TimezoneRowVariant;
     updateTimezone(newData: TimezoneRowData): void;
+    inputTime?: Date;
 }
 
 function TimezoneRow({
     index,
-    data,
+    timezoneRowData,
     variant,
     updateTimezone,
+    inputTime,
 }: TimezoneRowProps) {
-    const showLabel = data.label === data.timezone;
+    const convertedTime = convertToTimezone(
+        inputTime,
+        timezoneRowData.timezone
+    );
 
     return (
         <FormControl>
@@ -187,7 +168,8 @@ function TimezoneRow({
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <EditableFormLabel
+                    {/* FEAT: add 'rename' ghost (right-aligned) */}
+                    {/* <EditableFormLabel
                         htmlFor={`timezone-${index}`}
                         initialLabel={data.label}
                         onLabelChange={(newLabel) => {
@@ -195,15 +177,19 @@ function TimezoneRow({
                         }}
                         cursor="pointer"
                         labelAlignment="left"
-                    />
+                    /> */}
+                    {/* FEAT: modify to autocomplete timezone selector */}
                     <EditableFormLabel
                         htmlFor={`timezone-${index}`}
-                        initialLabel={data.timezone}
+                        initialLabel={timezoneRowData.timezone}
                         onLabelChange={(newLabel) => {
-                            updateTimezone({ ...data, timezone: newLabel });
+                            updateTimezone({
+                                ...timezoneRowData,
+                                timezone: newLabel,
+                            });
                         }}
                         cursor="pointer"
-                        labelAlignment="right"
+                        labelAlignment="left"
                     />
                 </Box>
             </Box>
@@ -215,10 +201,10 @@ function TimezoneRow({
                     }}
                     variant={'filled'}
                     id={`timezone-${index}`}
-                    value={data.convertedTime}
+                    value={convertedTime}
                 />
                 <InputRightElement
-                    children={<CopyButton value={data.convertedTime} />}
+                    children={<CopyButton value={convertedTime} />}
                 />
             </InputGroup>
         </FormControl>
@@ -233,6 +219,8 @@ interface EditableFormLabelProps {
 
 function EditableFormLabel(props: EditableFormLabelProps & FormLabelProps) {
     const { initialLabel, onLabelChange, htmlFor, labelAlignment } = props;
+
+    const thisRef = useRef<HTMLInputElement>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editableLabel, setEditableLabel] = useState(initialLabel);
 
@@ -242,11 +230,11 @@ function EditableFormLabel(props: EditableFormLabelProps & FormLabelProps) {
 
     const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditableLabel(e.target.value);
-        onLabelChange(editableLabel);
     };
 
     const handleBlur = () => {
         setIsEditing(false);
+        onLabelChange(editableLabel);
     };
 
     return (
@@ -257,13 +245,19 @@ function EditableFormLabel(props: EditableFormLabelProps & FormLabelProps) {
         >
             {isEditing ? (
                 <Input
+                    ref={thisRef}
                     autoFocus
-                    value={editableLabel}
-                    onChange={handleLabelChange}
-                    onBlur={handleBlur}
                     variant="unstyled"
                     textAlign={labelAlignment}
                     fontStyle={'italic'}
+                    value={editableLabel}
+                    onChange={handleLabelChange}
+                    onBlur={handleBlur}
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                            thisRef.current?.blur();
+                        }
+                    }}
                 />
             ) : (
                 <FormLabel
@@ -274,61 +268,12 @@ function EditableFormLabel(props: EditableFormLabelProps & FormLabelProps) {
                     my={1}
                     textAlign={labelAlignment}
                 >
-                    {editableLabel}
+                    {editableLabel || 'New Timezone'}
                 </FormLabel>
             )}
         </Flex>
     );
 }
-
-// // TODO: should this be just reusing TimezoneRow? Editable label and timezones
-// function NewTimezoneRow({
-//     addTimezoneRow,
-// }: {
-//     addTimezoneRow: (timezone: string) => void;
-// }) {
-//     const [timezone, setTimezone] = useState('');
-
-//     const handleClick = (
-//         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-//     ) => {
-//         if (!!timezone) {
-//             addTimezoneRow(timezone);
-//         }
-//     };
-//     return (
-//         <FormControl>
-//             {/* <FormLabel htmlFor={`timezone-${index}`}>{label}</FormLabel> */}
-//             <InputGroup>
-//                 <FormLabel htmlFor={'new-timezone'}>kldsjf</FormLabel>
-//                 {/* TODO: change to autocomplete */}
-//                 <Input
-//                     // // disable normal focus styling for readOnly
-//                     // _focus={{
-//                     //     borderColor: 'blue.500',
-//                     // }}
-//                     id={'new-timezone'}
-//                     borderEndRadius={'full'}
-//                     variant={'outline'}
-//                     placeholder={'Add new timezone'}
-//                     value={timezone}
-//                     onChange={(e) => setTimezone(e.target.value)}
-//                 />
-//                 <InputRightElement>
-//                     <Box>
-//                         <IconButton
-//                             borderRadius={'full'}
-//                             onClick={handleClick}
-//                             icon={<PlusCircle />}
-//                             isDisabled={!timezone}
-//                             aria-label={'add timezone'}
-//                         />
-//                     </Box>
-//                 </InputRightElement>
-//             </InputGroup>
-//         </FormControl>
-//     );
-// }
 
 interface CopyButtonProps {
     value?: string;
