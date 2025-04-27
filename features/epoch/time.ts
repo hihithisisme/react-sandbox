@@ -40,7 +40,6 @@ export function convertToTimezone(
     }
 
     timeZone = processOffsetString(timeZone);
-    console.log('timezone', timeZone);
 
     try {
         // passing locale as undefined defaults to the user's browser locale
@@ -53,12 +52,24 @@ export function convertToTimezone(
 }
 
 export function buildAllTimezones(): string[] {
-    // TODO: Somehow this is showing up as an error, but it works
-    const ianaTimezones = Intl.supportedValuesOf('timeZone');
+    let ianaTimezones: string[] = [];
+    try {
+        ianaTimezones = Intl.supportedValuesOf('timeZone');
+    } catch (error) {
+        console.error('Error getting IANA timezones:', error);
+    }
 
-    const gmtOffsets = Array.from;
+    const gmtOffsets = Array.from({ length: 24 })
+        .map((_, i) => {
+            const pos = i < 10 ? ` +0${i}` : ` +${i}`;
+            const neg = i < 10 ? ` -0${i}` : ` -${i}`;
+            return [GMT + pos, GMT + neg];
+        })
+        .flat();
 
-    return ianaTimezones.concat();
+    // FEAT: add short timezone abbreviations as well
+
+    return ianaTimezones.concat(...gmtOffsets).sort();
 }
 
 function processOffsetString(offset: string): string {
