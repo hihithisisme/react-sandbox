@@ -8,16 +8,25 @@ import {
     InputRightElement,
     Text,
 } from '@chakra-ui/react';
+import { useState } from 'react';
+import { parseTime } from '../time';
 
 export interface TimeInputFieldProps {
-    timeInput: string;
-    setTimeInput: (timeInput: string) => void;
+    setTimeInput: (timeInput: Date) => void;
 }
 
-export default function TimeInputField({
-    timeInput,
-    setTimeInput,
-}: TimeInputFieldProps) {
+export default function TimeInputField({ setTimeInput }: TimeInputFieldProps) {
+    const [inputValue, setInputValue] = useState<string>('');
+
+    const handleInputChange = (newValue: string) => {
+        setInputValue(newValue);
+        // Parse the input value
+        const parsedTime = parseTime(newValue) || undefined;
+        if (parsedTime) {
+            setTimeInput(parsedTime);
+        }
+    };
+
     return (
         <FormControl>
             <FormLabel htmlFor="time-input">Flexible Time Input</FormLabel>
@@ -25,10 +34,8 @@ export default function TimeInputField({
                 <Input
                     id="time-input"
                     type="text"
-                    onChange={(e) => {
-                        setTimeInput(e.target.value);
-                    }}
-                    value={timeInput}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    value={inputValue}
                 />
                 <InputRightElement>
                     <Button
@@ -36,7 +43,7 @@ export default function TimeInputField({
                         size="sm"
                         onClick={() =>
                             // set to current epoch ms
-                            setTimeInput(Date.now().toString())
+                            handleInputChange(Date.now().toString())
                         }
                     >
                         <Text textAlign={'right'}>now</Text>
