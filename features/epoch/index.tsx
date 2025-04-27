@@ -8,14 +8,10 @@ import TimezoneRow, {
 import { parseTime } from './time';
 
 export default function EpochConverter() {
-    const [timeInput, setTimeInput] = useState('');
-    const parsedTime = parseTime(timeInput) || undefined;
+    const [parsedTime, setParsedTime] = useState<Date | undefined>(undefined);
     const [timezoneRows, setTimezoneRows] = useState<TimezoneRowData[]>([]);
 
     useEffect(() => {
-        // TODO: Somehow this is showing up as an error, but it works
-        // const supportedTimezones = Intl.supportedValuesOf('timeZone');
-
         // Initial timezone row
         setTimezoneRows([
             {
@@ -52,10 +48,7 @@ export default function EpochConverter() {
     return (
         <Stack>
             <Stack direction={'column'} spacing={4}>
-                <TimeInputField
-                    timeInput={timeInput}
-                    setTimeInput={setTimeInput}
-                />
+                <TimeInputField setTimeInput={setParsedTime} />
 
                 <Divider />
 

@@ -86,6 +86,7 @@ export default function TimezoneRow({
                     }}
                     variant={'filled'}
                     id={`timezone-${index}`}
+                    // FEAT: consider allowing different time formats
                     value={convertedTime}
                 />
                 <InputRightElement
