@@ -11,8 +11,9 @@ import {
     useClipboard,
 } from '@chakra-ui/react';
 import { CheckSquare, Copy } from '@phosphor-icons/react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { convertToTimezone } from '../time';
+import TimezoneCombobox from './TimezoneCombobox';
 
 export enum TimezoneRowVariant {
     CONCISE,
@@ -107,8 +108,6 @@ function EditableFormLabel(
     props: EditableFormLabelProps & Partial<FormLabelProps>
 ) {
     const { initialLabel, onLabelChange, htmlFor, labelAlignment } = props;
-
-    const thisRef = useRef<HTMLInputElement>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editableLabel, setEditableLabel] = useState(initialLabel);
 
@@ -116,13 +115,15 @@ function EditableFormLabel(
         setIsEditing(true);
     };
 
-    const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEditableLabel(e.target.value);
-    };
-
     const handleBlur = () => {
         setIsEditing(false);
-        onLabelChange(editableLabel);
+    };
+
+    // once the label is selected, we can stop editing
+    const handleLabelChange = (newValue: string) => {
+        setEditableLabel(newValue);
+        onLabelChange(newValue);
+        setIsEditing(false);
     };
 
     return (
@@ -132,20 +133,25 @@ function EditableFormLabel(
             mr={labelAlignment === 'left' ? 'auto' : undefined}
         >
             {isEditing ? (
-                <Input
-                    ref={thisRef}
-                    autoFocus
-                    variant="unstyled"
-                    textAlign={labelAlignment}
-                    fontStyle={'italic'}
-                    value={editableLabel}
+                // <Input
+                //     ref={thisRef}
+                //     autoFocus
+                //     variant="unstyled"
+                //     textAlign={labelAlignment}
+                //     fontStyle={'italic'}
+                //     value={editableLabel}
+                //     onChange={handleLabelChange}
+                //     onBlur={handleBlur}
+                //     onKeyUp={(e) => {
+                //         if (e.key === 'Enter') {
+                //             thisRef.current?.blur();
+                //         }
+                //     }}
+                // />
+                <TimezoneCombobox
+                    inputValue={editableLabel}
                     onChange={handleLabelChange}
                     onBlur={handleBlur}
-                    onKeyUp={(e) => {
-                        if (e.key === 'Enter') {
-                            thisRef.current?.blur();
-                        }
-                    }}
                 />
             ) : (
                 <FormLabel

@@ -5,9 +5,8 @@ import TimezoneRow, {
     TimezoneRowData,
     TimezoneRowVariant,
 } from './components/TimezoneRow';
-import { parseTime } from './time';
 
-export default function EpochConverter() {
+export default function EpochConverter(): JSX.Element {
     const [parsedTime, setParsedTime] = useState<Date | undefined>(undefined);
     const [timezoneRows, setTimezoneRows] = useState<TimezoneRowData[]>([]);
 
@@ -46,37 +45,36 @@ export default function EpochConverter() {
     };
 
     return (
-        <Stack>
-            <Stack direction={'column'} spacing={4}>
-                <TimeInputField setTimeInput={setParsedTime} />
+        <Stack direction={'column'} spacing={4}>
+            <TimeInputField setTimeInput={setParsedTime} />
 
-                <Divider />
+            <Divider />
 
-                {timezoneRows.map((row, index) => {
-                    return (
-                        <TimezoneRow
-                            key={index}
-                            index={index}
-                            timezoneRowData={row}
-                            updateTimezone={(newData) =>
-                                updateTimezone(index, newData)
-                            }
-                            inputTime={parsedTime}
-                            // TODO: variant based on config
-                            variant={TimezoneRowVariant.CONCISE}
-                        />
-                    );
-                })}
+            {timezoneRows.map((row, index) => {
+                return (
+                    <TimezoneRow
+                        key={index}
+                        index={index}
+                        timezoneRowData={row}
+                        updateTimezone={(newData) =>
+                            updateTimezone(index, newData)
+                        }
+                        inputTime={parsedTime}
+                        // TODO: variant based on config
+                        variant={TimezoneRowVariant.CONCISE}
+                    />
+                );
+            })}
 
-                {/* FEAT: hide this behind a add row button */}
-                <TimezoneRow
-                    key={timezoneRows.length}
-                    index={timezoneRows.length}
-                    timezoneRowData={{ label: '', timezone: '' }}
-                    variant={TimezoneRowVariant.CONCISE}
-                    updateTimezone={(data) => appendTimezoneRow(data)}
-                />
-            </Stack>
+            {/* FEAT: hide this behind a add row button */}
+            <TimezoneRow
+                key={timezoneRows.length}
+                index={timezoneRows.length}
+                timezoneRowData={{ label: '', timezone: '' }}
+                variant={TimezoneRowVariant.CONCISE}
+                updateTimezone={(data) => appendTimezoneRow(data)}
+            />
+            {/* <TimezoneCombobox inputValue="GMT +08" onChange={() => {}} /> */}
         </Stack>
     );
 }
