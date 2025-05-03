@@ -142,7 +142,7 @@ function OnlineRoom(props: OnlineRoomProps) {
                 >
                     <ModalHeader>Play against your friend!</ModalHeader>
                     <ModalBody>
-                        <VStack p={3} spacing={6}>
+                        <VStack p={3} gap={6}>
                             <FormControl isRequired>
                                 <FormLabel>Username</FormLabel>
                                 <Input
@@ -172,7 +172,7 @@ function OnlineRoom(props: OnlineRoomProps) {
                     <ModalFooter>
                         <Stack
                             direction={{ base: 'column', md: 'row' }}
-                            spacing={3}
+                            gap={3}
                         >
                             <Button
                                 colorScheme="teal"

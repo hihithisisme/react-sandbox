@@ -1,14 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { Button, Center, Heading, Link, Text, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { ExternalLinkIcon, RepeatIcon } from '@chakra-ui/icons';
+import {
+    Button,
+    Center,
+    Heading,
+    Link,
+    Text,
+    useBreakpointValue,
+    VStack,
+} from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import tinycolor from 'tinycolor2';
-import { generateBackgroundImage, randomPalette } from '../../features/generative/logic/colours';
+import {
+    generateBackgroundImage,
+    randomPalette,
+} from '../../features/generative/logic/colours';
 import Layout from '../../features/structural/components/Layout';
 
-const DynamicComponent = dynamic(() => import('../../features/generative/components/Squiggles'), {
-    ssr: false,
-});
+const DynamicComponent = dynamic(
+    () => import('../../features/generative/components/Squiggles'),
+    {
+        ssr: false,
+    }
+);
 
 function Intro({ textColour }: { textColour: string }) {
     return (
@@ -18,8 +32,14 @@ function Intro({ textColour }: { textColour: string }) {
                     Squiggles
                 </Heading>
                 <Text color={textColour}>
-                    This is my first attempt as programmatically generative art. Credits to{' '}
-                    <Link href={'https://frontend.horse/articles/generative-grids/'} isExternal>
+                    This is my first attempt as programmatically generative art.
+                    Credits to{' '}
+                    <Link
+                        href={
+                            'https://frontend.horse/articles/generative-grids/'
+                        }
+                        isExternal
+                    >
                         this article
                         <ExternalLinkIcon mx="2px" />
                     </Link>{' '}
@@ -41,9 +61,13 @@ function SquigglesPage() {
     return (
         <Layout background={generateBackgroundImage(palette[0])}>
             <Center>
-                <VStack spacing={3} py={5}>
+                <VStack gap={3} py={5}>
                     <Intro textColour={textColour} />
-                    <DynamicComponent height={size} width={size} palette={palette} />
+                    <DynamicComponent
+                        height={size}
+                        width={size}
+                        palette={palette}
+                    />
                     <Button
                         backgroundColor={palette[0]}
                         color={textColour}

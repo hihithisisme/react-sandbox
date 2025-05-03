@@ -1,24 +1,41 @@
-import { Button, Center, Container, Flex, Heading, LinkBox, LinkOverlay, Stack, Text, VStack } from '@chakra-ui/react';
-import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
-import { randomPalette } from '../../generative/logic/colours';
 import { RepeatIcon } from '@chakra-ui/icons';
+import {
+    Button,
+    Center,
+    Container,
+    Flex,
+    Heading,
+    LinkBox,
+    LinkOverlay,
+    Stack,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import tinycolor from 'tinycolor2';
+import { randomPalette } from '../../generative/logic/colours';
 
 export default function CallToActionWithHero() {
     return (
         <Container maxW={'7xl'}>
             <Stack
                 align={'center'}
-                spacing={{ base: 8, md: 10 }}
+                gap={{ base: 8, md: 10 }}
                 py={{ base: 20, md: 28 }}
                 direction={{ base: 'column', md: 'row' }}
             >
-                <Stack flex={1} spacing={{ base: 5, md: 10 }}>
+                <Stack flex={1} gap={{ base: 5, md: 10 }}>
                     <CTAText />
                     <CTAButton />
                 </Stack>
-                <Flex flex={1} justify={'center'} align={'center'} position={'relative'} w={'full'}>
+                <Flex
+                    flex={1}
+                    justify={'center'}
+                    align={'center'}
+                    position={'relative'}
+                    w={'full'}
+                >
                     <HeroComponent />
                 </Flex>
             </Stack>
@@ -28,7 +45,11 @@ export default function CallToActionWithHero() {
 
 function Header() {
     return (
-        <Heading lineHeight={1.1} fontWeight={600} fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}>
+        <Heading
+            lineHeight={1.1}
+            fontWeight={600}
+            fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}
+        >
             {/*<Text*/}
             {/*    as={'span'}*/}
             {/*    position={'relative'}*/}
@@ -58,8 +79,9 @@ function CTAText() {
         <>
             <Header />
             <Text color={'gray.500'}>
-                Just playing around with web development. Not really trying to do anything. Something like a playground,
-                yeah? Hopefully, I will add more stuff as things go.
+                Just playing around with web development. Not really trying to
+                do anything. Something like a playground, yeah? Hopefully, I
+                will add more stuff as things go.
             </Text>
         </>
     );
@@ -67,7 +89,10 @@ function CTAText() {
 
 function CTAButton() {
     return (
-        <Stack spacing={{ base: 4, sm: 6 }} direction={{ base: 'column', sm: 'row' }}>
+        <Stack
+            gap={{ base: 4, sm: 6 }}
+            direction={{ base: 'column', sm: 'row' }}
+        >
             <LinkBox>
                 <Button
                     rounded={'full'}
@@ -78,16 +103,21 @@ function CTAButton() {
                     bg={'red.400'}
                     _hover={{ bg: 'red.500' }}
                 >
-                    <LinkOverlay href={'/generative/squiggles'}>Try it out!</LinkOverlay>
+                    <LinkOverlay href={'/generative/squiggles'}>
+                        Try it out!
+                    </LinkOverlay>
                 </Button>
             </LinkBox>
         </Stack>
     );
 }
 
-const Squiggles = dynamic(() => import('../../generative/components/Squiggles'), {
-    ssr: false,
-});
+const Squiggles = dynamic(
+    () => import('../../generative/components/Squiggles'),
+    {
+        ssr: false,
+    }
+);
 
 function HeroComponent() {
     const [palette, setPalette] = useState(['']);

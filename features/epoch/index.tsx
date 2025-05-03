@@ -45,7 +45,7 @@ export default function EpochConverter(): JSX.Element {
     };
 
     return (
-        <Stack direction={'column'} spacing={4}>
+        <Stack direction={'column'} gap={4}>
             <TimeInputField setTimeInput={setParsedTime} />
 
             <Divider />

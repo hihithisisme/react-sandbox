@@ -1,14 +1,19 @@
 import { Center, Grid, GridItem, HStack, Spinner, Stack, Tag, Text, VStack } from '@chakra-ui/react';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import { PlayerIcon } from '../../components/Square';
-import { boardSize, paddedBoardSize } from '../../components/BaseTicTacToe';
+import { Dispatch, SetStateAction } from 'react';
 import { Blob } from '../../../structural/components/Blob';
+import { boardSize, paddedBoardSize } from '../../components/BaseTicTacToe';
+import { PlayerIcon } from '../../components/Square';
+import {
+    getWinningLine,
+    hasGameEnded,
+    hasGameStarted,
+    otherPlayerSign,
+} from '../../logic/game';
+import { encodeSign } from '../../logic/squareSign';
+import { hasMovesLeft, IStackingGame } from '../logic/stackingGame';
 import DraggablePiece from './DraggablePiece';
 import DroppableSquare from './DroppableSquare';
-import { Dispatch, SetStateAction } from 'react';
-import { hasMovesLeft, IStackingGame } from '../logic/stackingGame';
-import { getWinningLine, hasGameEnded, hasGameStarted, otherPlayerSign } from '../../logic/game';
-import { encodeSign } from '../../logic/squareSign';
 
 export interface StackingTicTacToeProps extends IStackingGame {
     setGame: Dispatch<SetStateAction<IStackingGame>>;
@@ -74,7 +79,7 @@ function RemainingPieces(props: IStackingGame) {
             <HStack w={'100%'} px={6}>
                 <VStack alignItems={'start'} flex={1}>
                     {arr3.map((_, index) => (
-                        <HStack alignItems={'center'} spacing={2} key={index}>
+                        <HStack alignItems={'center'} gap={2} key={index}>
                             <Text>{props.playerRemainingPieces[index]}</Text>
                             <DraggablePiece
                                 id={index}
@@ -88,9 +93,12 @@ function RemainingPieces(props: IStackingGame) {
 
                 <VStack alignItems={'end'} flex={1}>
                     {arr3.map((_, index) => (
-                        <HStack alignItems={'center'} spacing={2} key={index}>
+                        <HStack alignItems={'center'} gap={2} key={index}>
                             <PlayerIcon
-                                signValue={encodeSign(otherPlayerSign(props.playerSign), index)}
+                                signValue={encodeSign(
+                                    otherPlayerSign(props.playerSign),
+                                    index
+                                )}
                                 isFocus={true}
                                 boxSize={`${index * 10 + 20}px`} //TODO: refactor this hardcoding boxSize
                             />

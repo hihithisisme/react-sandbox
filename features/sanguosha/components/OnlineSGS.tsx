@@ -1,5 +1,12 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Button, Center, Link, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react";
+import {
+    Button,
+    Center,
+    Link,
+    SimpleGrid,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
 import { useState } from "react";
 import OnlineRoom, { useOnlineRoom } from "../../../websocket/OnlineRoom";
 import { DrawCmd, InitCmd, SGSAction, ShowCmd, ShowRulerCmd } from "../logic/messages";
@@ -68,48 +75,41 @@ export default function OnlineSGS() {
         <VStack>
             <OnlineRoom handleNewMessage={handleNewMessage} {...roomState} />
 
-            {!ruler &&
-                (
-                    <Button onClick={rulerDeclaration}>
-                        I'm the Ruler!
-                    </Button>
-                )
-            }
+            {!ruler && (
+                <Button onClick={rulerDeclaration}>I'm the Ruler!</Button>
+            )}
             {/* TODO: implement proper info bar. Idea: Modal that you can expand to see Ruler's Hero */}
-            {
-                ruler && Object.keys(players).length === 1 && (
-                    <Center>
-                        <Text mr={1}>{`Ruler is ${ruler.username} and he chose `}</Text>
+            {ruler && Object.keys(players).length === 1 && (
+                <Center>
+                    <Text
+                        mr={1}
+                    >{`Ruler is ${ruler.username} and he chose `}</Text>
 
-                        <Text as={'u'}>
-                            <Link href={ruler.selectedHero?.url} isExternal>
-                                {`${ruler.selectedHero?.name}`}
-                                <ExternalLinkIcon mx={2} />
-                            </Link>
-                        </Text>
-                    </Center>
-                )
-            }
+                    <Text as={'u'}>
+                        <Link href={ruler.selectedHero?.url} isExternal>
+                            {`${ruler.selectedHero?.name}`}
+                            <ExternalLinkIcon mx={2} />
+                        </Link>
+                    </Text>
+                </Center>
+            )}
 
-            {
-                !heroChoices ? (
-                    <SimpleGrid spacing={3} columns={{ base: 1, sm: 3 }}>
-                        {players.map((player: SGSPlayer, idx: number) => {
-                            return (
-                                <HeroCard
-                                    key={idx}
-                                    hero={player.selectedHero!}
-                                    ownerUsername={player.username}
-                                    isRuler={player.id === ruler!.id}
-                                />
-                            )
-                        })}
-                    </SimpleGrid>
-                ) : (
-                    <HeroCards heroes={heroChoices} onSubmit={onHeroSubmit} />
-                )
-            }
-
+            {!heroChoices ? (
+                <SimpleGrid gap={3} columns={{ base: 1, sm: 3 }}>
+                    {players.map((player: SGSPlayer, idx: number) => {
+                        return (
+                            <HeroCard
+                                key={idx}
+                                hero={player.selectedHero!}
+                                ownerUsername={player.username}
+                                isRuler={player.id === ruler!.id}
+                            />
+                        );
+                    })}
+                </SimpleGrid>
+            ) : (
+                <HeroCards heroes={heroChoices} onSubmit={onHeroSubmit} />
+            )}
         </VStack>
-    )
+    );
 }

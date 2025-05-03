@@ -10,7 +10,7 @@ import {
     Wrap,
     WrapItem,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { randomlyChooseElement } from '../../features/generative/logic/numbers';
 import {
     BlightDisplayCard,
@@ -19,7 +19,7 @@ import {
 } from '../../features/spirit-island/BlightDisplayCard';
 import Layout from '../../features/structural/components/Layout';
 
-function Intro({}: {}) {
+function Intro() {
     return (
         <Center w={'100vw'} py={3} px={5} backgroundColor={'rgba(0, 0, 0, .1)'}>
             <Center maxW={600} flexDirection={'column'}>
@@ -55,7 +55,7 @@ function SpiritBlightsPage() {
     return (
         <Layout>
             <Center>
-                <VStack spacing={3} py={5}>
+                <VStack gap={3} py={5}>
                     <Intro />
 
                     {/* main display */}

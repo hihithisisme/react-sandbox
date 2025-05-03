@@ -56,34 +56,49 @@ function OwnerTag({ username, isRuler }: { username: string, isRuler?: boolean }
 export function HeroCard(props: HeroCardProps) {
     const { hero, onSubmit } = props;
     return (
-        <VStack p={5} rounded={10} borderWidth={2} shadow='md' spacing={3} bg={'blackAlpha.50'}        >
-            <Heading as='h2'>
+        <VStack
+            p={5}
+            rounded={10}
+            borderWidth={2}
+            shadow="md"
+            gap={3}
+            bg={'blackAlpha.50'}
+        >
+            <Heading as="h2">
                 <Link href={hero.url} isExternal>
                     {hero.name}
                     <ExternalLinkIcon mx={2} />
                 </Link>
             </Heading>
-            {
-                props.ownerUsername && <OwnerTag username={props.ownerUsername} isRuler={props.isRuler} />
-            }
-            <Image src={hero.imgUrl} w='80%' />
-            {
-                hero.ability.map((a, idx) => {
-                    return (
-                        <Box key={idx}>
-                            <Divider />
-                            <Heading as={'h3'} size={'sm'}>{a.title}</Heading>
-                            <Text>{a.description}</Text>
-                        </Box>
-                    )
-                })
-            }
-            {
-                onSubmit &&
-                <Button colorScheme={'teal'} variant={"solid"} onClick={() => onSubmit(hero)}>Select!</Button>
-            }
-        </VStack >
-    )
+            {props.ownerUsername && (
+                <OwnerTag
+                    username={props.ownerUsername}
+                    isRuler={props.isRuler}
+                />
+            )}
+            <Image src={hero.imgUrl} w="80%" />
+            {hero.ability.map((a, idx) => {
+                return (
+                    <Box key={idx}>
+                        <Divider />
+                        <Heading as={'h3'} size={'sm'}>
+                            {a.title}
+                        </Heading>
+                        <Text>{a.description}</Text>
+                    </Box>
+                );
+            })}
+            {onSubmit && (
+                <Button
+                    colorScheme={'teal'}
+                    variant={'solid'}
+                    onClick={() => onSubmit(hero)}
+                >
+                    Select!
+                </Button>
+            )}
+        </VStack>
+    );
 }
 
 // TODO: shift functionality to websockets + cookies
@@ -119,14 +134,12 @@ export function HeroCards(props: HeroCardsProps) {
 
 
     return (
-        <SimpleGrid spacing={3} columns={{ base: 1, sm: 3 }}>
-            {
-                props.heroes.map(
-                    (hero, idx) => <HeroCard key={idx} hero={hero} onSubmit={props.onSubmit} />
-                )
-            }
+        <SimpleGrid gap={3} columns={{ base: 1, sm: 3 }}>
+            {props.heroes.map((hero, idx) => (
+                <HeroCard key={idx} hero={hero} onSubmit={props.onSubmit} />
+            ))}
         </SimpleGrid>
-    )
+    );
 }
 
 export default function SanGuoSha(props: HeroCardsProps) {

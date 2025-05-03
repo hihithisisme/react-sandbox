@@ -1,3 +1,4 @@
+import { useColorModeValue } from '@/components/ui/color-mode';
 import {
     ChevronDownIcon,
     ChevronRightIcon,
@@ -7,7 +8,7 @@ import {
 import {
     Box,
     Button,
-    Collapse,
+    Collapsible,
     Flex,
     Icon,
     IconButton,
@@ -15,17 +16,15 @@ import {
     LinkBox,
     LinkOverlay,
     Popover,
-    PopoverContent,
     PopoverTrigger,
     Stack,
     Text,
-    useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
 import { HouseSimple } from '@phosphor-icons/react';
 
 export default function WithSubnavigation() {
-    const { isOpen, onToggle } = useDisclosure();
+    const { open, onToggle } = useDisclosure();
 
     return (
         <Box>
@@ -45,7 +44,7 @@ export default function WithSubnavigation() {
                     ml={{ base: -2 }}
                     display={{ base: 'flex', md: 'none' }}
                 >
-                    <NavIconButton onClick={onToggle} open={isOpen} />
+                    <NavIconButton onClick={onToggle} open={open} />
                 </Flex>
 
                 <Flex flex={1} justify={{ base: 'center', md: 'start' }}>
@@ -60,9 +59,11 @@ export default function WithSubnavigation() {
                 {/*<NavRightSide />*/}
             </Flex>
 
-            <Collapse in={isOpen} animateOpacity>
-                <MobileNav />
-            </Collapse>
+            <Collapsible.Root open={open} animateOpacity>
+                <Collapsible.Content>
+                    <MobileNav />
+                </Collapsible.Content>
+            </Collapsible.Root>
         </Box>
     );
 }
@@ -73,30 +74,23 @@ const NavRightSide = () => {
             flex={{ base: 1, md: 0 }}
             justify={'flex-end'}
             direction={'row'}
-            spacing={6}
+            gap={6}
         >
-            <Button
-                as={'a'}
-                fontSize={'sm'}
-                fontWeight={400}
-                variant={'link'}
-                href={'#'}
-            >
-                Sign In
+            <Button asChild fontSize={'sm'} fontWeight={400}>
+                <a href="#">Sign in</a>
             </Button>
             <Button
-                as={'a'}
+                asChild
                 display={{ base: 'none', md: 'inline-flex' }}
                 fontSize={'sm'}
                 fontWeight={600}
                 color={'white'}
                 bg={'pink.400'}
-                href={'#'}
                 _hover={{
                     bg: 'pink.300',
                 }}
             >
-                Sign Up
+                <a href="#">Sign up</a>
             </Button>
         </Stack>
     );
@@ -106,16 +100,15 @@ function NavIconButton(props: { onClick: () => void; open: boolean }) {
     return (
         <IconButton
             onClick={props.onClick}
-            icon={
-                props.open ? (
-                    <CloseIcon w={3} h={3} />
-                ) : (
-                    <HamburgerIcon w={5} h={5} />
-                )
-            }
             variant={'ghost'}
             aria-label={'Toggle Navigation'}
-        />
+        >
+            {props.open ? (
+                <CloseIcon w={3} h={3} />
+            ) : (
+                <HamburgerIcon w={5} h={5} />
+            )}
+        </IconButton>
     );
 }
 
@@ -134,10 +127,10 @@ const DesktopNav = () => {
     const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
     return (
-        <Stack direction={'row'} spacing={4}>
+        <Stack direction={'row'} gap={4}>
             {NAV_ITEMS.map((navItem) => (
                 <Box key={navItem.label}>
-                    <Popover trigger={'hover'} placement={'bottom-start'}>
+                    <Popover.Root trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
                             <Link
                                 p={2}
@@ -153,27 +146,30 @@ const DesktopNav = () => {
                                 {navItem.label}
                             </Link>
                         </PopoverTrigger>
-
-                        {navItem.children && (
-                            <PopoverContent
-                                border={0}
-                                boxShadow={'xl'}
-                                bg={popoverContentBgColor}
-                                p={4}
-                                rounded={'xl'}
-                                minW={'sm'}
-                            >
-                                <Stack>
-                                    {navItem.children.map((child) => (
-                                        <DesktopSubNav
-                                            key={child.label}
-                                            {...child}
-                                        />
-                                    ))}
-                                </Stack>
-                            </PopoverContent>
-                        )}
-                    </Popover>
+                        <Popover.Positioner>
+                            {navItem.children && (
+                                <Popover.Content
+                                    border={0}
+                                    boxShadow={'xl'}
+                                    bg={popoverContentBgColor}
+                                    p={4}
+                                    rounded={'xl'}
+                                    minW={'sm'}
+                                >
+                                    <Popover.Body>
+                                        <Stack>
+                                            {navItem.children.map((child) => (
+                                                <DesktopSubNav
+                                                    key={child.label}
+                                                    {...child}
+                                                />
+                                            ))}
+                                        </Stack>
+                                    </Popover.Body>
+                                </Popover.Content>
+                            )}
+                        </Popover.Positioner>
+                    </Popover.Root>
                 </Box>
             ))}
         </Stack>
@@ -240,58 +236,65 @@ const MobileNav = () => {
 };
 
 const MobileNavItem = ({ label, children, href }: NavItem) => {
-    const { isOpen, onToggle } = useDisclosure();
+    const { open, onToggle } = useDisclosure();
 
     return (
-        <Stack spacing={4} onClick={children && onToggle}>
+        <Stack gap={4} onClick={children && onToggle}>
             <Flex
+                asChild
                 py={2}
-                as={Link}
-                href={href ?? '#'}
                 justify={'space-between'}
                 align={'center'}
                 _hover={{
                     textDecoration: 'none',
                 }}
             >
-                <Text
-                    fontWeight={600}
-                    color={useColorModeValue('gray.600', 'gray.200')}
-                >
-                    {label}
-                </Text>
-                {children && (
-                    <Icon
-                        as={ChevronDownIcon}
-                        transition={'all .25s ease-in-out'}
-                        transform={isOpen ? 'rotate(180deg)' : ''}
-                        w={6}
-                        h={6}
-                    />
-                )}
+                <Link href={href ?? '#'}>
+                    <Text
+                        fontWeight={600}
+                        color={useColorModeValue('gray.600', 'gray.200')}
+                    >
+                        {label}
+                    </Text>
+                    {children && (
+                        <Icon
+                            as={ChevronDownIcon}
+                            transition={'all .25s ease-in-out'}
+                            transform={open ? 'rotate(180deg)' : ''}
+                            w={6}
+                            h={6}
+                        />
+                    )}
+                </Link>
             </Flex>
 
-            <Collapse
-                in={isOpen}
+            <Collapsible.Root
+                open={open}
                 animateOpacity
                 style={{ marginTop: '0!important' }}
             >
-                <Stack
-                    mt={2}
-                    pl={4}
-                    borderLeft={1}
-                    borderStyle={'solid'}
-                    borderColor={useColorModeValue('gray.200', 'gray.700')}
-                    align={'start'}
-                >
-                    {children &&
-                        children.map((child) => (
-                            <Link key={child.label} py={2} href={child.href}>
-                                {child.label}
-                            </Link>
-                        ))}
-                </Stack>
-            </Collapse>
+                <Collapsible.Content>
+                    <Stack
+                        mt={2}
+                        pl={4}
+                        borderLeft={1}
+                        borderStyle={'solid'}
+                        borderColor={useColorModeValue('gray.200', 'gray.700')}
+                        align={'start'}
+                    >
+                        {children &&
+                            children.map((child) => (
+                                <Link
+                                    key={child.label}
+                                    py={2}
+                                    href={child.href}
+                                >
+                                    {child.label}
+                                </Link>
+                            ))}
+                    </Stack>
+                </Collapsible.Content>
+            </Collapsible.Root>
         </Stack>
     );
 };

@@ -17,7 +17,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { ArrowUp } from '@phosphor-icons/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface commonControlProps {
     name: string;
@@ -102,7 +102,7 @@ export default function IterativeControls({
                         // position={'absolute'}
                         // bottom={0}
                         // p={3}
-                        // spacing={3}
+                        // gap={3}
                         // alignItems={'start'}
                         // backgroundColor={'rgba(255,255,255,0.2)'}
                         // roundedTopRight={10}
